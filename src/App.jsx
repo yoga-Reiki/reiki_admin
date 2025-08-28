@@ -10,14 +10,9 @@ function App() {
   return (
     <>
       <Toaster
-        position="bottom-right"
-        // top-left
+        top-left
         toastOptions={{
           duration: 5000,
-          style: {
-            background: "#363636",
-            color: "#fff",
-          },
         }}
       />
       <BrowserRouter>

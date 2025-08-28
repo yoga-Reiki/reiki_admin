@@ -1,14 +1,28 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Header from '../component/Header'
+import LeftPanel from '../component/LeftPanel'
 import Content from '../component/Content'
-import LeftPannel from '../component/leftPannel/index'
 
 function DefaultLayout() {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
   return (
-    <div>
-        <Header />
-        <LeftPannel />
-        <Content />
+    <div className="flex h-screen overflow-hidden bg-[#FBFBFB] p-3 space-x-2">
+      {/* Sidebar */}
+      <div className={`${isSidebarCollapsed ? 'w-20' : 'w-64'} transition-all duration-300 z-20`}>
+        <LeftPanel isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
+      </div>
+
+      {/* Main Content */}
+      <div className="flex flex-col flex-1">
+        <div className="sticky top-0 z-10">
+          <Header isCollapsed={isSidebarCollapsed} />
+        </div>
+
+        <div className="flex-1 overflow-auto bg-gray-50 p-4">
+          <Content />
+        </div>
+      </div>
     </div>
   )
 }
