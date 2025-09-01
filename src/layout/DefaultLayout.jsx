@@ -19,7 +19,7 @@ function DefaultLayout() {
           <Header isCollapsed={isSidebarCollapsed} />
         </div>
 
-        <div className="flex-1 overflow-auto bg-gray-50 p-4">
+        <div className="flex-1 overflow-auto bg-gray-50">
           <Content />
         </div>
       </div>

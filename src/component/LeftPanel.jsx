@@ -46,7 +46,7 @@ function LeftPanel({ isCollapsed, setIsCollapsed }) {
         <div className={`flex flex-col gap-2 relative h-full transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}>
             {/* Logo Section */}
             <div
-                className='bg-white h-[80px] flex justify-center border border-[#F1F1F1] rounded-3xl hover:cursor-pointer'
+                className='bg-white h-[80px] shadow-md flex justify-center border border-[#F1F1F1] rounded-3xl hover:cursor-pointer'
                 onClick={toggleSidebar}
             >
                 <img
@@ -57,7 +57,7 @@ function LeftPanel({ isCollapsed, setIsCollapsed }) {
             </div>
 
             {/* Menu Items */}
-            <div className='bg-white border border-[#F1F1F1] rounded-3xl flex-1 p-3 space-y-2'>
+            <div className='bg-white border border-[#F1F1F1] shadow-md rounded-3xl flex-1 p-3 space-y-2'>
                 {menuItems.map((item, index) => (
                     <NavLink
                         key={index}
