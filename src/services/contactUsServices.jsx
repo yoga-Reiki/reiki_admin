@@ -1,9 +1,9 @@
 import axios from "axios";
 
-export async function getAllUser({ page: page, pageSize: pageSize }) {
+export async function getContactPageData() {
     try {
         const response = await axios.get(
-            `${process.env.REACT_APP_URL}/users?page=${page}&limit=${pageSize}`,
+            `${process.env.REACT_APP_URL}/contact`,
             {
                 headers: {
                     Authorization: localStorage.getItem("admin_accessToken"),
@@ -16,15 +16,15 @@ export async function getAllUser({ page: page, pageSize: pageSize }) {
     }
 }
 
-// user block 
-export async function getUserAccess({ userId }) {
+export async function getContactUsUpdate(formData) {
     try {
         const response = await axios.put(
-            `${process.env.REACT_APP_URL}/users/${userId}/toggle-status`,
-            {},
+            `${process.env.REACT_APP_URL}/contact`,
+            formData,
             {
                 headers: {
                     Authorization: localStorage.getItem("admin_accessToken"),
+                    "Content-Type": "multipart/form-data",
                 },
             }
         );
@@ -33,4 +33,5 @@ export async function getUserAccess({ userId }) {
         throw error;
     }
 }
+
 

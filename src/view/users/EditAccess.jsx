@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { IoIosArrowBack } from "react-icons/io";
 import leftBackIcon from "../../assets/svg/leftIcon.svg"
 import UserIcon from "../../assets/svg/userIcon.svg"
 
@@ -34,7 +33,7 @@ function EditAccess({ selectedUser, setSelectedUser }) {
                         onClick={() => setSelectedUser(null)}
                         className="flex items-center text-3xl gap-1 transition"
                     >
-                        <span className='hover:text-[#EA7913]'>User Management</span> <span className="mx-2">{">"}</span>
+                        <span className='hover:text-[#EA7913] cursor-pointer'>User Management</span> <span className="mx-2">{">"}</span>
                     </button>
                     <button className="text-gray-500 text-xl hover:text-[#EA7913] mt-1">Course Access</button>
                 </div>

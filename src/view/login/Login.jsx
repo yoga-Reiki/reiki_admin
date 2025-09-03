@@ -8,7 +8,7 @@ import Emailicon from "../../assets/svg/Email.svg";
 import eyeIcon from "../../assets/svg/eyeIcon.svg";
 import Password from "../../assets/svg/Password.svg";
 import toast from "react-hot-toast";
-import { userLogin } from "../../services/LoginServices";
+import { userForgotPassowrd, userLogin, userResetPassword } from "../../services/LoginServices";
 import ForgotModel from "./ForgotModel";
 import OtpModel from "./OtpModel";
 import ResetPasswordModel from "./ResetPasswordModel";
@@ -16,14 +16,11 @@ import SuccessModel from "./SuccessModel";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const [form, setForm] = useState({ email: "", Password: "" });
+  const [form, setForm] = useState({ email: "", Password: "", otp: "", newPassword: "", confirmPassword: "" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
-  const [otp, setOtp] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -72,15 +69,92 @@ function Login() {
     }
   };
 
-  const onForgotPassword = () => {
-    // if (!form.email) {
-    //   setErrors((prev) => ({
-    //     ...prev,
-    //     email: "Please enter your email to reset password.",
-    //   }));
-    //   return;
-    // }
-    setStep(1);
+  const onForgotPassword = async () => {
+    if (!form.email) {
+      setErrors((prev) => ({
+        ...prev,
+        email: "Please enter your email to reset password."
+      }));
+      return;
+    }
+
+    try {
+      setErrors({});
+      const body = { email: form.email.trim() };
+
+      const res = await userForgotPassowrd({ body });
+
+      console.log("Forgot password response:", res);
+      setStep(2);
+    } catch (err) {
+      console.error("Forgot password failed:", err);
+      setErrors({
+        api: err.response?.data?.message || "Failed to send reset email. Try again."
+      });
+    }
+  };
+
+  const verifyOtp = () => {
+    let tempErrors = {};
+    if (form.otp.length !== 6) {
+      tempErrors.otp = "Please enter a valid 6-digit OTP";
+    }
+    setErrors(tempErrors);
+    if (Object.keys(tempErrors).length > 0) return;
+
+    setStep(3);
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    const newErrors = {};
+
+    const lowerCaseRegex = /[a-z]/;
+    const upperCaseRegex = /[A-Z]/;
+    const numberRegex = /[0-9]/;
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+
+    if (!form.newPassword) {
+      newErrors.newPassword = "New password is required.";
+    } else if (form.newPassword.length < 8) {
+      newErrors.newPassword = "Password must be at least 8 characters.";
+    } else if (!lowerCaseRegex.test(form.newPassword)) {
+      newErrors.newPassword = "Password must contain at least one lowercase letter.";
+    } else if (!upperCaseRegex.test(form.newPassword)) {
+      newErrors.newPassword = "Password must contain at least one uppercase letter.";
+    } else if (!numberRegex.test(form.newPassword)) {
+      newErrors.newPassword = "Password must contain at least one number.";
+    } else if (!specialCharRegex.test(form.newPassword)) {
+      newErrors.newPassword = "Password must contain at least one special character.";
+    }
+
+    if (!form.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password.";
+    } else if (form.newPassword !== form.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    try {
+      setErrors({});
+      const body = {
+        email: form.email.trim(),
+        otp: form.otp.trim(),
+        newPassword: form.newPassword,
+      };
+      const res = await userResetPassword({ body });
+      console.log("Reset password response:", res);
+      setStep(4);
+    } catch (err) {
+      console.error("Reset password failed:", err);
+      setErrors({
+        api: err.response?.data?.message || "Failed to reset password. Try again."
+      });
+    }
   };
 
   return (
@@ -101,7 +175,7 @@ function Login() {
             <div className="flex flex-col gap-2">
               <h1 className="text-2xl md:text-[32px] md:leading-[40px] font-semibold font-Raleway text-center text-[#3D3D3D]">
                 {step === 0 ? "Welcome to Shree Sai Yog & Reiki Healing Centre" : step === 1 ? "Forgot Password"
-                  : step === 2 ? "OTP Verification" : step === 3 ? "Change Password" : "Login successfuly!"}
+                  : step === 2 ? "OTP Verification" : step === 3 ? "Change Password" : "Success"}
               </h1>
               {step === 1 ? <p>Enter Your Email to reset the password</p> : step === 2 ? <p>Verify OTP to reset your password.</p>
                 : step === 3 ? <p>Enter new password to change password.</p> : step === 4 && <p>Password has been successfully changed.</p>}
@@ -177,8 +251,8 @@ function Login() {
                   <div className="flex justify-end pt-1">
                     <button
                       type="button"
-                      onClick={onForgotPassword}
                       className="text-sm cursor-pointer"
+                      onClick={() => setStep(1)}
                     >
                       Forgot Password ?
                     </button>
@@ -208,11 +282,7 @@ function Login() {
 
           {step === 1 && (
             <ForgotModel
-              onSubmit={(e) => {
-                e.preventDefault();
-                // send OTP logic here
-                toast.success("OTP sent to your email");
-              }}
+              onForgotPassword={onForgotPassword}
               onChange={onChange}
               form={form}
               errors={errors}
@@ -221,19 +291,19 @@ function Login() {
           )}
 
           {step === 2 && (
-            <OtpModel otp={otp} setOtp={setOtp} setStep={setStep} />
+            <OtpModel form={form} setForm={setForm} errors={errors} setErrors={setErrors} verifyOtp={verifyOtp} />
           )}
 
           {step === 3 && (
-            <ResetPasswordModel setStep={setStep} newPassword={newPassword} setNewPassword={setNewPassword} confirmPassword={confirmPassword} setConfirmPassword={setConfirmPassword} />
+            <ResetPasswordModel form={form} setForm={setForm} setStep={setStep} errors={errors} setErrors={setErrors} handleChangePassword={handleChangePassword} />
           )}
 
-          {step === 3 && (
+          {step === 4 && (
             <SuccessModel />
           )}
         </div>
       </div>
-    </div >
+    </div>
   );
 }
 

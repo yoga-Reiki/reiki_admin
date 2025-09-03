@@ -31,7 +31,7 @@ const menuItems = [
     { name: 'Courses', path: '/courses', iconBlack: coursesIcon, iconWhite: coursesIconWhite },
     { name: 'Product', path: '/product', iconBlack: productIcon, iconWhite: productIconWhite },
     { name: 'Gallery', path: '/gallery', iconBlack: galleryIcon, iconWhite: galleryIconWhite },
-    { name: 'About Us', path: '/about-us', iconBlack: userIcon, iconWhite: userIconWhite },
+    { name: 'About Us', path: '/aboutus', iconBlack: userIcon, iconWhite: userIconWhite },
     { name: 'Blog', path: '/blog', iconBlack: blogIcon, iconWhite: blogIconWhite },
     { name: 'Contact Us', path: '/contact', iconBlack: contactIcon, iconWhite: contactIconWhite },
     { name: 'Testimonials', path: '/testimonials', iconBlack: testimonialsIcon, iconWhite: testimonialsIconWhite },
