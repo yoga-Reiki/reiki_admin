@@ -3,7 +3,7 @@ import { MdOutlineClose } from "react-icons/md";
 import { FiUploadCloud } from "react-icons/fi";
 import { getAddTestimonials } from "../../services/testimonialsServices";
 import toast from "react-hot-toast";
-import SuccsessModel from "./SuccsessModel";
+import SuccsessModel from "../component/SuccsessModel";
 
 function AddTestimonials({ onClose, selectedUser }) {
   const inputId = "testimonial-image-upload";
@@ -86,7 +86,7 @@ function AddTestimonials({ onClose, selectedUser }) {
         <SuccsessModel onClose={() => {
           setShowSuccess(false);
           onClose(); // ✅ Close AddTestimonials modal too
-        }} />
+        }} showSuccessTestimonails={showSuccess} />
       ) : (
         <div className="fixed inset-0 flex justify-center items-center bg-black/40 z-50 text-[#464646]">
           <div className="bg-white p-6 w-full max-w-[971px] flex flex-col justify-between gap-5.5 border-t-2 border-t-[#EA7913] rounded-3xl">

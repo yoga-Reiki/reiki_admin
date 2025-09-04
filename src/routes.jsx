@@ -1,12 +1,14 @@
 import React from "react";
 
-const Dashboard = React.lazy(() => import("./view/dashBoard/index"));
+const Dashboard = React.lazy(() => import("./view/dashBoard/Dashboard"));
 const Users = React.lazy(() => import("./view/users/index"));
 const ErrorPage = React.lazy(() => import("./view/error/Error"));
 const AboutUs = React.lazy(() => import("./view/about/Aboutus"));
 const Testimonials = React.lazy(() => import("./view/testimonails/Testimonials"));
 const Gallery = React.lazy(() => import("./view/gallery/Gallery"));
 const ContactUs = React.lazy(() => import("./view/contactUs/ContactUs"));
+const Blog = React.lazy(() => import("./view/blog/Blog"));
+const Courses = React.lazy(() => import("./view/course/Courses"));
 
 const routes = [
   {
@@ -28,6 +30,16 @@ const routes = [
     path: '/aboutus',
     name: 'AboutUs',
     element: AboutUs,
+  },
+  {
+    path: '/blog',
+    name: 'Blog',
+    element: Blog,
+  },
+  {
+    path: '/courses',
+    name: 'Courses',
+    element: Courses,
   },
   {
     path: '/contact',
