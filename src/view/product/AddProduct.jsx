@@ -3,9 +3,9 @@ import { MdOutlineClose } from "react-icons/md";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import UploadIcon from "../../assets/svg/UploadIcon.svg";
 import SuccsessModel from "../component/SuccsessModel";
-import { getAddCourses } from "../../services/courseServices";
+import { getAddProduct } from "../../services/productServices";
 
-function AddCourse({ onClose }) {
+function AddProduct({ onClose }) {
     const fileInputRef = useRef(null);
     const [formData, setFormData] = useState({
         title: "",
@@ -117,9 +117,9 @@ function AddCourse({ onClose }) {
             }
 
             // Call API
-            const res = await getAddCourses(formDataToSend);
+            const res = await getAddProduct(formDataToSend);
 
-            console.log("Course added ✅", res);
+            console.log("Product added ✅", res);
             // Show success modal
             setShowSuccess(true);
         } catch (error) {
@@ -136,13 +136,13 @@ function AddCourse({ onClose }) {
                         setShowSuccess(false);
                         onClose();
                     }}
-                    showSuccessCourse={showSuccess}
+                    showSuccessProduct={showSuccess}
                 />
             ) : (
                 <div className="fixed inset-0 flex justify-center items-center bg-black/40 z-50 text-[#464646] p-6">
                     <div className="bg-white w-full max-w-[971px] p-5 rounded-3xl border-t-2 border-t-[#EA7913] flex flex-col gap-5.5">
-                        <div className="flex justify-between items-center p-3">
-                            <h2 className="text-[32px] font-Raleway">Add Course</h2>
+                        <div className="flex justify-between items-center px-3 py-4">
+                            <h2 className="text-[32px] font-Raleway">Add Product</h2>
                             <button
                                 onClick={onClose}
                                 className="text-[#EA7913] border border-[#989898] cursor-pointer p-4 rounded-full"
@@ -181,7 +181,7 @@ function AddCourse({ onClose }) {
                                     </div>
 
                                     {/* Content + Image */}
-                                    <div className="grid grid-cols-2 pt-2.5 gap-x-4.5 pb-14.5 ">
+                                    <div className="grid grid-cols-2 pt-2.5 gap-x-4.5 pb-5">
                                         <div>
                                             <label className="block text-lg mb-1">Content</label>
                                             <textarea
@@ -189,16 +189,16 @@ function AddCourse({ onClose }) {
                                                 value={formData.content}
                                                 onChange={handleChange}
                                                 placeholder="Enter Your Content"
-                                                className="w-full h-[136px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                                className="w-full h-[166px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                             />
                                             {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
                                         </div>
 
                                         {/* Image Upload */}
                                         <div>
-                                            <label className="block text-lg mb-1">Image for Blog Section</label>
+                                            <label className="block text-lg mb-1">Upload Image - Product Section</label>
                                             <div
-                                                className={`flex flex-col items-center justify-center h-[136px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
+                                                className={`flex flex-col items-center justify-center h-[166px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
                                                     }`}
                                                 onDragOver={(e) => {
                                                     e.preventDefault();
@@ -222,7 +222,7 @@ function AddCourse({ onClose }) {
                                                 ) : (
                                                     <div className="flex flex-col items-center gap-2 px-12">
                                                         <img src={UploadIcon} alt="Not Found" />
-                                                        <span className="text-[#989898]">Upload Image Here</span>
+                                                        <span className="text-[#525252]">Upload Image or Drag & drop here</span>
                                                     </div>
                                                 )}
                                                 <input
@@ -319,7 +319,7 @@ function AddCourse({ onClose }) {
                                                 onChange={handleChange}
                                                 className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-3"
                                             >
-                                                <option value="" disabled>Select Mode of Course</option>
+                                                <option value="" disabled>Select Mode of Product</option>
                                                 <option value="Online">Online</option>
                                                 <option value="Offline">Offline</option>
                                                 <option value="Hybrid">Hybrid</option>
@@ -352,7 +352,7 @@ function AddCourse({ onClose }) {
                                                 name="duration"
                                                 value={formData.duration}
                                                 onChange={handleChange}
-                                                placeholder="Enter Duration of Course"
+                                                placeholder="Enter Duration of Product"
                                                 className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
                                             />
                                             {errors.duration && <p className="text-red-500 text-sm mt-1">{errors.duration}</p>}
@@ -396,4 +396,4 @@ function AddCourse({ onClose }) {
     );
 }
 
-export default AddCourse;
+export default AddProduct;

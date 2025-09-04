@@ -13,6 +13,8 @@ import ForgotModel from "./ForgotModel";
 import OtpModel from "./OtpModel";
 import ResetPasswordModel from "./ResetPasswordModel";
 import SuccessModel from "./SuccessModel";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../features/userProfileDataSlice";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,6 +23,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
+  const dispatch = useDispatch()
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -56,6 +59,12 @@ function Login() {
 
       localStorage.setItem("admin_accessToken", res?.data?.tokens?.accessToken);
       localStorage.setItem("admin_refreshToken", res?.data?.tokens?.refreshToken);
+
+      const accessToken = res?.data?.tokens?.accessToken;
+      const refreshToken = res?.data?.tokens?.refreshToken;
+      const userData = res?.data?.user;
+
+      dispatch(setUser({ user: userData, accessToken, refreshToken }));
 
       toast.success("Login successful!");
       navigate("/dashboard");
