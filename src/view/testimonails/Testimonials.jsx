@@ -7,6 +7,7 @@ import { getTestimonialsData, getTestimonialsDelete } from "../../services/testi
 import TestimonialsEdit from "./TestimonialsEdit";
 import DeleteIcon from "../../assets/svg/DeleteIcon.svg"
 import DeleteModel from "../component/DeleteModel";
+import toast from "react-hot-toast";
 
 function Testimonials() {
     const [testimonialsData, setTestimonialsData] = useState([]);
@@ -19,17 +20,16 @@ function Testimonials() {
 
     useEffect(() => {
         if (!hasFetched.current) {
-            fetchUsers();
+            fetchTestimonials();
+            toast.success("Testimonials Fetched Successfully")
             hasFetched.current = true;
         }
     }, []);
 
-    const fetchUsers = async () => {
+    const fetchTestimonials = async () => {
         setLoading(true);
         try {
             const response = await getTestimonialsData({ page: 1, pageSize: 10 });
-
-            console.log("response", response);
             setTestimonialsData(response?.data?.items || []);
         } catch (err) {
             setError("Failed to fetch users");
@@ -38,21 +38,14 @@ function Testimonials() {
         }
     };
 
-    const openDeleteModal = (user) => {
-        setTestimonialsDelete(user);
-    };
-
-    const cancelDelete = () => {
-        setTestimonialsDelete(null);
-    };
-
     const confirmDelete = async () => {
         if (!testimonialsDelete || !testimonialsDelete._id) return;
 
         try {
-            await getTestimonialsDelete(testimonialsDelete._id);
+            const response = await getTestimonialsDelete(testimonialsDelete._id);
             setTestimonialsDelete(null);
-            fetchUsers(); // ⬅️ Optional: Refresh the list after deletion
+            toast.success(response?.message)
+            fetchTestimonials();
         } catch (error) {
             console.error("Delete failed", error);
         }
@@ -64,6 +57,7 @@ function Testimonials() {
                 <TestimonialsEdit
                     selectedUser={selectedUser}
                     setSelectedUser={setSelectedUser}
+                    fetchTestimonials={fetchTestimonials}
                 />
             ) : (
                 <div>
@@ -169,6 +163,7 @@ function Testimonials() {
                         console.log("Blocked:", addTestimonials.name);
                         setAddTestimonials(null);
                     }}
+                    fetchTestimonials={fetchTestimonials}
                 />
             )}
 

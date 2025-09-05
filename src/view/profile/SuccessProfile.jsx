@@ -6,7 +6,7 @@ function SuccessProfile({ setCurrentScreenMain }) {
         <div>
             <div className="bg-white border-t border-t-[#EA7913] rounded-3xl p-8 max-w-[863px] mx-auto">
                 <div className="flex gap-8 flex-col items-center justify-center rounded-2xl text-center">
-                    <h2 className="text-2xl font-semibold">Success!</h2>
+                    <h2 className="text-[32px] text-[#3D3D3D] Raleway-medium font-Raleway">Success!</h2>
                     <img src={success} alt="Success" className="w-72 h-72" />
 
                     <div className='pt-18 w-full'>

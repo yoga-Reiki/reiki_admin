@@ -5,7 +5,7 @@ import { getAddTestimonials } from "../../services/testimonialsServices";
 import toast from "react-hot-toast";
 import SuccsessModel from "../component/SuccsessModel";
 
-function AddTestimonials({ onClose, selectedUser }) {
+function AddTestimonials({ onClose, selectedUser, fetchTestimonials }) {
   const inputId = "testimonial-image-upload";
   const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
@@ -24,9 +24,20 @@ function AddTestimonials({ onClose, selectedUser }) {
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
+  // const handleFileChange = (e) => {
+  //   const file = e.target.files[0];
+  //   validateImage(file);
+  // };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    validateImage(file);
+    if (file && file.type.startsWith("image/")) {
+      setImage(file);
+      setErrors((prev) => ({ ...prev, image: "" }));
+    } else {
+      setImage(null);
+      setErrors((prev) => ({ ...prev, image: "Please upload a valid image." }));
+    }
   };
 
   const handleDrop = (e) => {
@@ -71,6 +82,7 @@ function AddTestimonials({ onClose, selectedUser }) {
       setIsSubmitting(true);
       const response = await getAddTestimonials(data);
       setShowSuccess(true);
+      fetchTestimonials()
       toast.success(response?.message)
     } catch (err) {
       console.error("API Error:", err);
@@ -85,7 +97,7 @@ function AddTestimonials({ onClose, selectedUser }) {
       {showSuccess ? (
         <SuccsessModel onClose={() => {
           setShowSuccess(false);
-          onClose(); // ✅ Close AddTestimonials modal too
+          onClose();
         }} showSuccessTestimonails={showSuccess} />
       ) : (
         <div className="fixed inset-0 flex justify-center items-center bg-black/40 z-50 text-[#464646]">
@@ -164,22 +176,19 @@ function AddTestimonials({ onClose, selectedUser }) {
                     }
                   }}
                 >
-                  <label htmlFor={inputId} className="w-full h-full flex flex-col items-center justify-center gap-2 px-12 cursor-pointer">
-                    <FiUploadCloud size={20} className="text-[#EA7913]" />
-                    {image ? (
-                      <p className="text-[#989898]">{image.name}</p>
-                    ) : (
-                      <span className="text-[#989898]">Upload Image Here</span>
-                    )}
-                  </label>
                   <input
                     type="file"
-                    id={inputId}
-                    ref={fileInputRef}
                     accept="image/*"
+                    ref={fileInputRef}
                     className="hidden"
                     onChange={handleFileChange}
                   />
+                  <FiUploadCloud size={24} className="text-[#EA7913] mb-2" />
+                  {image ? (
+                    <p className="text-[#464646]">{image.name}</p>
+                  ) : (
+                    <span className="text-[#989898]">Upload Image Here</span>
+                  )}
                 </div>
                 {errors.image && <p className="text-red-500 text-sm mt-1">{errors.image}</p>}
               </div>

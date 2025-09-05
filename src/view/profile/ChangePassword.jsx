@@ -58,7 +58,6 @@ function ChangePassword({ setCurrentScreenMain }) {
                                 <div className="w-full relative inline-block rounded-full px-[4px] py-[3px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:to-[#F39C2C]">
                                     <button
                                         type="submit"
-                                        onClick={() => setOtpVerification(true)}
                                         className="w-full py-2 bg-[#EA7913] text-lg text-white rounded-full font-medium hover:bg-[#F39C2C] disabled:opacity-60"
                                     >
                                         Send Reset Link

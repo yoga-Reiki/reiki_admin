@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import arrowRightOrange from "../../assets/svg/arrowRightOrange.svg"
 import EditProfile from './EditProfile';
 import ChangePassword from './ChangePassword';
+import AccountActivity from './AccountActivity';
 
 function Profile() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -31,7 +32,7 @@ function Profile() {
         </div>
       )
     },
-    { label: 'Account Activity' },
+    { label: 'Account Activity', action: () => setCurrentScreen('accountActivity') },
     { label: 'Log Out' },
   ];
 
@@ -64,8 +65,10 @@ function Profile() {
         </>
       ) : currentScreen === 'edit' ? (
         <EditProfile setCurrentScreenMain={() => setCurrentScreen('main')} />
-      ) : (
+      ) : currentScreen === 'changePassword' ? (
         <ChangePassword setCurrentScreenMain={() => setCurrentScreen('main')} />
+      ) : (
+        <AccountActivity setCurrentScreenMain={() => setCurrentScreen('main')} />
       )}
     </div>
   );

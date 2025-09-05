@@ -3,10 +3,12 @@ import { getAboutPageData } from "../../services/aboutServices";
 import editIconWhite from "../../assets/svg/editIconWhite.svg"
 import galleryIconOrange from "../../assets/svg/galleryIconOrange.svg"
 import EditAboutUs from "./EditAboutUs";
+import EditChooseCard from "./EditChooseCard";
 
 function Aboutus() {
     const [aboutData, setAboutData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [isEditingChooseCard, setIsEditingChooseCard] = useState(false);
     const hasFetched = useRef(false);
 
     useEffect(() => {
@@ -37,14 +39,18 @@ function Aboutus() {
 
     return (
         <div>
-            {!isEditing ? (
+            {isEditing ? (
+                <EditAboutUs onCancel={() => setIsEditing(false)} />
+            ) : isEditingChooseCard ? (
+                <EditChooseCard aboutData={aboutData} onCancel={() => setIsEditingChooseCard(false)} />
+            ) : (
                 <div className="text-[#464646] space-y-2">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-3">
                         <div>
-                            <h1 className="text-2xl font-bold">About Us</h1>
+                            <h1 className="text-[32px] font-Raleway Raleway-medium">About Us</h1>
                             <p className="text-[#656565] pt-1">Change Content and Image of About Us Page</p>
                         </div>
-                        <button className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full cursor-pointer">
+                        <button onClick={() => setIsEditingChooseCard(true)} className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full cursor-pointer">
                             <img src={editIconWhite} alt="Download Icon" />
                             <span>Edit Why Choose Us</span>
                         </button>
@@ -125,8 +131,6 @@ function Aboutus() {
                     </div>
 
                 </div>
-            ) : (
-                <EditAboutUs onCancel={() => setIsEditing(false)} />
             )}
         </div>
     );

@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getTestimonialsUpdate } from "../../services/testimonialsServices";
+import toast from "react-hot-toast";
 
-function TestimonialsEdit({ selectedUser, setSelectedUser }) {
+function TestimonialsEdit({ selectedUser, setSelectedUser, fetchTestimonials }) {
   const [formData, setFormData] = useState({
     name: "",
     roleOrAddress: "",
@@ -49,6 +50,18 @@ function TestimonialsEdit({ selectedUser, setSelectedUser }) {
   };
 
   const handleSubmit = async () => {
+    // Check if anything has changed
+    const hasChanged =
+      formData.name !== selectedUser.name ||
+      formData.roleOrAddress !== selectedUser.roleOrAddress ||
+      formData.message !== selectedUser.message ||
+      selectedFile !== null;
+
+    if (!hasChanged) {
+      toast.error("Please make a change before submitting.");
+      return;
+    }
+
     try {
       const data = new FormData();
       data.append("name", formData.name);
@@ -58,13 +71,18 @@ function TestimonialsEdit({ selectedUser, setSelectedUser }) {
       if (selectedFile) {
         data.append("image", selectedFile);
       }
-      const result = await getTestimonialsUpdate(data);
+
+      const result = await getTestimonialsUpdate(data, selectedUser._id);
       setSelectedUser(null);
-      
+      fetchTestimonials()
+      toast.success(result?.message)
     } catch (error) {
       console.error("Error updating testimonial:", error);
     }
   };
+
+console.log("formData", formData);
+
 
   return (
     <div className="bg-[#FAFAFA] text-[#464646] flex flex-col gap-2 px-3">

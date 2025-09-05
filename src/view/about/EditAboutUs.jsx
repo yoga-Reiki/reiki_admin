@@ -109,7 +109,7 @@ function EditAboutUs({ onCancel }) {
         <div className="text-[#464646] space-y-2">
             {/* Header */}
             <div className="p-3">
-                <h1 className="text-[32px] font-Raleway font-bold">About Us</h1>
+                <h1 className="text-[32px] font-Raleway Raleway-medium">About Us</h1>
                 <p className="text-[#656565] pt-1">Change Content and Image of About Us Page</p>
             </div>
 
@@ -199,7 +199,7 @@ function EditAboutUs({ onCancel }) {
                         <div>
                             <label className="text-lg font-medium block mb-2">Hero Section Content</label>
                             <textarea
-                                className="w-full rounded-xl px-4.5 py-3 resize-none border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                className="w-full h-[153px] rounded-xl px-4.5 py-3 resize-none border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                 rows={3}
                                 value={heroContent}
                                 onChange={(e) => {

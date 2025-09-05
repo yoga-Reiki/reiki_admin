@@ -1,33 +1,107 @@
-import React, { useState, useRef } from 'react';
-import loginBG from "../../assets/img/loginBG.png";
-import gallery1 from "../../assets/img/blog1.png";
-import gallery2 from "../../assets/img/blog2.png";
-import gallery3 from "../../assets/img/blog3.png";
-import gallery4 from "../../assets/img/blog4.png";
-import gallery5 from "../../assets/img/blog5.png";
-import gallery6 from "../../assets/img/blog6.png";
-import gallery7 from "../../assets/img/blog7.png";
+import React, { useState, useRef, useEffect } from 'react';
 import addIconBlack from "../../assets/svg/addIconBlack.svg";
-import deletIconBlack from "../../assets/svg/deletIconBlack.svg"
+import deletIconBlack from "../../assets/svg/deletIconBlack.svg";
 import DeleteModel from '../component/DeleteModel';
-import { getGalleryImgDelete } from '../../services/galleryServices';
+import { getAddGalleryImg, getAllGalleryImg, getGalleryImgDelete, getUpdateGalleryImg } from '../../services/galleryServices';
+import toast from 'react-hot-toast';
 
 function Gallery() {
-    const [images, setImages] = useState([
-        loginBG, gallery1, gallery2,
-        gallery3, gallery4, gallery5,
-        gallery6, gallery7
-    ]);
+    const [images, setImages] = useState([]);
     const [draggedItem, setDraggedItem] = useState(null);
     const [selectedImageIndex, setSelectedImageIndex] = useState(null);
     const fileInputRef = useRef(null);
+    const hasFetched = useRef(false);
     const [galleyImgDelete, setGalleyImgDelete] = useState(null);
+    const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [updatedFile, setUpdatedFile] = useState(null);
+
+    useEffect(() => {
+        async function fetchImages() {
+            try {
+                const response = await getAllGalleryImg();
+                toast.success(response?.message)
+                setImages(response?.data?.items);
+            } catch (error) {
+                console.error("Failed to fetch gallery images", error);
+            }
+        }
+
+        if (!hasFetched.current) {
+            fetchImages();
+            hasFetched.current = true;
+        }
+    }, []);
+
+    useEffect(() => {
+        const updateImage = async () => {
+            if (!updatedFile || selectedImageIndex === null) return;
+
+            const selectedImage = images[selectedImageIndex];
+            const imageId = selectedImage._id;
+            if (!imageId) return;
+
+            const formData = new FormData();
+            formData.append("image", updatedFile);
+
+            try {
+                const response = await getUpdateGalleryImg(formData, imageId);
+                toast.success(response.message || "Image updated successfully!");
+
+                const refreshed = await getAllGalleryImg();
+                setImages(refreshed?.data?.items || []);
+            } catch (error) {
+                toast.error("Failed to update image.");
+                console.error(error);
+            } finally {
+                setUpdatedFile(null); // Reset state
+            }
+        };
+
+        updateImage();
+    }, [updatedFile]);
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setImages(prev => [...prev, imageUrl]);
+        if (!file) return;
+
+        const imageUrl = URL.createObjectURL(file);
+
+        if (selectedImageIndex !== null && images[selectedImageIndex]._id) {
+            // Replace the image at selected index
+            const updatedImages = [...images];
+            updatedImages[selectedImageIndex].imageUrl = imageUrl;
+            setImages(updatedImages);
+            setUpdatedFile(file); // Save for API update
+        } else {
+            // Add new image
+            const tempImage = { _id: null, imageUrl };
+            setImages(prev => [...prev, tempImage]);
+            setUploadedFiles(prev => [...prev, file]);
+        }
+    };
+
+    const handleUploadToWebsite = async () => {
+        if (uploadedFiles.length === 0) {
+            toast.error("No new images to upload.");
+            return;
+        }
+
+        const formData = new FormData();
+        uploadedFiles.forEach(file => formData.append("images", file));
+
+        try {
+            const res = await getAddGalleryImg(formData);
+            toast.success(res?.message || "Images uploaded successfully!");
+
+            // Refresh gallery
+            const refreshed = await getAllGalleryImg();
+            setImages(refreshed?.data?.items || []);
+
+            // Reset upload state
+            setUploadedFiles([]);
+        } catch (error) {
+            toast.error("Image upload failed.");
+            console.error(error);
         }
     };
 
@@ -35,7 +109,9 @@ function Gallery() {
         if (!galleyImgDelete || !galleyImgDelete._id) return;
 
         try {
-            await getGalleryImgDelete(galleyImgDelete._id);
+            const response = await getGalleryImgDelete(galleyImgDelete._id);
+            setImages(prev => prev.filter(img => img._id !== galleyImgDelete._id));
+            toast.success(response.message)
             setGalleyImgDelete(null);
         } catch (error) {
             console.error("Delete failed", error);
@@ -50,7 +126,10 @@ function Gallery() {
                     <h1 className="text-[32px] font-Raleway">Gallery</h1>
                     <p className="text-[#656565] pt-1">Manage Your Gallery</p>
                 </div>
-                <button className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full cursor-pointer">
+                <button className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full cursor-pointer"
+                    onClick={handleUploadToWebsite}
+                    disabled={uploadedFiles.length === 0}
+                >
                     Upload in Website
                 </button>
             </div>
@@ -60,7 +139,7 @@ function Gallery() {
                 <div className="w-full lg:w-1/2 grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 flex-1 lg:p-3 xl:p-5">
                     {images.map((img, index) => (
                         <div
-                            key={index}
+                            key={img._id || index}
                             className={`overflow-hidden rounded-3xl border-2 ${selectedImageIndex === index ? 'border-[#EA7913] p-0.5' : 'border-transparent'} transition`}
                             draggable
                             onClick={() => setSelectedImageIndex(index)}
@@ -77,26 +156,22 @@ function Gallery() {
                                 if (draggedItem !== null && draggedItem !== index) {
                                     const newImages = [...images];
                                     const draggedImage = newImages[draggedItem];
-
-                                    // Remove the dragged image
                                     newImages.splice(draggedItem, 1);
-
-                                    // Insert it at the drop index
                                     newImages.splice(index, 0, draggedImage);
-
                                     setImages(newImages);
                                     setDraggedItem(null);
                                 }
                             }}
                         >
                             <img
-                                src={img}
+                                src={img.imageUrl}
                                 alt={`Gallery ${index + 1}`}
                                 className={`w-full h-48 md:h-60 lg:h-72 ${selectedImageIndex === index && "rounded-3xl"} object-cover cursor-pointer`}
                             />
                         </div>
                     ))}
 
+                    {/* Upload Box */}
                     <div
                         className="w-full h-48 md:h-60 lg:h-72 rounded-3xl bg-[#FEF8EC] flex items-center justify-center cursor-pointer transition"
                         onClick={() => fileInputRef.current.click()}
@@ -118,11 +193,15 @@ function Gallery() {
                         <div className={`bg-white border ${selectedImageIndex !== null ? "border-[#EA7913]" : "border-[#DCDCDC]"} rounded-xl h-48 flex items-center justify-center overflow-hidden`}>
                             {selectedImageIndex !== null ? (
                                 <div className="flex flex-col items-center justify-center w-full h-full text-center">
-                                    <p className="text-sm text-[#525252]">Image {selectedImageIndex + 1}</p>
+                                    <p className="text-sm text-[#525252]">
+                                        {updatedFile
+                                            ? updatedFile.name
+                                            : images[selectedImageIndex]?.imageUrl.split("/").pop()}
+                                    </p>
                                 </div>
                             ) : (
                                 <div className='text-[#525252] text-center px-4'>
-                                    <p>Select Image to Change </p>
+                                    <p>Select Image to Change</p>
                                 </div>
                             )}
                         </div>
@@ -132,7 +211,7 @@ function Gallery() {
                         <div className="flex justify-center gap-3">
                             <button
                                 className="w-full bg-[#FCEAC9] text-[#656565] px-4 py-2 rounded-full flex justify-center gap-2 items-center cursor-pointer"
-                                onClick={() => setGalleyImgDelete(selectedImageIndex)}
+                                onClick={() => setGalleyImgDelete(images[selectedImageIndex])}
                             >
                                 <img src={deletIconBlack} alt='Not Found' />
                                 Delete
@@ -140,6 +219,7 @@ function Gallery() {
                             <div className="w-full relative inline-block rounded-full px-[4px] py-[3px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:to-[#F39C2C]">
                                 <button
                                     type="submit"
+                                    onClick={() => fileInputRef.current.click()}
                                     className="w-full py-2.5 bg-[#EA7913] text-white rounded-full font-medium hover:bg-[#F39C2C] disabled:opacity-60"
                                 >
                                     Change Image

@@ -36,10 +36,10 @@ export async function getAddTestimonials(formData) {
 }
 
 // update testimonials
-export async function getTestimonialsUpdate(formData) {
+export async function getTestimonialsUpdate(formData, testimonialId) {
     try {
-        const response = await axios.put(
-            `${process.env.REACT_APP_URL}/testimonials`,
+        const response = await axios.patch(
+            `${process.env.REACT_APP_URL}/testimonials/${testimonialId}`,
             formData,
             {
                 headers: {
