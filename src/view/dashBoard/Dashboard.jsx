@@ -1,21 +1,65 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import AddIcon from "../../assets/svg/AddIcon.svg";
 import dropdownArrow from "../../assets/svg/dropdownArrow.svg";
 import UserIcon1 from "../../assets/svg/UserIcon1.svg";
 import DashboardTable from './DashboardTable';
 import fileIcon from "../../assets/svg/fileIcon.svg";
+import { getAllUser } from '../../services/userServices';
+import AddCourse from '../course/AddCourse';
+import AddProduct from '../product/AddProduct';
+import AddBlog from '../blog/AddBlog';
+import AddTestimonials from '../testimonails/AddTestimonials';
 
 function Dashboard() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("Courses");
+  const [activePopup, setActivePopup] = useState(null);
+  const [dashboardData, setDashboardData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const hasFetched = useRef(false);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: 10,
+    totalUsers: 0,
+  });
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
+  // const handleItemClick = (item) => {
+  //   setActiveItem(item);
+  //   // setDropdownOpen(false);
+  // };
+
   const handleItemClick = (item) => {
     setActiveItem(item);
-    // setDropdownOpen(false);
+    setDropdownOpen(false);
+    setActivePopup(item);
+  };
+
+  useEffect(() => {
+    if (!hasFetched.current) {
+      fetchUsers();
+      hasFetched.current = true;
+    }
+  }, [pagination.page]);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const response = await getAllUser({ page: pagination.page, pageSize: pagination.pageSize });
+      setDashboardData(response?.data?.users || []);
+      setPagination((prev) => ({
+        ...prev,
+        totalUsers: response?.data?.totalUsers || 0,
+      }));
+    } catch (err) {
+      setError("Failed to fetch users");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -65,7 +109,7 @@ function Dashboard() {
         {/* Card 1 */}
         <div className="flex justify-between items-center bg-white rounded-3xl border-l border-l-[#EA7913] shadow-[0_4px_6px_rgba(0,0,0,0.08)]">
           <div className='py-[17px] px-8 w-full flex flex-col gap-1.5'>
-            <h2 className="text-4xl text-[#525252] font-Raleway">1,247</h2>
+            <h2 className="text-4xl text-[#525252] font-Raleway">{dashboardData?.length}</h2>
             <p className="text-[#757575] text-sm">Total Users</p>
           </div>
           <div className="bg-gradient-to-br w-27 h-full flex justify-center items-center from-[#FFB979] to-[#EA7913] rounded-3xl p-3 shadow-[-4px_0_6px_rgba(234,121,19,0.3)]">
@@ -85,7 +129,12 @@ function Dashboard() {
         </div>
       </div>
 
-      <DashboardTable />
+      <DashboardTable dashboardData={dashboardData} loading={loading} error={error} pagination={pagination} setPagination={setPagination} />
+
+      {activePopup === "Courses" && <AddCourse onClose={() => setActivePopup(null)} />}
+      {activePopup === "Products" && <AddProduct onClose={() => setActivePopup(null)} />}
+      {activePopup === "Blog" && <AddBlog onClose={() => setActivePopup(null)} />}
+      {activePopup === "Testimonials" && <AddTestimonials onClose={() => setActivePopup(null)} />}
     </div>
   );
 }

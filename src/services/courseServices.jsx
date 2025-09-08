@@ -35,4 +35,22 @@ export async function getAddCourses(formData) {
     }
 }
 
+// update courses
+export async function getCoursesUpdate(formData, coursesId) {
+    try {
+        const response = await axios.put(
+            `${process.env.REACT_APP_URL}/courses/${coursesId}`,
+            formData,
+            {
+                headers: {
+                    Authorization: localStorage.getItem("admin_accessToken"),
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
 

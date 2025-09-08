@@ -5,13 +5,13 @@ import Right from "../../assets/svg/right.svg"
 import editIconGrey from "../../assets/svg/editIconGrey.svg"
 import deleteIconGrey from "../../assets/svg/deleteIconGrey.svg"
 
-const CourseCard = () => {
+const CourseCard = ({ setIsEditingCard, setSelectedCourse }) => {
     const [currentSlide, setCurrentSlide] = useState(0)
     const [cardsToShow, setCardsToShow] = useState(3)
 
     const courses = [
         {
-            title: "Reiki Course Level 3",
+            title: "Reiki Course Level 1",
             points: [
                 "Reiki Level 3 master symbol",
                 "Distance Reiki and aura operation",
@@ -22,7 +22,7 @@ const CourseCard = () => {
             image: course1,
         },
         {
-            title: "Reiki Course Level 3",
+            title: "Reiki Course Level 2",
             points: [
                 "Reiki Level 3 master symbol",
                 "Distance Reiki and aura operation",
@@ -125,7 +125,12 @@ const CourseCard = () => {
                                 />
 
                                 {/* Buttons */}
-                                <button className="absolute flex items-center gap-2 top-3 left-3 bg-[#FFFFFF] p-3 text-[#656565] rounded-full border border-[#989898] cursor-pointer hover:bg-gray-100">
+                                <button
+                                    onClick={() => {
+                                        setSelectedCourse(course);
+                                        setIsEditingCard(true);
+                                    }}
+                                    className="absolute flex items-center gap-2 top-3 left-3 bg-[#FFFFFF] p-3 text-[#656565] rounded-full border border-[#989898] cursor-pointer hover:bg-gray-100">
                                     <img src={editIconGrey} alt="Edit" className="p-0.5" /> <span>Edit</span>
                                 </button>
                                 <button className="absolute bottom-3 left-3 bg-white p-3 rounded-full border border-[#989898] hover:bg-gray-100">

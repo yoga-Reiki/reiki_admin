@@ -33,11 +33,13 @@ function Header() {
     const handleClickOutside = (event) => {
       if (notifRef.current && !notifRef.current.contains(event.target)) {
         setShowNotifications(false);
+        if (activeButton === "notifications") setActiveButton(null);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [activeButton]);
+
 
   // Sample notifications
   const notifications = [
@@ -63,8 +65,10 @@ function Header() {
           <button
             className={getButtonClasses("notifications")}
             onClick={() => {
+              setActiveButton((prev) =>
+                prev === "notifications" ? null : "notifications"
+              );
               setShowNotifications((prev) => !prev);
-              setActiveButton((prev) => (prev === "notifications" ? null : "notifications"));
             }}
           >
             <div className="relative">
@@ -73,6 +77,7 @@ function Header() {
             </div>
             <span>Notifications</span>
           </button>
+
 
           {showNotifications && (
             <div className="absolute top-full mt-2 right-0 w-103.5 bg-white rounded-2xl text-[#656565] shadow-xl border border-[#989898] z-50 shadow-[0_0_14px_rgba(0,0,0,0.25)]">
@@ -93,24 +98,34 @@ function Header() {
         </div>
 
         {/* Profile */}
-        <button className={getButtonClasses("profile")}
+        <button
+          className={getButtonClasses("profile")}
           onClick={() => {
-            setActiveButton("profile")
-            navigate("/profile")
-          }}>
-          <img src={activeButton ? UserIcon1 : userIcon} alt="userIcon" className="w-5 h-5" />
+            setActiveButton("profile");
+            navigate("/profile");
+          }}
+        >
+          <img
+            src={activeButton === "profile" ? UserIcon1 : userIcon}
+            alt="userIcon"
+            className="w-5 h-5"
+          />
           <span>Profile</span>
         </button>
 
+
         {/* Logout */}
-        <button onClick={() => {
-          setActiveButton("logout");
-          handleLogout();
-        }}
-          className={getButtonClasses("logout")}>
+        <button
+          onClick={() => {
+            setActiveButton("logout");
+            handleLogout();
+          }}
+          className={getButtonClasses("logout")}
+        >
           <img src={logoutIcon} alt="logoutIcon" className="w-5 h-5" />
           <span>Logout</span>
         </button>
+
       </div>
     </header>
   );

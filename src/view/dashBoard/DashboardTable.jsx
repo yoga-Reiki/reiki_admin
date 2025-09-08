@@ -1,46 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import successTickIcon from "../../assets/svg/successTickIcon.svg"
 
-function DashboardTable() {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+function DashboardTable({ dashboardData, loading, error, pagination, setPagination }) {
     const [activeTab, setActiveTab] = useState("Pending");
-
-    const contactData = [
-        {
-            name: "Ryan Jones",
-            email: "ryanjohn@gmail.com",
-            mobile: "+91 95648 21024",
-            address: "1234 Elm Street, Springfield, IL 62704",
-            status: "Contacted"
-        },
-        {
-            name: "Robin Clark",
-            email: "robinvlark@gmail.com",
-            mobile: "+91 86402 20015",
-            address: "7890 Maple Avenue, Apt 5B, Brooklyn, NY 11215",
-            status: "Contacted"
-        },
-        {
-            name: "Ivy Rogers",
-            email: "ivyrogers@gmail.com",
-            mobile: "+91 85884 65520",
-            address: "4567 Pine Ridge Road, Dallas, TX 75231",
-            status: "Contacted"
-        },
-        {
-            name: "Ryan Jones",
-            email: "ryanjones@gmail.com",
-            mobile: "+91 64520 15420",
-            address: "2500 Sunset Boulevard, Suite 210, Los Angeles, CA 90026",
-            status: "Contacted"
-        }
-    ];
 
     return (
         <div>
             <div className="flex flex-col md:flex-row justify-between items-center my-4 gap-4 px-3">
-                <p className="text-2xl text-[#656565]">Testimonial Data List</p>
+                <p className="text-2xl text-[#656565]">Today’s Contact Details</p>
                 <div className="flex bg-[#F5F0E6] rounded-full text-[#656565] w-fit">
                     <button
                         onClick={() => setActiveTab("Pending")}
@@ -83,10 +50,10 @@ function DashboardTable() {
                                     {error}
                                 </td>
                             </tr>
-                        ) : contactData.length > 0 ? (
-                            contactData.map((Data, index) => {
+                        ) : dashboardData.length > 0 ? (
+                            dashboardData.map((Data, index) => {
                                 const isFirst = index === 0;
-                                const isLast = index === contactData.length - 1;
+                                const isLast = index === dashboardData.length - 1;
                                 return (
                                     <tr
                                         key={index}
@@ -94,11 +61,11 @@ function DashboardTable() {
                                     >
                                         <td className="whitespace-pre-wrap px-4 py-7.5">{Data.name}</td>
                                         <td className="whitespace-pre-wrap px-4 py-7.5">{Data.email}</td>
-                                        <td className="whitespace-pre-wrap px-4 py-7.5">{Data.mobile}</td>
-                                        <td className="pl-4 pr-8 py-7.5">
-                                            <div className="line-clamp-2 whitespace-pre-wrap">
-                                                {Data.address}
-                                            </div>
+                                        <td className="whitespace-pre-wrap px-4 py-7.5">{Data.mobileNumber}</td>
+                                        <td className="whitespace-pre-wrap px-4 py-7">
+                                            {Data?.address
+                                                ? `${Data.address.street}, ${Data.address.city}, ${Data.address.state}, ${Data.address.pincode}, ${Data.address.country}`
+                                                : "-"}
                                         </td>
                                         <td className="flex gap-3.5 items-center flex-wrap mt-2 md:mt-0 px-4 py-7.5">
                                             <button className="p-3 flex items-center gap-2 rounded-full bg-[#F0FDF4] text-[#22C55E] border border-[#BBF7D0] cursor-pointer">
@@ -118,6 +85,26 @@ function DashboardTable() {
                         )}
                     </tbody>
                 </table>
+
+                <div className="flex justify-end items-center gap-4 py-6">
+                    <button
+                        onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                        disabled={pagination.page === 1}
+                        className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
+                    >
+                        Previous
+                    </button>
+                    <span className="text-[#656565] font-medium">
+                        Page {pagination.page} of {Math.ceil(pagination.totalUsers / pagination.pageSize)}
+                    </span>
+                    <button
+                        onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                        disabled={pagination.page >= Math.ceil(pagination.totalUsers / pagination.pageSize)}
+                        className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
     )

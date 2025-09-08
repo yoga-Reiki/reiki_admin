@@ -35,4 +35,21 @@ export async function getAddProduct(formData) {
     }
 }
 
-
+// update product
+export async function getProductUpdate(formData, productId) {
+    try {
+        const response = await axios.put(
+            `${process.env.REACT_APP_URL}/product/${productId}`,
+            formData,
+            {
+                headers: {
+                    Authorization: localStorage.getItem("admin_accessToken"),
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}

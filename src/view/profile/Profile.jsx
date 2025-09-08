@@ -1,15 +1,39 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import arrowRightOrange from "../../assets/svg/arrowRightOrange.svg"
 import EditProfile from './EditProfile';
 import ChangePassword from './ChangePassword';
 import AccountActivity from './AccountActivity';
+import toast from 'react-hot-toast';
+import { getProfileData } from '../../services/ProfileServices';
 
 function Profile() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [currentScreen, setCurrentScreen] = useState('main');
+  const hasFetched = useRef(false);
+  const [loading, setLoading] = useState(false);
+  const [ProfileData, setProfileData] = useState([]);
 
   const handleToggleNotification = () => {
     setNotificationsEnabled(!notificationsEnabled);
+  };
+
+  useEffect(() => {
+    if (!hasFetched.current) {
+      fetchTestimonials();
+      hasFetched.current = true;
+    }
+  }, []);
+
+  const fetchTestimonials = async () => {
+    setLoading(true);
+    try {
+      const response = await getProfileData({ page: 1, pageSize: 10 });
+      setProfileData(response);
+    } 
+    
+    finally {
+      setLoading(false);
+    }
   };
 
   const menuItems = [
@@ -64,9 +88,9 @@ function Profile() {
           </div>
         </>
       ) : currentScreen === 'edit' ? (
-        <EditProfile setCurrentScreenMain={() => setCurrentScreen('main')} />
+        <EditProfile ProfileData={ProfileData} setCurrentScreenMain={() => setCurrentScreen('main')} />
       ) : currentScreen === 'changePassword' ? (
-        <ChangePassword setCurrentScreenMain={() => setCurrentScreen('main')} />
+        <ChangePassword ProfileData={ProfileData} setCurrentScreenMain={() => setCurrentScreen('main')} />
       ) : (
         <AccountActivity setCurrentScreenMain={() => setCurrentScreen('main')} />
       )}

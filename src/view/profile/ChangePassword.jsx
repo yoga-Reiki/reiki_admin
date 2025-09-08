@@ -1,18 +1,45 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import leftBackIcon from "../../assets/svg/leftIcon.svg"
 import Emailicon from "../../assets/svg/Email.svg";
 import OtpVerification from './OtpVerification';
+import { userForgotPassowrd } from '../../services/LoginServices';
 
-function ChangePassword({ setCurrentScreenMain }) {
+function ChangePassword({ setCurrentScreenMain, ProfileData }) {
     const [formData, setFormData] = useState({ email: '' });
+    const [errors, setErrors] = useState({});
     const [otpVerification, setOtpVerification] = useState(false)
 
-    const handleChangePassword = (e) => {
-        e.preventDefault();
-        console.log('Saved Details:', formData);
+    useEffect(() => {
+        if (ProfileData?.data?.email) {
+            setFormData({ email: ProfileData.data.email });
+        }
+    }, [ProfileData]);
 
-        // simulate API success or update success screen
-        setOtpVerification(true);
+    const handleChangePassword = async (e) => {
+        e.preventDefault();
+
+        if (!formData.email) {
+            setErrors((prev) => ({
+                ...prev,
+                email: "Please enter your email to reset password."
+            }));
+            return;
+        }
+
+        try {
+            setErrors({});
+            const body = { email: formData.email.trim() };
+
+            const res = await userForgotPassowrd({ body });
+
+            console.log("Forgot password response:", res);
+            setOtpVerification(true);
+        } catch (err) {
+            console.error("Forgot password failed:", err);
+            setErrors({
+                api: err.response?.data?.message || "Failed to send reset email. Try again."
+            });
+        }
     };
 
     return (
@@ -50,9 +77,9 @@ function ChangePassword({ setCurrentScreenMain }) {
                                             className="w-full pl-10 pr-3 py-2.5 rounded-xl text-[#525252] placeholder-[#525252] border-[1px] border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                         />
                                     </div>
-                                    {/* {errors.email && (
-                              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                            )} */}
+                                    {errors.email && (
+                                        <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                                    )}
                                 </div>
 
                                 <div className="w-full relative inline-block rounded-full px-[4px] py-[3px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:to-[#F39C2C]">

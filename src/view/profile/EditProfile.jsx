@@ -7,8 +7,7 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import SuccessProfile from './SuccessProfile';
 
-function EditProfile({ setCurrentScreenMain }) {
-    const user = useSelector((state) => state.userData.user);
+function EditProfile({ setCurrentScreenMain, ProfileData }) {
     const [showSuccess, setShowSuccess] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -17,14 +16,14 @@ function EditProfile({ setCurrentScreenMain }) {
     });
 
     useEffect(() => {
-        if (user) {
+        if (ProfileData) {
             setFormData({
-                name: user.name || "",
-                email: user.email || "",
-                mobileNumber: user.mobileNumber || ""
+                name: ProfileData?.data?.name || '',
+                email: ProfileData?.data?.email || '',
+                mobileNumber: ProfileData?.data?.mobileNumber || ''
             });
         }
-    }, [user]);
+    }, [ProfileData]);
 
     const handleFormChange = (e) => {
         const { name, value } = e.target;

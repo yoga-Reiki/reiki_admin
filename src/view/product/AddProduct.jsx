@@ -15,6 +15,7 @@ function AddProduct({ onClose }) {
         certificate: "",
         onlineOffline: "",
         content: "",
+        content1: "",
         language: "",
         shippingDetails: ""
     });
@@ -76,20 +77,17 @@ function AddProduct({ onClose }) {
 
         if (step === 1) {
             if (!formData.title.trim()) newErrors.title = "Title is required.";
-            if (!formData.newPricing.trim()) newErrors.newPricing = "New Pricing is required.";
-            if (!formData.oldPricing.trim()) newErrors.oldPricing = "Old Pricing is required.";
-            if (!formData.duration.trim()) newErrors.duration = "Duration is required.";
-            if (!formData.certificate.trim()) newErrors.certificate = "Certificate is required.";
-            if (!formData.onlineOffline.trim()) newErrors.onlineOffline = "Mode is required.";
+            if (!formData.chip1?.trim()) newErrors.chip1 = "Chip 1 title is required.";
+            if (!formData.chip2?.trim()) newErrors.chip2 = "Chip 2 title is required.";
             if (!formData.content.trim()) newErrors.content = "Content is required.";
             if (!image) newErrors.image = "Image is required.";
         } else if (step === 2) {
-            if (!formData.content.trim()) newErrors.content = "Content is required.";
+            if (!formData.content1?.trim()) newErrors.content1 = "Content is required.";
+            if (!formData.specifications?.trim()) newErrors.specifications = "Specifications is required.";
             if (!image) newErrors.image = "Image is required.";
-            if (!formData.language.trim()) newErrors.language = "Language is required.";
+            if (!formData.newPricing.trim()) newErrors.newPricing = "New Pricing is required.";
             if (!formData.shippingDetails.trim()) newErrors.shippingDetails = "Shipping details are required.";
-            if (!formData.duration.trim()) newErrors.duration = "Duration is required.";
-            if (!formData.onlineOffline.trim()) newErrors.onlineOffline = "Mode is required.";
+            if (!formData.oldPricing.trim()) newErrors.oldPricing = "Old Pricing is required.";
         }
 
         setErrors(newErrors);
@@ -104,7 +102,8 @@ function AddProduct({ onClose }) {
     };
 
     // Submit button handler
-    const handleConfirmSubmit = async () => {
+    const handleConfirmSubmit = async (e) => {
+        e.preventDefault();
         if (!validateForm()) return;
 
         try {
@@ -142,7 +141,7 @@ function AddProduct({ onClose }) {
                 <div className="fixed inset-0 flex justify-center items-center bg-black/40 z-50 text-[#464646] p-6">
                     <div className="bg-white w-full max-w-[971px] p-5 rounded-3xl border-t-2 border-t-[#EA7913] flex flex-col gap-5.5">
                         <div className="flex justify-between items-center px-3 py-4">
-                            <h2 className="text-[32px] font-Raleway">Add Product</h2>
+                            <h2 className="text-[32px] font-Raleway Raleway-medium">Add Product</h2>
                             <button
                                 onClick={onClose}
                                 className="text-[#EA7913] border border-[#989898] cursor-pointer p-4 rounded-full"
@@ -153,35 +152,24 @@ function AddProduct({ onClose }) {
 
                         <form className="flex flex-col gap-5.5">
                             {step === 1 ? (
-                                <div>
-                                    <div className="grid grid-cols-3 gap-y-2.5 gap-x-4.5">
-                                        {[
-                                            { label: "Title", name: "title" },
-                                            { label: "New Pricing", name: "newPricing" },
-                                            { label: "Old Pricing", name: "oldPricing" },
-                                            { label: "Duration", name: "duration" },
-                                            { label: "Certificate", name: "certificate" },
-                                            { label: "Online/Offline", name: "onlineOffline" }
-                                        ].map((field) => (
-                                            <div key={field.name}>
-                                                <label className="block text-lg mb-1">{field.label}</label>
-                                                <input
-                                                    type="text"
-                                                    name={field.name}
-                                                    value={formData[field.name]}
-                                                    onChange={handleChange}
-                                                    placeholder={`Enter ${field.label}`}
-                                                    className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
-                                                />
-                                                {errors[field.name] && (
-                                                    <p className="text-red-500 text-sm mt-1">{errors[field.name]}</p>
-                                                )}
-                                            </div>
-                                        ))}
+                                <div className="space-y-2.5">
+                                    <div>
+                                        <label className="block text-lg mb-1">Title</label>
+                                        <input
+                                            type="text"
+                                            name="title"
+                                            value={formData?.title}
+                                            onChange={handleChange}
+                                            placeholder="Enter your Title"
+                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                        />
+                                        {errors?.title && (
+                                            <p className="text-red-500 text-sm mt-1">{errors?.title}</p>
+                                        )}
                                     </div>
 
                                     {/* Content + Image */}
-                                    <div className="grid grid-cols-2 pt-2.5 gap-x-4.5 pb-5">
+                                    <div className="grid grid-cols-2 gap-x-4.5">
                                         <div>
                                             <label className="block text-lg mb-1">Content</label>
                                             <textarea
@@ -189,7 +177,7 @@ function AddProduct({ onClose }) {
                                                 value={formData.content}
                                                 onChange={handleChange}
                                                 placeholder="Enter Your Content"
-                                                className="w-full h-[166px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                                className="w-full h-[120px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                             />
                                             {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
                                         </div>
@@ -198,7 +186,7 @@ function AddProduct({ onClose }) {
                                         <div>
                                             <label className="block text-lg mb-1">Upload Image - Product Section</label>
                                             <div
-                                                className={`flex flex-col items-center justify-center h-[166px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
+                                                className={`flex flex-col items-center justify-center h-[120px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
                                                     }`}
                                                 onDragOver={(e) => {
                                                     e.preventDefault();
@@ -238,6 +226,35 @@ function AddProduct({ onClose }) {
                                         </div>
                                     </div>
 
+                                    <div>
+                                        <label className="block text-lg mb-1">Chip 1 </label>
+                                        <input
+                                            type="text"
+                                            name="chip1"
+                                            value={formData?.chip1}
+                                            onChange={handleChange}
+                                            placeholder="Enter your Title"
+                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                        />
+                                        {errors?.chip1 && (
+                                            <p className="text-red-500 text-sm mt-1">{errors?.chip1}</p>
+                                        )}
+                                    </div>
+                                    <div className="pb-16.5">
+                                        <label className="block text-lg mb-1">Chip 2 </label>
+                                        <input
+                                            type="text"
+                                            name="chip2"
+                                            value={formData?.chip2}
+                                            onChange={handleChange}
+                                            placeholder="Enter your Title"
+                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                        />
+                                        {errors?.chip2 && (
+                                            <p className="text-red-500 text-sm mt-1">{errors?.chip2}</p>
+                                        )}
+                                    </div>
+
                                     {/* Next button */}
                                     <div className="w-full relative inline-block rounded-full bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900]">
                                         <button
@@ -252,23 +269,77 @@ function AddProduct({ onClose }) {
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-2 gap-y-5.5 gap-x-4.5">
-                                    <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col gap-4.5">
                                         <div>
                                             <label className="block text-lg mb-1">Content</label>
                                             <textarea
-                                                name="content"
-                                                value={formData.content}
+                                                name="content1"
+                                                value={formData.content1}
                                                 onChange={handleChange}
                                                 placeholder="Enter Your Content"
-                                                className="w-full h-[136px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                                className="w-full h-[217px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                             />
-                                            {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
+                                            {errors.content1 && <p className="text-red-500 text-sm mt-1">{errors.content1}</p>}
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-lg mb-1">Specifications</label>
+                                            <textarea
+                                                name="specifications"
+                                                value={formData.specifications}
+                                                onChange={handleChange}
+                                                placeholder="Enter Your Specifications"
+                                                className="w-full h-[217px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                            />
+                                            {errors.specifications && <p className="text-red-500 text-sm mt-1">{errors.specifications}</p>}
+                                        </div>
+                                    </div>
+
+                                    {/* Right Section */}
+                                    <div className="flex flex-col gap-6">
+                                        <div>
+                                            <label className="block text-lg mb-1">New Pricing</label>
+                                            <input
+                                                type="text"
+                                                name="newPricing"
+                                                value={formData.newPricing}
+                                                onChange={handleChange}
+                                                placeholder="Enter Your New Pricing"
+                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                                            />
+                                            {errors.newPricing && <p className="text-red-500 text-sm mt-1">{errors.newPricing}</p>}
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-lg mb-1">Old Pricing</label>
+                                            <input
+                                                type="text"
+                                                name="oldPricing"
+                                                value={formData.oldPricing}
+                                                onChange={handleChange}
+                                                placeholder="Enter Your Old Pricing"
+                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                                            />
+                                            {errors.oldPricing && <p className="text-red-500 text-sm mt-1">{errors.oldPricing}</p>}
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-lg mb-1">Shipping Details</label>
+                                            <input
+                                                type="text"
+                                                name="shippingDetails"
+                                                value={formData.shippingDetails}
+                                                onChange={handleChange}
+                                                placeholder="Enter Shipping Details"
+                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                                            />
+                                            {errors.shippingDetails && <p className="text-red-500 text-sm mt-1">{errors.shippingDetails}</p>}
                                         </div>
 
                                         <div>
                                             <label className="block text-lg mb-1">Image for Blog Section</label>
                                             <div
-                                                className={`flex flex-col items-center justify-center h-[136px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
+                                                className={`flex flex-col items-center justify-center h-[185px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
                                                     }`}
                                                 onDragOver={(e) => {
                                                     e.preventDefault();
@@ -309,76 +380,13 @@ function AddProduct({ onClose }) {
                                         </div>
                                     </div>
 
-                                    {/* Right Section */}
-                                    <div className="flex flex-col gap-4">
-                                        <div>
-                                            <label className="block text-lg mb-1">Mode</label>
-                                            <select
-                                                name="onlineOffline"
-                                                value={formData.onlineOffline}
-                                                onChange={handleChange}
-                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-3"
-                                            >
-                                                <option value="" disabled>Select Mode of Product</option>
-                                                <option value="Online">Online</option>
-                                                <option value="Offline">Offline</option>
-                                                <option value="Hybrid">Hybrid</option>
-                                            </select>
-                                            {errors.onlineOffline && <p className="text-red-500 text-sm mt-1">{errors.onlineOffline}</p>}
-                                        </div>
-
-                                        {/* Language */}
-                                        <div>
-                                            <label className="block text-lg mb-1">Language</label>
-                                            <select
-                                                name="language"
-                                                value={formData.language}
-                                                onChange={handleChange}
-                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-3"
-                                            >
-                                                <option value="" disabled>Select Language</option>
-                                                <option value="English">English</option>
-                                                <option value="Spanish">Spanish</option>
-                                                <option value="French">French</option>
-                                                <option value="German">German</option>
-                                            </select>
-                                            {errors.language && <p className="text-red-500 text-sm mt-1">{errors.language}</p>}
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-lg mb-1">Duration</label>
-                                            <input
-                                                type="text"
-                                                name="duration"
-                                                value={formData.duration}
-                                                onChange={handleChange}
-                                                placeholder="Enter Duration of Product"
-                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
-                                            />
-                                            {errors.duration && <p className="text-red-500 text-sm mt-1">{errors.duration}</p>}
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-lg mb-1">Shipping Details</label>
-                                            <input
-                                                type="text"
-                                                name="shippingDetails"
-                                                value={formData.shippingDetails}
-                                                onChange={handleChange}
-                                                placeholder="Enter Shipping Details"
-                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
-                                            />
-                                            {errors.shippingDetails && <p className="text-red-500 text-sm mt-1">{errors.shippingDetails}</p>}
-                                        </div>
-                                    </div>
-
                                     {/* Confirm Submit button */}
                                     <div className="col-span-2 pt-8.5">
-                                        <div className="w-full relative inline-block rounded-full bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900]">
+                                        <div className="w-full relative inline-block rounded-full px-[5px] py-[3px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
                                             <button
-                                                type="button"
-                                                onClick={handleConfirmSubmit}
-                                                className="w-full flex justify-center items-center gap-2 py-2.5 bg-[#EA7913] text-lg text-white rounded-full"
+                                                type="submit"
+                                                onClick={(e) => handleConfirmSubmit(e)}
+                                                className="w-full h-full inline-flex justify-center items-center space-x-1.5 py-2 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
                                             >
                                                 <span>Submit</span>
                                                 <IoIosArrowRoundForward size={28} />

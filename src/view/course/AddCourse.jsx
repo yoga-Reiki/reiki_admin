@@ -78,9 +78,9 @@ function AddCourse({ onClose }) {
             if (!formData.title.trim()) newErrors.title = "Title is required.";
             if (!formData.newPricing.trim()) newErrors.newPricing = "New Pricing is required.";
             if (!formData.oldPricing.trim()) newErrors.oldPricing = "Old Pricing is required.";
-            if (!formData.duration.trim()) newErrors.duration = "Duration is required.";
-            if (!formData.certificate.trim()) newErrors.certificate = "Certificate is required.";
-            if (!formData.onlineOffline.trim()) newErrors.onlineOffline = "Mode is required.";
+            // if (!formData.duration.trim()) newErrors.duration = "Duration is required.";
+            // if (!formData.certificate.trim()) newErrors.certificate = "Certificate is required.";
+            // if (!formData.onlineOffline.trim()) newErrors.onlineOffline = "Mode is required.";
             if (!formData.content.trim()) newErrors.content = "Content is required.";
             if (!image) newErrors.image = "Image is required.";
         } else if (step === 2) {
@@ -142,7 +142,7 @@ function AddCourse({ onClose }) {
                 <div className="fixed inset-0 flex justify-center items-center bg-black/40 z-50 text-[#464646] p-6">
                     <div className="bg-white w-full max-w-[971px] p-5 rounded-3xl border-t-2 border-t-[#EA7913] flex flex-col gap-5.5">
                         <div className="flex justify-between items-center p-3">
-                            <h2 className="text-[32px] font-Raleway">Add Course</h2>
+                            <h2 className="text-[32px] font-Raleway Raleway-medium">Add Course</h2>
                             <button
                                 onClick={onClose}
                                 className="text-[#EA7913] border border-[#989898] cursor-pointer p-4 rounded-full"
@@ -159,9 +159,9 @@ function AddCourse({ onClose }) {
                                             { label: "Title", name: "title" },
                                             { label: "New Pricing", name: "newPricing" },
                                             { label: "Old Pricing", name: "oldPricing" },
-                                            { label: "Duration", name: "duration" },
-                                            { label: "Certificate", name: "certificate" },
-                                            { label: "Online/Offline", name: "onlineOffline" }
+                                            // { label: "Duration", name: "duration" },
+                                            // { label: "Certificate", name: "certificate" },
+                                            // { label: "Online/Offline", name: "onlineOffline" }
                                         ].map((field) => (
                                             <div key={field.name}>
                                                 <label className="block text-lg mb-1">{field.label}</label>
@@ -181,24 +181,24 @@ function AddCourse({ onClose }) {
                                     </div>
 
                                     {/* Content + Image */}
-                                    <div className="grid grid-cols-2 pt-2.5 gap-x-4.5 pb-14.5 ">
+                                    <div className="grid grid-cols-2 pt-2.5 gap-x-4.5 pb-5.5">
                                         <div>
                                             <label className="block text-lg mb-1">Content</label>
                                             <textarea
                                                 name="content"
                                                 value={formData.content}
                                                 onChange={handleChange}
-                                                placeholder="Enter Your Content"
-                                                className="w-full h-[136px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                                placeholder="Enter Your Content Here"
+                                                className="w-full h-[280px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                             />
                                             {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
                                         </div>
 
                                         {/* Image Upload */}
                                         <div>
-                                            <label className="block text-lg mb-1">Image for Blog Section</label>
+                                            <label className="block text-lg mb-1">Upload Image</label>
                                             <div
-                                                className={`flex flex-col items-center justify-center h-[136px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
+                                                className={`flex flex-col items-center justify-center h-[280px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
                                                     }`}
                                                 onDragOver={(e) => {
                                                     e.preventDefault();
@@ -251,7 +251,7 @@ function AddCourse({ onClose }) {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-2 gap-y-5.5 gap-x-4.5">
+                                <div className="grid grid-cols-2 gap-y-5.5 gap-x-6">
                                     <div className="flex flex-col gap-4">
                                         <div>
                                             <label className="block text-lg mb-1">Content</label>
@@ -266,7 +266,7 @@ function AddCourse({ onClose }) {
                                         </div>
 
                                         <div>
-                                            <label className="block text-lg mb-1">Image for Blog Section</label>
+                                            <label className="block text-lg mb-1">Upload Image - Details Section</label>
                                             <div
                                                 className={`flex flex-col items-center justify-center h-[136px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
                                                     }`}

@@ -5,7 +5,7 @@ import ResetPassword from './ResetPassword';
 function OtpVerification({ setCurrentScreenMain }) {
     const [otp, setOtp] = useState(Array(6).fill(""));
     const [activeInput, setActiveInput] = useState(0);
-    const [timer, setTimer] = useState(300); // 5 minutes countdown
+    const [timer, setTimer] = useState(300);
     const [error, setError] = useState("");
     const inputRefs = useRef([]);
     const [resetPassShow, setResetPassShow] = useState(false)
@@ -49,22 +49,18 @@ function OtpVerification({ setCurrentScreenMain }) {
         }
     };
 
-    const handleSubmit = (e) => {
+    const verifyOtp = (e) => {
         e.preventDefault();
-        const finalOtp = otp.join('');
 
-        if (finalOtp.length !== 6 || otp.includes("")) {
-            setError("Please enter the complete 6-digit OTP.");
+        const fullOtp = otp.join('');
+        if (fullOtp.length !== 6 || otp.includes("")) {
+            setError("Please enter a valid 6-digit OTP.");
             return;
         }
-
         setError("");
-        console.log("Submitted OTP:", finalOtp);
-
-        // Simulate successful OTP verification
+        console.log("Entered OTP:", fullOtp);
         setResetPassShow(true);
     };
-
 
     return (
         <div>
@@ -84,7 +80,7 @@ function OtpVerification({ setCurrentScreenMain }) {
                     {/* OTP Section */}
                     <div>
                         <div className="bg-white border-t border-t-[#EA7913] rounded-3xl p-8 w-full xl:max-w-[863px] mx-auto">
-                            <form onSubmit={handleSubmit} className="flex flex-col gap-51">
+                            <form onSubmit={verifyOtp} className="flex flex-col gap-51">
 
                                 <div className="flex flex-col gap-2">
                                     <label className="text-sm md:text-lg">OTP</label>
