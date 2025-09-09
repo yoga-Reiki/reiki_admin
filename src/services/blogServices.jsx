@@ -1,9 +1,9 @@
 import axios from "axios";
 
-export async function getblogData() {
+export async function getblogData({ page, pageSize, query }) {
     try {
         const response = await axios.get(
-            `${process.env.REACT_APP_URL}/blog`,
+            `${process.env.REACT_APP_URL}/blogs?page=${page}&limit=${pageSize}&q=${query || ""}`,
             {
                 headers: {
                     Authorization: localStorage.getItem("admin_accessToken"),
@@ -20,12 +20,11 @@ export async function getblogData() {
 export async function getAddBlog(formData) {
     try {
         const response = await axios.post(
-            `${process.env.REACT_APP_URL}/blog`,
+            `${process.env.REACT_APP_URL}/blogs`,
             formData,
             {
                 headers: {
-                    Authorization: localStorage.getItem("admin_accessToken"),
-                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${localStorage.getItem("admin_accessToken")}`,
                 },
             }
         );
@@ -36,10 +35,10 @@ export async function getAddBlog(formData) {
 }
 
 // update blog
-export async function getBlogUpdate(formData) {
+export async function getBlogUpdate(formData, blogId) {
     try {
-        const response = await axios.put(
-            `${process.env.REACT_APP_URL}/blog`,
+        const response = await axios.patch(
+            `${process.env.REACT_APP_URL}/blogs/${blogId}`,
             formData,
             {
                 headers: {
@@ -56,18 +55,18 @@ export async function getBlogUpdate(formData) {
 
 // delete blog
 export async function getBlogDelete(blogId) {
-  try {
-    const response = await axios.delete(
-      `${process.env.REACT_APP_URL}/blog/${blogId}`,
-      {
-        headers: {
-          Authorization: localStorage.getItem("admin_accessToken"),
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+    try {
+        const response = await axios.delete(
+            `${process.env.REACT_APP_URL}/blogs/${blogId}`,
+            {
+                headers: {
+                    Authorization: localStorage.getItem("admin_accessToken"),
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
 }
 

@@ -8,7 +8,7 @@ import Emailicon from "../../assets/svg/Email.svg";
 import eyeIcon from "../../assets/svg/eyeIcon.svg";
 import Password from "../../assets/svg/Password.svg";
 import toast from "react-hot-toast";
-import { userForgotPassowrd, userLogin, userResetPassword } from "../../services/LoginServices";
+import { userForgotPassowrd, userLogin, userResetPassword, userVerifyOtp } from "../../services/LoginServices";
 import ForgotModel from "./ForgotModel";
 import OtpModel from "./OtpModel";
 import ResetPasswordModel from "./ResetPasswordModel";
@@ -103,16 +103,45 @@ function Login() {
     }
   };
 
-  const verifyOtp = () => {
+  // const verifyOtp = () => {
+  //   let tempErrors = {};
+  //   if (form.otp.length !== 6) {
+  //     tempErrors.otp = "Please enter a valid 6-digit OTP";
+  //   }
+  //   setErrors(tempErrors);
+  //   if (Object.keys(tempErrors).length > 0) return;
+
+  //   setStep(3);
+  // };
+
+  const verifyOtp = async () => {
     let tempErrors = {};
     if (form.otp.length !== 6) {
       tempErrors.otp = "Please enter a valid 6-digit OTP";
+      setErrors(tempErrors);
+      return;
     }
-    setErrors(tempErrors);
-    if (Object.keys(tempErrors).length > 0) return;
 
-    setStep(3);
+    try {
+      const body = {
+        email: form.email.trim(),
+        otp: form.otp.trim(),
+      };
+
+      const res = await userVerifyOtp({ body });
+      console.log("OTP verification success:", res);
+
+      toast.success("OTP Verified Successfully!");
+      setStep(3);
+    } catch (err) {
+      console.error("OTP verification failed:", err);
+
+      const message = err?.response?.data?.message || "OTP verification failed. Please try again.";
+      setErrors({ otp: message });
+      toast.error(message);
+    }
   };
+
 
   const handleChangePassword = async (e) => {
     e.preventDefault();

@@ -47,6 +47,19 @@ export async function userForgotPassowrd({ body: body }) {
     }
 }
 
+// verify otp
+export async function userVerifyOtp({ body: body }) {
+    try {
+        const response = await axios.post(
+            `${process.env.REACT_APP_URL}/auth/verify-reset-otp`,
+            body
+        )
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
 export async function userResetPassword({ body: body }) {
     try {
         const response = await axios.post(

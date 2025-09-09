@@ -3,21 +3,26 @@ import toast from 'react-hot-toast';
 import { getProductUpdate } from '../../services/productServices';
 import UploadIcon from "../../assets/svg/UploadIcon.svg";
 
-function EditProduct({ selectedProduct, onCancel }) {
+function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
 
     const [formData, setFormData] = useState({
         title: selectedProduct?.title || '',
-        content: selectedProduct?.points?.join('\n') || '',
-        chip1: selectedProduct?.chip1 || '',
-        chip2: selectedProduct?.chip2 || '',
-        specifications: selectedProduct?.specifications || '',
-        newPricing: selectedProduct?.discountedPrice || '',
-        oldPricing: selectedProduct?.price || '',
-        shippingDetails: selectedProduct?.shippingDetails || '',
+        summary: selectedProduct?.summary || '',
+        chip1: selectedProduct?.chips?.[0] || '',
+        chip2: selectedProduct?.chips?.[1] || '',
+        specifications: selectedProduct?.detail?.specifications || '',
+        newPricing: selectedProduct?.detail?.priceNew || '',
+        oldPricing: selectedProduct?.detail?.priceOld || '',
+        shippingDetails: selectedProduct?.detail?.shippingDetails || '',
+        detailContent: selectedProduct?.detail?.content || '',
     });
+
     const [errors, setErrors] = useState({});
     const [isDragging, setIsDragging] = useState(false);
-    const [image, setImage] = useState(null);
+    const [images, setImages] = useState({
+        cover: selectedProduct?.coverImageUrl || '',
+        detail: selectedProduct?.detail?.detailImageUrl || '',
+    });
     const fileInputRef = useRef(null);
 
     const handleChange = (e) => {
@@ -37,19 +42,26 @@ function EditProduct({ selectedProduct, onCancel }) {
         }
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files?.[0];
+    const handleImageChange = (file, type) => {
         if (file && file.type.startsWith("image/")) {
-            setImage(file);
+            setImages((prev) => ({
+                ...prev,
+                [type]: file,
+            }));
         }
     };
 
-    const handleDrop = async (e) => {
+    const handleFileChange = (e, type) => {
+        const file = e.target.files?.[0];
+        handleImageChange(file, type);
+    };
+
+    const handleDrop = async (e, type) => {
         e.preventDefault();
         e.stopPropagation();
         setIsDragging(false);
         const file = e.dataTransfer?.files?.[0];
-        await validateImageAndSet(file);
+        handleImageChange(file, type);
     };
 
     const readFileAsDataURL = (file) =>
@@ -68,7 +80,7 @@ function EditProduct({ selectedProduct, onCancel }) {
         }
         try {
             const dataUrl = await readFileAsDataURL(file);
-            setImage(file);
+            setImages(file);
             setErrors((p) => ({ ...p, image: "" }));
         } catch {
             setErrors((p) => ({ ...p, image: "Failed to load image preview." }));
@@ -76,11 +88,30 @@ function EditProduct({ selectedProduct, onCancel }) {
     };
 
     const handleSubmit = async () => {
-        const requiredFields = ["title", "newPricing", "oldPricing", "content", "chip1", "chip2", "specifications", "shippingDetails"];
+        const isChanged =
+            formData.title !== (selectedProduct?.title || "") ||
+            formData.summary !== (selectedProduct?.summary || "") ||
+            formData.chip1 !== (selectedProduct?.chips?.[0] || "") ||
+            formData.chip2 !== (selectedProduct?.chips?.[1] || "") ||
+            formData.specifications !== (selectedProduct?.detail?.specifications || "") ||
+            formData.newPricing !== (selectedProduct?.detail?.priceNew || "") ||
+            formData.oldPricing !== (selectedProduct?.detail?.priceOld || "") ||
+            formData.shippingDetails !== (selectedProduct?.detail?.shippingDetails || "") ||
+            formData.detailContent !== (selectedProduct?.detail?.content || "") ||
+            (images.cover && images.cover instanceof File) ||
+            (images.detail && images.detail instanceof File);
+
+        if (!isChanged) {
+            toast.error("No changes detected.");
+            return;
+        }
+
+        // validation check
+        const requiredFields = ["title", "newPricing", "oldPricing", "summary", "detailContent", "chip1", "chip2", "specifications", "shippingDetails"];
         const newErrors = {};
 
         requiredFields.forEach((field) => {
-            if (!formData[field] || formData[field].trim() === "") {
+            if (!formData[field] || String(formData[field]).trim() === "") {
                 newErrors[field] = `${field} is required`;
             }
         });
@@ -93,30 +124,43 @@ function EditProduct({ selectedProduct, onCancel }) {
         try {
             const updatedForm = new FormData();
             updatedForm.append("title", formData.title);
+            updatedForm.append("summary", formData.summary);
             updatedForm.append("chip1 title", formData.chip1);
             updatedForm.append("chip2 title", formData.chip2);
             updatedForm.append("specifications", formData.specifications);
             updatedForm.append("discountedPrice", formData.newPricing);
             updatedForm.append("price", formData.oldPricing);
             updatedForm.append("shippingDetails", formData.shippingDetails || "");
+            updatedForm.append("content", formData.detailContent || "");
 
-            const points = formData.content.split('\n').filter(Boolean);
+            const points = formData.summary.split('\n').filter(Boolean);
             points.forEach((point, index) => {
                 updatedForm.append(`points[${index}]`, point);
             });
 
-            if (image) {
-                updatedForm.append("image", image);
+            if (images.cover && images.cover instanceof File) {
+                updatedForm.append("coverImage", images.cover);
             }
 
-            const response = await getProductUpdate(updatedForm, selectedProduct.id);
+            if (images.detail && images.detail instanceof File) {
+                updatedForm.append("detailImage", images.detail);
+            }
 
-            toast.success("Course updated successfully.", + response.message);
-            // onCancel();
+            const response = await getProductUpdate(updatedForm, selectedProduct._id);
 
+            toast.success(response.message || "Product updated successfully.");
+
+            // wait for fetch then close
+            if (fetchProduct) {
+                await fetchProduct();
+            }
+
+            if (onCancel) {
+                onCancel();
+            }
         } catch (error) {
             console.error("Update failed", error);
-            alert("Something went wrong. Please try again.");
+            toast.error("Something went wrong. Please try again.");
         }
     };
 
@@ -172,6 +216,7 @@ function EditProduct({ selectedProduct, onCancel }) {
                     </div>
 
                     <div className="grid grid-col-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {/* left side card */}
                         <div className="col-span-1 sticky top-24 self-start">
                             <div
                                 key={selectedProduct.id}
@@ -180,7 +225,7 @@ function EditProduct({ selectedProduct, onCancel }) {
                                     {/* products Image */}
                                     <div className="relative overflow-hidden">
                                         <img
-                                            src={selectedProduct.image}
+                                            src={selectedProduct.coverImageUrl}
                                             alt={selectedProduct.title}
                                             className="w-full h-[542px] object-cover"
                                         />
@@ -188,18 +233,18 @@ function EditProduct({ selectedProduct, onCancel }) {
                                         {/* product Content */}
                                         <div className="absolute bottom-1 left-1 right-1 bg-white bg-opacity-90 backdrop-blur-md p-6 rounded-3xl">
                                             <h3 className="text-xl md:text-2xl font-Raleway Raleway-bold">
-                                                {selectedProduct.name}
+                                                {selectedProduct.title}
                                             </h3>
                                             <p className="text-[#525252] text-sm pt-2 pb-3.5">
-                                                {selectedProduct.description}
+                                                {selectedProduct.summary}
                                             </p>
                                             <div className='space-x-1.5 space-y-2 md:space-y-0 pb-7 md:pb-5'>
-                                                <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>Emotional balance</button>
-                                                <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>Stress relief</button>
+                                                <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{selectedProduct?.chips[0]}</button>
+                                                <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{selectedProduct?.chips[1]}</button>
                                             </div>
                                             <div className="flex items-end gap-2 text-[#464646]">
-                                                <span className="text-lg md:text-[32px] md:leading-[40px] font-Raleway Raleway-bold">$29</span>
-                                                <span className="mb-1">$50</span>
+                                                <span className="text-lg md:text-[32px] md:leading-[40px] font-Raleway Raleway-bold">${selectedProduct?.detail?.priceNew}</span>
+                                                <span className="mb-1">${selectedProduct?.detail?.priceOld}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -213,7 +258,7 @@ function EditProduct({ selectedProduct, onCancel }) {
                                 <input
                                     type="text"
                                     name="title"
-                                    value={formData?.name}
+                                    value={formData?.title}
                                     onChange={handleChange}
                                     placeholder="Enter your Title"
                                     className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
@@ -228,12 +273,15 @@ function EditProduct({ selectedProduct, onCancel }) {
                                 <div className='w-full'>
                                     <label className="block text-lg mb-1">Content</label>
                                     <textarea
-                                        name="content"
-                                        value={formData.content}
+                                        name="summary"
+                                        value={formData.summary}
                                         onChange={handleChange}
                                         placeholder="Enter Your Content Here"
                                         className="w-full h-[133px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                     />
+                                    {errors?.summary && (
+                                        <p className="text-red-500 text-sm mt-1">{errors?.summary}</p>
+                                    )}
                                 </div>
 
                                 {/* Image Upload */}
@@ -255,11 +303,10 @@ function EditProduct({ selectedProduct, onCancel }) {
                                         onDrop={handleDrop}
                                         onClick={() => fileInputRef.current?.click()}
                                     >
-                                        {image || selectedProduct?.image ? (
+                                        {images.cover ? (
                                             <div className="flex flex-col justify-center items-center gap-1">
-
                                                 <span className="text-[#464646] text-sm font-medium w-full text-center break-words">
-                                                    {image?.name || selectedProduct?.image?.split("/").pop()}
+                                                    {images.cover?.name || selectedProduct?.coverImageUrl?.split("/").pop()}
                                                 </span>
                                                 <span className="text-xs text-center text-[#9a9a9a]">Click Here to Change Image</span>
                                             </div>
@@ -275,9 +322,8 @@ function EditProduct({ selectedProduct, onCancel }) {
                                             type="file"
                                             accept="image/*"
                                             className="hidden"
-                                            onChange={handleFileChange}
+                                            onChange={(e) => handleFileChange(e, "cover")}
                                         />
-
                                     </div>
                                 </div>
                             </div>
@@ -310,6 +356,67 @@ function EditProduct({ selectedProduct, onCancel }) {
                                     <p className="text-red-500 text-sm mt-1">{errors?.chip2}</p>
                                 )}
                             </div>
+
+                            {/* Content + Image */}
+                            <div className="flex flex-col lg:flex-row gap-x-4.5">
+                                <div className='w-full'>
+                                    <label className="block text-lg mb-1">Product Detail Content</label>
+                                    <textarea
+                                        name="detailContent"
+                                        value={formData.detailContent}
+                                        onChange={handleChange}
+                                        placeholder="Enter Your Content Here"
+                                        className="w-full h-[133px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                    />
+                                    {errors?.detailContent && (
+                                        <p className="text-red-500 text-sm mt-1">{errors?.detailContent}</p>
+                                    )}
+                                </div>
+
+                                {/* Image Upload */}
+                                <div className='w-full'>
+                                    <label className="block text-lg mb-1">Product Detail Upload Image</label>
+                                    <div
+                                        className={`flex flex-col items-center justify-center h-[133px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
+                                            }`}
+                                        onDragOver={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setIsDragging(true);
+                                        }}
+                                        onDragLeave={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setIsDragging(false);
+                                        }}
+                                        onDrop={handleDrop}
+                                        onClick={() => fileInputRef.current?.click()}
+                                    >
+                                        {images.detail ? (
+                                            <div className="flex flex-col justify-center items-center gap-1">
+                                                <span className="text-[#464646] text-sm font-medium w-full text-center break-words">
+                                                    {images.detail?.name || selectedProduct?.detail?.detailImageUrl?.split("/").pop()}
+                                                </span>
+                                                <span className="text-xs text-center text-[#9a9a9a]">Click Here to Change Image</span>
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col items-center gap-2 px-12">
+                                                <img src={UploadIcon} alt="Upload Icon" />
+                                                <span className="text-[#989898]">Upload Image Here</span>
+                                            </div>
+                                        )}
+
+                                        <input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={(e) => handleFileChange(e, "detail")}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className='w-full'>
                                 <label className="block text-lg mb-1">Specifications</label>
                                 <textarea
@@ -360,7 +467,6 @@ function EditProduct({ selectedProduct, onCancel }) {
                                 />
                                 {errors.shippingDetails && <p className="text-red-500 text-sm mt-1">{errors.shippingDetails}</p>}
                             </div>
-
                         </div>
                     </div>
                 </div>

@@ -45,7 +45,7 @@ function ChangePassword({ setCurrentScreenMain, ProfileData }) {
     return (
         <div>
             {otpVerification ? (
-                <OtpVerification setCurrentScreenMain={setCurrentScreenMain} />
+                <OtpVerification setCurrentScreenMain={setCurrentScreenMain} ProfileData={ProfileData} />
             ) : (
                 <div className='flex flex-col gap-14'>
                     <div className="flex items-center gap-6 py-4 cursor-pointer" >

@@ -1,11 +1,11 @@
 import React, { useRef, useState } from "react";
 import { MdOutlineClose } from "react-icons/md";
 import { FiUploadCloud } from "react-icons/fi";
-import { getAddTestimonials } from "../../services/testimonialsServices";
 import toast from "react-hot-toast";
 import SuccsessModel from "../component/SuccsessModel";
+import { getAddBlog } from "../../services/blogServices";
 
-function AddBlog({ onClose, selectedUser }) {
+function AddBlog({ onClose, selectedUser, fetchBlog }) {
     const fileInputRef = useRef(null);
     const [formData, setFormData] = useState({
         title: selectedUser?.name || "",
@@ -76,21 +76,21 @@ function AddBlog({ onClose, selectedUser }) {
         if (!validateForm()) return;
 
         const data = new FormData();
-        data.append("name", formData.title);
-        data.append("roleOrAddress", formData.description);
-        data.append("message", formData.content);
-        data.append("order", "1");
-        data.append("isActive", "true");
+        data.append("title", formData.title);
+        data.append("description", formData.description);
+        data.append("content", formData.content);
+        data.append("isPublished", "true");
         data.append("image", image);
 
         try {
             setIsSubmitting(true);
-            const response = await getAddTestimonials(data);
+            const response = await getAddBlog(data);
             setShowSuccess(true);
             toast.success(response?.message || "Added successfully");
+            fetchBlog()
         } catch (err) {
-            console.error("API Error:", err);
-            toast.error("Something went wrong. Please try again.");
+            console.error("API Error:", err.response?.data || err.message);
+            toast.error(err.response?.data?.message || "Something went wrong. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -214,7 +214,7 @@ function AddBlog({ onClose, selectedUser }) {
                                         <button
                                             type="submit"
                                             disabled={isSubmitting}
-                                            className="w-full py-2.5 bg-[#EA7913] text-lg text-white rounded-full font-medium hover:bg-[#F39C2C] disabled:opacity-60"
+                                            className="w-full py-2.5 bg-[#EA7913] text-lg text-white cursor-pointer rounded-full font-medium hover:bg-[#F39C2C]"
                                         >
                                             {isSubmitting ? "Adding..." : "Add Blog"}
                                         </button>

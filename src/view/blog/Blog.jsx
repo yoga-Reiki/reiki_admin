@@ -6,8 +6,8 @@ import DeleteIcon from "../../assets/svg/DeleteIcon.svg"
 import DeleteModel from "../component/DeleteModel";
 import EditBlog from "./EditBlog";
 import AddBlog from "./AddBlog";
-// import { getblogData, getBlogDelete } from "../../services/blogServices";
-import { getTestimonialsData, getTestimonialsDelete } from "../../services/testimonialsServices";
+import { getblogData, getBlogDelete } from "../../services/blogServices";
+import toast from "react-hot-toast";
 
 function Blog() {
     const [blogsData, setBlogsData] = useState([]);
@@ -17,6 +17,12 @@ function Blog() {
     const [selectedUser, setSelectedUser] = useState(null);
     const [addBlogs, setAddBlogs] = useState(null);
     const [blogDelete, setBlogDelete] = useState(null);
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 10,
+        totalUsers: 0,
+    });
+    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         if (!hasFetched.current) {
@@ -25,14 +31,26 @@ function Blog() {
         }
     }, []);
 
+    useEffect(() => {
+        if (searchQuery === "") {
+            fetchBlog();
+        }
+    }, [searchQuery]);
+
     const fetchBlog = async () => {
         setLoading(true);
         try {
-            // const response = await getblogData({ page: 1, pageSize: 10 });
-            const response = await getTestimonialsData({ page: 1, pageSize: 10 });
+            const response = await getblogData({
+                page: pagination.page,
+                pageSize: pagination.pageSize,
+                query: searchQuery,
+            });
 
-            console.log("response", response);
             setBlogsData(response?.data?.items || []);
+            setPagination((prev) => ({
+                ...prev,
+                totalUsers: response?.data?.totalItems || 0,
+            }));
         } catch (err) {
             setError("Failed to fetch users");
         } finally {
@@ -40,21 +58,13 @@ function Blog() {
         }
     };
 
-    const openDeleteModal = (user) => {
-        setBlogDelete(user);
-    };
-
-    const cancelDelete = () => {
-        setBlogDelete(null);
-    };
-
     const confirmDelete = async () => {
         if (!blogDelete || !blogDelete._id) return;
 
         try {
-            // await getBlogDelete(blogDelete._id);
-            await getTestimonialsDelete(blogDelete._id);
+            await getBlogDelete(blogDelete._id);
             setBlogDelete(null);
+            toast.success("block deleted successfully!")
             fetchBlog();
         } catch (error) {
             console.error("Delete failed", error);
@@ -67,6 +77,7 @@ function Blog() {
                 <EditBlog
                     selectedUser={selectedUser}
                     setSelectedUser={setSelectedUser}
+                    fetchBlog={fetchBlog}
                 />
             ) : (
                 <div>
@@ -92,6 +103,13 @@ function Blog() {
                             <input
                                 type="text"
                                 placeholder="Search Blog by Title"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        fetchBlog();
+                                    }
+                                }}
                                 className="w-full pl-10 pr-4 py-2 md:py-3 rounded-full bg-[#FCEAC9] text-[#656565] placeholder-[#656565] border-2 border-[#FEF8EC] focus:outline-none focus:ring-0 focus:border-[#F3E9D6]"
                             />
                         </div>
@@ -128,8 +146,10 @@ function Blog() {
                                                 key={index}
                                                 className={`grid grid-cols-3 items-center bg-white mt-[1px] text-sm ${isFirst ? 'rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
                                             >
-                                                <td className="whitespace-pre-wrap px-4 py-4">{Data.name}</td>
-                                                <td className="whitespace-pre-wrap px-4 py-4">{Data.roleOrAddress}</td>
+                                                <td className="whitespace-pre-wrap px-4 py-4">{Data.title}</td>
+                                                <td className="whitespace-pre-wrap px-4 py-4">
+                                                    <div className="line-clamp-2 whitespace-pre-wrap">{Data.description}</div>
+                                                </td>
                                                 <td className="flex gap-1 items-center flex-wrap mt-2 md:mt-0 px-4 py-4">
                                                     <button onClick={() => setSelectedUser(Data)} className="p-3 flex items-center gap-2 rounded-full text-[#EA7913] bg-[#FEF8EC] border border-[#F9D38E] hover:bg-[#FCEAC9] cursor-pointer">
                                                         <img src={EditIcon} alt='Download Icon' className='w-5 h-5' />
@@ -151,6 +171,26 @@ function Blog() {
                                 )}
                             </tbody>
                         </table>
+
+                        <div className="flex justify-end items-center gap-4 py-6">
+                            <button
+                                onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                                disabled={pagination.page === 1}
+                                className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
+                            >
+                                Previous
+                            </button>
+                            <span className="text-[#656565] font-medium">
+                                Page {pagination.page} of {Math.ceil(pagination.totalUsers / pagination.pageSize)}
+                            </span>
+                            <button
+                                onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                                disabled={pagination.page >= Math.ceil(pagination.totalUsers / pagination.pageSize)}
+                                className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
+                            >
+                                Next
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
@@ -163,11 +203,12 @@ function Blog() {
                         console.log("Blocked:", addBlogs.name);
                         setAddBlogs(null);
                     }}
+                    fetchBlog={fetchBlog}
                 />
             )}
 
             {blogDelete && (
-                <DeleteModel onCancel={() => setBlogDelete(null)} onConfirm={confirmDelete} />
+                <DeleteModel onCancel={() => setBlogDelete(null)} onConfirmBlog={confirmDelete} />
             )}
         </div>
     );

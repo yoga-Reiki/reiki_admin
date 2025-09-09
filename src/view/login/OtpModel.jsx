@@ -2,9 +2,9 @@ import React, { useRef, useState, useEffect } from "react";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import toast from "react-hot-toast";
 
-function OtpModel({ form, setForm, errors, setErrors, verifyOtp }) {
+function OtpModel({ form, setForm, errors, verifyOtp }) {
     const inputsRef = useRef([]);
-    const [timer, setTimer] = useState(300); // 5 minutes = 300 sec
+    const [timer, setTimer] = useState(300);
     const [isResendActive, setIsResendActive] = useState(false);
 
     useEffect(() => {

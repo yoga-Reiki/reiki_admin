@@ -3,58 +3,77 @@ import leftBackIcon from "../../assets/svg/leftIcon.svg";
 import SuccessProfile from './SuccessProfile';
 import eyeIcon from "../../assets/svg/eyeIcon.svg";
 import { IoEyeOffOutline } from "react-icons/io5";
-import { RiLockPasswordLine } from "react-icons/ri";
 import Password from "../../assets/svg/Password.svg";
+import { userResetPassword } from '../../services/LoginServices';
+import toast from 'react-hot-toast';
 
-function ResetPassword({ setCurrentScreenMain }) {
+function ResetPassword({ setCurrentScreenMain, ProfileData, otp }) {
     const [formData, setFormData] = useState({ newPassword: '', confirmPassword: '' });
     const [errors, setErrors] = useState({});
     const [showSuccess, setShowSuccess] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const validate = () => {
-        const newErrors = {};
-
-        if (!formData.newPassword) {
-            newErrors.newPassword = "Password is required";
-        } else if (formData.newPassword.length < 8) {
-            newErrors.newPassword = "Password must be at least 8 characters";
-        } else if (!/[A-Z]/.test(formData.newPassword)) {
-            newErrors.newPassword = "Password must contain at least one uppercase letter";
-        } else if (!/[a-z]/.test(formData.newPassword)) {
-            newErrors.newPassword = "Password must contain at least one lowercase letter";
-        } else if (!/[0-9]/.test(formData.newPassword)) {
-            newErrors.newPassword = "Password must contain at least one number";
-        } else if (!/[!@#$%^&*]/.test(formData.newPassword)) {
-            newErrors.newPassword = "Password must contain at least one special character";
-        }
-
-        if (!formData.confirmPassword) {
-            newErrors.confirmPassword = "Please confirm your password";
-        } else if (formData.confirmPassword !== formData.newPassword) {
-            newErrors.confirmPassword = "Passwords do not match";
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
     const onChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
-        setErrors((prev) => ({ ...prev, [name]: "" })); // Clear error on change
+        setErrors((prev) => ({ ...prev, [name]: "" }));
     };
 
-    const handleResetPassword = (e) => {
+    const handleChangePassword = async (e) => {
         e.preventDefault();
+        const newErrors = {};
 
-        if (!validate()) return;
+        const lowerCaseRegex = /[a-z]/;
+        const upperCaseRegex = /[A-Z]/;
+        const numberRegex = /[0-9]/;
+        const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
 
-        console.log('Saved Details:', formData);
+        if (!formData.newPassword) {
+            newErrors.newPassword = "New password is required.";
+        } else if (formData.newPassword.length < 8) {
+            newErrors.newPassword = "Password must be at least 8 characters.";
+        } else if (!lowerCaseRegex.test(formData.newPassword)) {
+            newErrors.newPassword = "Password must contain at least one lowercase letter.";
+        } else if (!upperCaseRegex.test(formData.newPassword)) {
+            newErrors.newPassword = "Password must contain at least one uppercase letter.";
+        } else if (!numberRegex.test(formData.newPassword)) {
+            newErrors.newPassword = "Password must contain at least one number.";
+        } else if (!specialCharRegex.test(formData.newPassword)) {
+            newErrors.newPassword = "Password must contain at least one special character.";
+        }
 
-        // Simulate success response
-        setShowSuccess(true);
+        if (!formData.confirmPassword) {
+            newErrors.confirmPassword = "Please confirm your password.";
+        } else if (formData.newPassword !== formData.confirmPassword) {
+            newErrors.confirmPassword = "Passwords do not match.";
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        try {
+            setErrors({});
+            const userOtp = Array.isArray(otp) ? otp.join("").trim() : (otp?.trim() || "");
+            console.log("userOtp", userOtp);
+            
+            const body = {
+                email: ProfileData?.data?.email?.trim(),
+                otp: userOtp,
+                newPassword: formData.newPassword,
+            };
+
+            const res = await userResetPassword({ body });
+            toast.success(res?.message)
+            setShowSuccess(true);
+        } catch (err) {
+            console.error("Reset password failed:", err);
+            setErrors({
+                api: err.response?.data?.message || "Failed to reset password. Try again."
+            });
+        }
     };
 
     return (
@@ -84,7 +103,7 @@ function ResetPassword({ setCurrentScreenMain }) {
 
                     <div>
                         <div className="bg-white border-t border-t-[#EA7913] rounded-3xl p-8 max-w-[863px] mx-auto">
-                            <form onSubmit={handleResetPassword} className="flex flex-col gap-66">
+                            <form onSubmit={handleChangePassword} className="flex flex-col gap-66">
                                 <div className="space-y-6">
 
                                     {/* New Password */}
@@ -101,7 +120,7 @@ function ResetPassword({ setCurrentScreenMain }) {
                                                 name="newPassword"
                                                 value={formData.newPassword}
                                                 onChange={onChange}
-                                                className={`w-full pl-10 pr-3 py-2.5 rounded-xl text-[#525252] placeholder-[#525252] border-[1px] ${errors.newPassword ? 'border-red-500' : 'border-[#BDBDBD]'} focus:outline-none focus:ring-0 focus:border-[#EA7913]`}
+                                                className={`w-full pl-10 pr-3 py-2.5 rounded-xl text-[#525252] placeholder-[#525252] border-[1px] border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913]`}
                                                 placeholder="Enter New Password"
                                                 type={showNewPassword ? "text" : "password"}
                                                 onCopy={(e) => e.preventDefault()}
@@ -139,7 +158,7 @@ function ResetPassword({ setCurrentScreenMain }) {
                                                 name="confirmPassword"
                                                 value={formData.confirmPassword}
                                                 onChange={onChange}
-                                                className={`w-full pl-10 pr-10 py-2.5 rounded-xl text-[#525252] placeholder-[#525252] border-[1px] ${errors.confirmPassword ? 'border-red-500' : 'border-[#BDBDBD]'} focus:outline-none focus:ring-0 focus:border-[#EA7913]`}
+                                                className={`w-full pl-10 pr-10 py-2.5 rounded-xl text-[#525252] placeholder-[#525252] border-[1px] border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913]`}
                                                 placeholder="Confirm Your Password"
                                                 type={showConfirmPassword ? "text" : "password"}
                                                 onCopy={(e) => e.preventDefault()}
@@ -167,7 +186,8 @@ function ResetPassword({ setCurrentScreenMain }) {
                                 <div className="w-full relative inline-block rounded-full px-[4px] py-[3px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:to-[#F39C2C]">
                                     <button
                                         type="submit"
-                                        className="w-full py-2 bg-[#EA7913] text-lg text-white rounded-full font-medium hover:bg-[#F39C2C] disabled:opacity-60"
+                                        // onClick={handleChangePassword}
+                                        className="w-full py-2 bg-[#EA7913] text-lg text-white rounded-full font-medium hover:bg-[#F39C2C] disabled:opacity-60 cursor-pointer"
                                     >
                                         Send Reset Link
                                     </button>

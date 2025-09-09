@@ -4,22 +4,26 @@ import { IoIosArrowRoundForward } from "react-icons/io";
 import UploadIcon from "../../assets/svg/UploadIcon.svg";
 import SuccsessModel from "../component/SuccsessModel";
 import { getAddProduct } from "../../services/productServices";
+import toast from "react-hot-toast";
 
-function AddProduct({ onClose }) {
+function AddProduct({ onClose, fetchProduct }) {
     const fileInputRef = useRef(null);
     const [formData, setFormData] = useState({
         title: "",
-        newPricing: "",
-        oldPricing: "",
+        priceNew: "",
+        priceOld: "",
         duration: "",
         certificate: "",
         onlineOffline: "",
-        content: "",
+        summary: "",
         content1: "",
         language: "",
         shippingDetails: ""
     });
-    const [image, setImage] = useState(null);
+    const [images, setImages] = useState({
+        cover: "",
+        detail: "",
+    });
     const [errors, setErrors] = useState({});
     const [isDragging, setIsDragging] = useState(false);
     const [step, setStep] = useState(1);
@@ -30,46 +34,28 @@ function AddProduct({ onClose }) {
         setFormData((p) => ({ ...p, [name]: value }));
         setErrors((p) => ({ ...p, [name]: "" }));
     };
-
-    const handleFileChange = (e) => {
+    const handleFileChange = (e, type) => {
         const file = e.target.files?.[0];
         if (file && file.type.startsWith("image/")) {
-            setImage(file);
-            setErrors((p) => ({ ...p, image: "" }));
+            setImages((prev) => ({ ...prev, [type]: file }));
+            setErrors((prev) => ({ ...prev, [type]: "" }));
         } else {
-            setErrors((p) => ({ ...p, image: "Please upload a valid image." }));
+            setErrors((prev) => ({ ...prev, [type]: "Please upload a valid image." }));
         }
     };
 
-    const readFileAsDataURL = (file) =>
-        new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
-
-    const validateImageAndSet = async (file) => {
-        if (!file) return;
-        if (!file.type?.startsWith("image/")) {
-            setErrors((p) => ({ ...p, image: "Please upload a valid image." }));
-            return;
-        }
-        try {
-            const dataUrl = await readFileAsDataURL(file);
-            setImage(file);
-            setErrors((p) => ({ ...p, image: "" }));
-        } catch {
-            setErrors((p) => ({ ...p, image: "Failed to load image preview." }));
-        }
-    };
-
-    const handleDrop = async (e) => {
+    const handleDrop = async (e, type) => {
         e.preventDefault();
         e.stopPropagation();
         setIsDragging(false);
+
         const file = e.dataTransfer?.files?.[0];
-        await validateImageAndSet(file);
+        if (file && file.type.startsWith("image/")) {
+            setImages((prev) => ({ ...prev, [type]: file }));
+            setErrors((prev) => ({ ...prev, [type]: "" }));
+        } else {
+            setErrors((prev) => ({ ...prev, [type]: "Please upload a valid image." }));
+        }
     };
 
     const validateForm = () => {
@@ -79,15 +65,23 @@ function AddProduct({ onClose }) {
             if (!formData.title.trim()) newErrors.title = "Title is required.";
             if (!formData.chip1?.trim()) newErrors.chip1 = "Chip 1 title is required.";
             if (!formData.chip2?.trim()) newErrors.chip2 = "Chip 2 title is required.";
-            if (!formData.content.trim()) newErrors.content = "Content is required.";
-            if (!image) newErrors.image = "Image is required.";
+            if (!formData.summary.trim()) newErrors.summary = "Content is required.";
+            if (!images.cover) newErrors.cover = "Product section image is required.";
         } else if (step === 2) {
             if (!formData.content1?.trim()) newErrors.content1 = "Content is required.";
-            if (!formData.specifications?.trim()) newErrors.specifications = "Specifications is required.";
-            if (!image) newErrors.image = "Image is required.";
-            if (!formData.newPricing.trim()) newErrors.newPricing = "New Pricing is required.";
+            if (!formData.specifications?.trim()) newErrors.specifications = "Specifications are required.";
+            if (!images.detail) newErrors.detail = "Blog section image is required.";
+            if (!formData.priceNew.trim()) {
+                newErrors.priceNew = "New Pricing is required.";
+            } else if (isNaN(formData.priceNew)) {
+                newErrors.priceNew = "New Pricing must be a number.";
+            }
+            if (!formData.priceOld.trim()) {
+                newErrors.priceOld = "Old Pricing is required.";
+            } else if (isNaN(formData.priceOld)) {
+                newErrors.priceOld = "Old Pricing must be a number.";
+            }
             if (!formData.shippingDetails.trim()) newErrors.shippingDetails = "Shipping details are required.";
-            if (!formData.oldPricing.trim()) newErrors.oldPricing = "Old Pricing is required.";
         }
 
         setErrors(newErrors);
@@ -111,15 +105,13 @@ function AddProduct({ onClose }) {
             Object.keys(formData).forEach((key) => {
                 formDataToSend.append(key, formData[key]);
             });
-            if (image) {
-                formDataToSend.append("image", image);
-            }
 
-            // Call API
+            if (images.cover) formDataToSend.append("coverImage", images.cover);
+            if (images.detail) formDataToSend.append("detailImage", images.detail);
+
             const res = await getAddProduct(formDataToSend);
-
-            console.log("Product added ✅", res);
-            // Show success modal
+            fetchProduct()
+            toast.success(res?.message)
             setShowSuccess(true);
         } catch (error) {
             console.error("Error submitting form:", error);
@@ -173,13 +165,13 @@ function AddProduct({ onClose }) {
                                         <div>
                                             <label className="block text-lg mb-1">Content</label>
                                             <textarea
-                                                name="content"
-                                                value={formData.content}
+                                                name="summary"
+                                                value={formData.summary}
                                                 onChange={handleChange}
                                                 placeholder="Enter Your Content"
                                                 className="w-full h-[120px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                             />
-                                            {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
+                                            {errors.summary && <p className="text-red-500 text-sm mt-1">{errors.summary}</p>}
                                         </div>
 
                                         {/* Image Upload */}
@@ -201,10 +193,10 @@ function AddProduct({ onClose }) {
                                                 onDrop={handleDrop}
                                                 onClick={() => fileInputRef.current?.click()}
                                             >
-                                                {image ? (
+                                                {images.cover ? (
                                                     <div className="flex flex-col items-center gap-1">
                                                         <img src={UploadIcon} alt="Not Found" />
-                                                        <span className="text-[#464646] font-medium">{image.name}</span>
+                                                        <span className="text-[#464646] font-medium">{images.cover.name}</span>
                                                         <span className="text-xs text-[#9a9a9a]">Click Here to Change Image</span>
                                                     </div>
                                                 ) : (
@@ -218,11 +210,11 @@ function AddProduct({ onClose }) {
                                                     type="file"
                                                     accept="image/*"
                                                     className="hidden"
-                                                    onChange={handleFileChange}
-                                                    onInput={handleFileChange}
+                                                    onChange={(e) => handleFileChange(e, "cover")}
+                                                    onInput={(e) => handleFileChange(e, "cover")}
                                                 />
                                             </div>
-                                            {errors.image && <p className="text-red-500 text-sm mt-1">{errors.image}</p>}
+                                            {errors.cover && <p className="text-red-500 text-sm mt-1">{errors.cover}</p>}
                                         </div>
                                     </div>
 
@@ -271,7 +263,7 @@ function AddProduct({ onClose }) {
                                 <div className="grid grid-cols-2 gap-y-5.5 gap-x-4.5">
                                     <div className="flex flex-col gap-4.5">
                                         <div>
-                                            <label className="block text-lg mb-1">Content</label>
+                                            <label className="block text-lg mb-1">Product Detail Content</label>
                                             <textarea
                                                 name="content1"
                                                 value={formData.content1}
@@ -301,26 +293,36 @@ function AddProduct({ onClose }) {
                                             <label className="block text-lg mb-1">New Pricing</label>
                                             <input
                                                 type="text"
-                                                name="newPricing"
-                                                value={formData.newPricing}
-                                                onChange={handleChange}
+                                                name="priceNew"
+                                                value={formData.priceNew}
+                                                onChange={(e) => {
+                                                    const val = e.target.value;
+                                                    if (/^\d*$/.test(val)) {
+                                                        handleChange(e);
+                                                    }
+                                                }}
                                                 placeholder="Enter Your New Pricing"
                                                 className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
                                             />
-                                            {errors.newPricing && <p className="text-red-500 text-sm mt-1">{errors.newPricing}</p>}
+                                            {errors.priceNew && <p className="text-red-500 text-sm mt-1">{errors.priceNew}</p>}
                                         </div>
 
                                         <div>
                                             <label className="block text-lg mb-1">Old Pricing</label>
                                             <input
                                                 type="text"
-                                                name="oldPricing"
-                                                value={formData.oldPricing}
-                                                onChange={handleChange}
+                                                name="priceOld"
+                                                value={formData.priceOld}
+                                                onChange={(e) => {
+                                                    const val = e.target.value;
+                                                    if (/^\d*$/.test(val)) {
+                                                        handleChange(e);
+                                                    }
+                                                }}
                                                 placeholder="Enter Your Old Pricing"
                                                 className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
                                             />
-                                            {errors.oldPricing && <p className="text-red-500 text-sm mt-1">{errors.oldPricing}</p>}
+                                            {errors.priceOld && <p className="text-red-500 text-sm mt-1">{errors.priceOld}</p>}
                                         </div>
 
                                         <div>
@@ -354,10 +356,10 @@ function AddProduct({ onClose }) {
                                                 onDrop={handleDrop}
                                                 onClick={() => fileInputRef.current?.click()}
                                             >
-                                                {image ? (
+                                                {images.detail ? (
                                                     <div className="flex flex-col items-center gap-1">
                                                         <img src={UploadIcon} alt="Not Found" />
-                                                        <span className="text-[#464646] font-medium">{image.name}</span>
+                                                        <span className="text-[#464646] font-medium">{images.detail.name}</span>
                                                         <span className="text-xs text-[#9a9a9a]">Click Here to Change Image</span>
                                                     </div>
                                                 ) : (
@@ -372,11 +374,11 @@ function AddProduct({ onClose }) {
                                                     type="file"
                                                     accept="image/*"
                                                     className="hidden"
-                                                    onChange={handleFileChange}
-                                                    onInput={handleFileChange}
+                                                    onChange={(e) => handleFileChange(e, "detail")}
+                                                    onInput={(e) => handleFileChange(e, "detail")}
                                                 />
                                             </div>
-                                            {errors.image && <p className="text-red-500 text-sm mt-1">{errors.image}</p>}
+                                            {errors.detail && <p className="text-red-500 text-sm mt-1">{errors.detail}</p>}
                                         </div>
                                     </div>
 

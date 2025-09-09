@@ -1,29 +1,39 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getTestimonialsUpdate } from "../../services/testimonialsServices";
 import leftBackIcon from "../../assets/svg/leftIcon.svg"
+import imageIconOrange from "../../assets/svg/imageIconOrange.svg"
+import { getBlogUpdate } from "../../services/blogServices";
+import toast from "react-hot-toast";
 
-function EditBlog({ selectedUser, setSelectedUser }) {
+function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
     const [formData, setFormData] = useState({
-        name: "",
-        roleOrAddress: "",
-        message: "",
+        title: "",
+        description: "",
+        content: "",
     });
+    const [initialData, setInitialData] = useState({});
     const [imageName, setImageName] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
+    const [originalImage, setOriginalImage] = useState("");
     const fileInputRef = useRef(null);
 
     useEffect(() => {
         if (selectedUser) {
-            setFormData({
-                name: selectedUser.name || "",
-                roleOrAddress: selectedUser.roleOrAddress || "",
-                message: selectedUser.message || "",
-            });
-            setImageName(
-                selectedUser.imageUrl
-                    ? selectedUser.imageUrl.split("/").pop()
-                    : "No image"
-            );
+            const updatedData = {
+                title: selectedUser.title || "",
+                description: selectedUser.description || "",
+                content: selectedUser.content || "",
+            };
+
+            setFormData(updatedData);
+            setInitialData(updatedData);
+
+            const imgName = selectedUser.imageUrl
+                ? selectedUser.imageUrl.split("/").pop()
+                : "No image";
+
+            setImageName(imgName);
+            setOriginalImage(imgName);
             setSelectedFile(null);
         }
     }, [selectedUser]);
@@ -50,20 +60,42 @@ function EditBlog({ selectedUser, setSelectedUser }) {
     };
 
     const handleSubmit = async () => {
+        const hasTextChanges =
+            formData.title !== initialData.title ||
+            formData.description !== initialData.description ||
+            formData.content !== initialData.content;
+
+        const hasImageChange = selectedFile !== null;
+
+        if (!hasTextChanges && !hasImageChange) {
+            toast.error("No changes detected.");
+            return;
+        }
+
+        if (!selectedUser?._id) {
+            toast.error("Invalid blog ID. Please refresh the page.");
+            return;
+        }
+
         try {
             const data = new FormData();
-            data.append("name", formData.name);
-            data.append("roleOrAddress", formData.roleOrAddress);
-            data.append("message", formData.message);
+            data.append("title", formData.title);
+            data.append("description", formData.description);
+            data.append("content", formData.content);
+            data.append("isPublished", "true");
 
             if (selectedFile) {
                 data.append("image", selectedFile);
             }
-            const result = await getTestimonialsUpdate(data);
-            setSelectedUser(null);
 
+            await getBlogUpdate(data, selectedUser._id);
+
+            toast.success("Blog updated successfully!");
+            setSelectedUser(null);
+            fetchBlog()
         } catch (error) {
-            console.error("Error updating testimonial:", error);
+            console.error("Update failed:", error);
+            toast.error("Failed to update blog.");
         }
     };
 
@@ -150,7 +182,7 @@ function EditBlog({ selectedUser, setSelectedUser }) {
                         <div className="flex-1">
                             <label className="block text-lg mb-1.5">Image for Blog Section</label>
                             <div
-                                className="w-full h-[231px] flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-md text-center cursor-pointer hover:border-orange-400 transition"
+                                className="w-full h-[231px] flex flex-col items-center justify-center border border-[#BDBDBD] rounded-md text-center cursor-pointer hover:border-[#EA7913] transition"
                                 onClick={handleFileClick}
                             >
                                 <input
@@ -160,12 +192,13 @@ function EditBlog({ selectedUser, setSelectedUser }) {
                                     onChange={handleFileChange}
                                     className="hidden"
                                 />
-                                <img
-                                    src="/icons/upload.svg"
-                                    alt="Upload"
-                                    className="w-8 h-8 opacity-50 mb-2"
-                                />
-                                <p className="text-gray-500 text-sm">{imageName}</p>
+                                <div className="flex flex-col justify-center items-center gap-2.5 text-[#525252]">
+                                    <img src={imageIconOrange} alt="not Found" className="w-6 h-6" />
+                                    <div>
+                                        <p>{imageName}</p>
+                                        <p >Click Here to Change Image</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

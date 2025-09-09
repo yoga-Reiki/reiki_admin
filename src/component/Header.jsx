@@ -80,7 +80,7 @@ function Header() {
 
 
           {showNotifications && (
-            <div className="absolute top-full mt-2 right-0 w-103.5 bg-white rounded-2xl text-[#656565] shadow-xl border border-[#989898] z-50 shadow-[0_0_14px_rgba(0,0,0,0.25)]">
+            <div className="absolute top-full mt-2 -right-44 lg:right-0 md:w-80 lg:w-103.5 bg-white rounded-2xl text-[#656565] shadow-xl border border-[#989898] z-50 shadow-[0_0_14px_rgba(0,0,0,0.25)]">
               {notifications.map((notif, index) => (
                 <div
                   key={notif.id}

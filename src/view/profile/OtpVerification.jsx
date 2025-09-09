@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import leftBackIcon from "../../assets/svg/leftIcon.svg";
 import ResetPassword from './ResetPassword';
 
-function OtpVerification({ setCurrentScreenMain }) {
+function OtpVerification({ setCurrentScreenMain, ProfileData }) {
     const [otp, setOtp] = useState(Array(6).fill(""));
     const [activeInput, setActiveInput] = useState(0);
     const [timer, setTimer] = useState(300);
@@ -65,7 +65,7 @@ function OtpVerification({ setCurrentScreenMain }) {
     return (
         <div>
             {resetPassShow ? (
-                <ResetPassword setCurrentScreenMain={setCurrentScreenMain} />
+                <ResetPassword setCurrentScreenMain={setCurrentScreenMain} ProfileData={ProfileData} otp={otp} />
             ) : (
                 <div className='flex flex-col gap-14'>
                     {/* Top Navigation */}

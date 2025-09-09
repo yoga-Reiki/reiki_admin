@@ -1,69 +1,82 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import AddIcon from "../../assets/svg/AddIcon.svg";
 import AddProduct from './AddProduct';
 import SearchIcon from "../../assets/svg/SearchIcon.svg";
 import editIconGrey from "../../assets/svg/editIconGrey.svg"
 import deleteIconGrey from "../../assets/svg/deleteIconGrey.svg"
-import products1 from "../../assets/img/Product 1.png"
 import EditProduct from './EditProduct';
+import toast from 'react-hot-toast';
+import { getProductData, getProductDelete } from '../../services/productServices';
+import DeleteModel from '../component/DeleteModel';
 
 function Product() {
+    const [productData, setProductData] = useState([]);
+    const [error, setError] = useState(null);
     const [addProduct, setProducts] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [isEditingProduct, setIsEditingProduct] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [productDelete, setProductDelete] = useState(null);
+    const hasFetched = useRef(false);
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 10,
+        totalUsers: 0,
+    });
+    const [searchQuery, setSearchQuery] = useState("");
 
-    const products = [
-        {
-            id: 1,
-            name: "Reiki Crystal Bracelet",
-            description:
-                "Handmade natural gemstone bracelet charged with Reiki energy. Ideal for daily healing, chakra balance, and positive vibration.",
-            tags: ["Emotional Balance", "Stress Relief"],
-            price: "$29.50",
-            image: products1,
-        },
-        {
-            id: 2,
-            name: "Reiki Crystal Bracelet",
-            description:
-                "Handmade natural gemstone bracelet charged with Reiki energy. Ideal for daily healing, chakra balance, and positive vibration.",
-            tags: ["Emotional Balance", "Stress Relief"],
-            price: "$29.50",
-            image: products1,
-        },
-        {
-            id: 3,
-            name: "Reiki Crystal Bracelet",
-            description:
-                "Handmade natural gemstone bracelet charged with Reiki energy. Ideal for daily healing, chakra balance, and positive vibration.",
-            tags: ["Emotional Balance", "Stress Relief"],
-            price: "$29.50",
-            image: products1,
-        },
-        {
-            id: 4,
-            name: "Reiki Crystal Bracelet",
-            description:
-                "Handmade natural gemstone bracelet charged with Reiki energy. Ideal for daily healing, chakra balance, and positive vibration.",
-            tags: ["Emotional Balance", "Stress Relief"],
-            price: "$29.50",
-            image: products1,
-        },
-        {
-            id: 5,
-            name: "Reiki Crystal Bracelet",
-            description:
-                "Handmade natural gemstone bracelet charged with Reiki energy. Ideal for daily healing, chakra balance, and positive vibration.",
-            tags: ["Emotional Balance", "Stress Relief"],
-            price: "$29.50",
-            image: products1,
+    useEffect(() => {
+        if (!hasFetched.current) {
+            fetchProduct();
+            hasFetched.current = true;
         }
-    ];
+    }, []);
+
+    useEffect(() => {
+        if (searchQuery === "") {
+            fetchProduct();
+        }
+    }, [searchQuery]);
+
+    const fetchProduct = async () => {
+        setLoading(true);
+        try {
+            const response = await getProductData({
+                page: pagination.page,
+                pageSize: pagination.pageSize,
+                query: searchQuery,
+            });
+
+            setProductData(response?.data?.items || []);
+            setPagination((prev) => ({
+                ...prev,
+                totalUsers: response?.data?.totalItems || 0,
+            }));
+        } catch (err) {
+            setError("Failed to fetch users");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const confirmDelete = async () => {
+        if (!productDelete || !productDelete._id) return;
+
+        try {
+            await getProductDelete(productDelete._id);
+            toast.success("Product deleted successfully!");
+            setProductDelete(null);
+            fetchProduct();
+        } catch (error) {
+            console.error("Delete failed", error);
+            toast.error("Failed to delete product");
+        }
+    };
 
     return (
         <div>
             {isEditingProduct ? (
-                <EditProduct selectedProduct={selectedProduct} onCancel={() => setIsEditingProduct(false)} />
+                <EditProduct fetchProduct={fetchProduct} selectedProduct={selectedProduct} onCancel={() => setIsEditingProduct(false)} />
             ) : (
                 <div className="text-[#464646] flex flex-col gap-2">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-3">
@@ -88,23 +101,31 @@ function Product() {
                                     <input
                                         type="text"
                                         placeholder="Search"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                fetchProduct();
+                                            }
+                                        }}
                                         className="w-full pl-10 pr-4 py-2 md:py-3 rounded-full bg-[#FCEAC9] text-[#656565] placeholder-[#656565] border-2 border-[#FEF8EC] focus:outline-none focus:ring-0 focus:border-[#F3E9D6]"
                                     />
+
                                 </div>
                             </div>
 
                             <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-                                {products.map((item) => (
+                                {productData.map((item) => (
                                     <div
-                                        key={item.id}
+                                        key={item._id}
                                     >
                                         <div className="bg-white rounded-3xl overflow-hidden">
                                             {/* products Image */}
                                             <div className="relative overflow-hidden">
                                                 <img
-                                                    src={item.image}
+                                                    src={item.coverImageUrl}
                                                     alt={item.title}
-                                                    className="w-full max-h-[542px] object-cover"
+                                                    className="w-full h-[542px] object-cover"
                                                 />
 
                                                 {/* Buttons */}
@@ -115,25 +136,25 @@ function Product() {
                                                     }} className="absolute flex items-center gap-2 top-5 left-5 bg-[#FFFFFF] p-3 text-[#656565] rounded-full border border-[#989898] cursor-pointer hover:bg-gray-100">
                                                     <img src={editIconGrey} alt="Edit" className="p-0.5" /> <span>Edit</span>
                                                 </button>
-                                                <button className="absolute top-5 right-5 bg-white p-3 rounded-full border border-[#989898] cursor-pointer hover:bg-gray-100">
+                                                <button onClick={() => setProductDelete(item)} className="absolute top-5 right-5 bg-white p-3 rounded-full border border-[#989898] cursor-pointer hover:bg-gray-100">
                                                     <img src={deleteIconGrey} alt="Delete" />
                                                 </button>
 
                                                 {/* product Content */}
                                                 <div className="absolute bottom-1 left-1 right-1 bg-white bg-opacity-90 backdrop-blur-md p-6 rounded-3xl">
                                                     <h3 className="text-xl md:text-2xl font-Raleway Raleway-bold">
-                                                        {item.name}
+                                                        {item.title}
                                                     </h3>
                                                     <p className="text-[#525252] text-sm pt-2 pb-3.5">
-                                                        {item.description}
+                                                        {item.summary}
                                                     </p>
                                                     <div className='space-x-1.5 space-y-2 md:space-y-0 pb-7 md:pb-5'>
-                                                        <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>Emotional balance</button>
-                                                        <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>Stress relief</button>
+                                                        <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{item?.chips[0]}</button>
+                                                        <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{item?.chips[1]}</button>
                                                     </div>
                                                     <div className="flex items-end gap-2 text-[#464646]">
-                                                        <span className="text-lg md:text-[32px] md:leading-[40px] font-Raleway Raleway-bold">$29</span>
-                                                        <span className="mb-1">$50</span>
+                                                        <span className="text-lg md:text-[32px] md:leading-[40px] font-Raleway Raleway-bold">${item?.detail?.priceNew}</span>
+                                                        <span className="mb-1">${item?.detail?.priceOld}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -152,7 +173,12 @@ function Product() {
                                 console.log("Blocked:", addProduct.name);
                                 setProducts(null);
                             }}
+                            fetchProduct={fetchProduct}
                         />
+                    )}
+
+                    {productDelete && (
+                        <DeleteModel onCancel={() => setProductDelete(null)} onConfirmProduct={confirmDelete} />
                     )}
                 </div>
             )}

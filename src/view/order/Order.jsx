@@ -2,9 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import SearchIcon from "../../assets/svg/SearchIcon.svg";
 import downloadIcon from "../../assets/svg/downloadIcon.svg";
 import successTickIcon from "../../assets/svg/successTickIcon.svg"
-import { getAllUser } from "../../services/userServices";
 import CancelIconRed from "../../assets/svg/CancelIconRed.svg"
-import { getAllOrder } from "../../services/orderServices";
+import { getAllOrder, getOrderUpdate } from "../../services/orderServices";
 
 function Order() {
     const [orders, setOrders] = useState([]);
@@ -12,26 +11,47 @@ function Order() {
     const [error, setError] = useState(null);
     const hasFetched = useRef(false);
     const [activeTab, setActiveTab] = useState("Pending");
+    const [pagination, setPagination] = useState({
+        page: 1,
+        pageSize: 10,
+        totalUsers: 0,
+    });
 
     useEffect(() => {
         if (!hasFetched.current) {
-            fetchUsers();
+            fetchOrder();
             hasFetched.current = true;
         }
     }, []);
 
-    const fetchUsers = async () => {
+    const fetchOrder = async () => {
         setLoading(true);
         try {
-            const response = await getAllUser({ page: 1, pageSize: 10 });
-            // const response = await getAllOrder({ page: 1, pageSize: 10 });
+            const response = await getAllOrder({
+                page: pagination.page,
+                pageSize: pagination.pageSize,
+                status: activeTab.toLowerCase(),
+            });
 
-            console.log("response", response);
-            setOrders(response?.data?.users || []);
+            setOrders(response?.data);
         } catch (err) {
             setError("Failed to fetch orders");
         } finally {
             setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchOrder();
+    }, [pagination.page, activeTab]);
+
+    const handleStatusChange = async (orderId, status) => {
+        try {
+            await getOrderUpdate(orderId, { status });
+            fetchOrder(); // refresh list
+        } catch (err) {
+            console.error(err);
+            setError("Failed to update order status");
         }
     };
 
@@ -65,27 +85,15 @@ function Order() {
                             />
                         </div>
                         <div className="flex bg-[#F5F0E6] border border-[#FCEAC9] rounded-full text-[#656565] w-fit">
-                            <button
-                                onClick={() => setActiveTab("Pending")}
-                                className={`text-center py-3 pl-6 pr-3.5 rounded-l-full font-medium cursor-pointer ${activeTab === "Pending" ? "bg-[#FCEAC9]" : "bg-[#F8F8F8]"
-                                    }`}
-                            >
-                                Pending
-                            </button>
-                            <button
-                                onClick={() => setActiveTab("Completed")}
-                                className={`text-center py-3 px-3.5 font-medium cursor-pointer ${activeTab === "Completed" ? "bg-[#FCEAC9]" : "bg-[#F8F8F8]"
-                                    }`}
-                            >
-                                Completed
-                            </button>
-                            <button
-                                onClick={() => setActiveTab("Canceled ")}
-                                className={`text-center py-3 px-3.5 rounded-r-full font-medium cursor-pointer ${activeTab === "Canceled " ? "bg-[#FCEAC9]" : "bg-[#F8F8F8]"
-                                    }`}
-                            >
-                                Canceled
-                            </button>
+                            {["Pending", "Completed", "Canceled"].map((tab, index) => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab)}
+                                    className={`text-center ${index === 0 ? "rounded-l-full" : index === 2 && "rounded-r-full"} py-3 px-3.5 font-medium cursor-pointer ${activeTab === tab ? "bg-[#FCEAC9]" : "bg-[#F8F8F8]"}`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -115,8 +123,8 @@ function Order() {
                                         {error}
                                     </td>
                                 </tr>
-                            ) : orders.length > 0 ? (
-                                orders.map((user, index) => {
+                            ) : orders?.items?.length > 0 ? (
+                                orders?.items?.map((data, index) => {
                                     const isFirst = index === 0;
                                     const isLast = index === orders.length - 1;
                                     return (
@@ -124,24 +132,46 @@ function Order() {
                                             key={index}
                                             className={`grid grid-cols-6 items-center bg-white mt-[1px] text-sm ${isFirst ? 'rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
                                         >
-                                            <td className="whitespace-pre-wrap px-4 py-7">{user.name}</td>
-                                            <td className="whitespace-pre-wrap px-4 py-7">{user.email}</td>
-                                            <td className="whitespace-pre-wrap px-4 py-7">{user.adharCardNumber}</td>
-                                            <td className="whitespace-pre-wrap px-4 py-7">{user.mobileNumber}</td>
-                                            <td className="whitespace-pre-wrap px-4 py-7">
-                                                {user?.address
-                                                    ? `${user.address.street}, ${user.address.city}, ${user.address.state}, ${user.address.pincode}, ${user.address.country}`
-                                                    : "-"}
-                                            </td>
-                                            <td className="flex gap-1 items-center flex-wrap mt-2 md:mt-0">
-                                                <button className="p-3 flex items-center gap-2 rounded-full bg-[#F0FDF4] text-[#22C55E] border border-[#BBF7D0] cursor-pointer">
-                                                    <img src={successTickIcon} alt='Not Found' className='w-4 h-4' />
-                                                    <span>Completed</span>
-                                                </button>
-                                                <button className="p-3 flex items-center gap-2 rounded-full bg-[#FEF2F2] text-[#EF4444] border border-[#FECACA] cursor-pointer">
-                                                    <img src={CancelIconRed} alt='Not Found' className='w-4 h-4' />
-                                                    <span>Cancel</span>
-                                                </button>
+                                            <td className="whitespace-pre-wrap px-4 py-7">{data.customer?.name}</td>
+                                            <td className="whitespace-pre-wrap px-4 py-7">{data.customer?.email}</td>
+                                            <td className="whitespace-pre-wrap px-4 py-7">{data.product?.title}</td>
+                                            <td className="whitespace-pre-wrap px-4 py-7">{data.customer?.mobile}</td>
+                                            <td className="whitespace-pre-wrap px-4 py-7">{data?.customer?.address}</td>
+                                            <td className="flex gap-2">
+                                                {data.status === "pending" && (
+                                                    <>
+                                                        <button
+                                                            onClick={() =>
+                                                                handleStatusChange(data._id, "completed")
+                                                            }
+                                                            className="p-2 flex items-center gap-2 cursor-pointer rounded-full bg-[#F0FDF4] text-[#22C55E] border border-[#BBF7D0]"
+                                                        >
+                                                            <img src={successTickIcon} alt="" className="w-4 h-4" />
+                                                            Completed
+                                                        </button>
+                                                        <button
+                                                            onClick={() =>
+                                                                handleStatusChange(data._id, "canceled")
+                                                            }
+                                                            className="p-2 flex items-center gap-2 cursor-pointer rounded-full bg-[#FEF2F2] text-[#EF4444] border border-[#FECACA]"
+                                                        >
+                                                            <img src={CancelIconRed} alt="" className="w-4 h-4" />
+                                                            Cancel
+                                                        </button>
+                                                    </>
+                                                )}
+                                                {data.status === "completed" && (
+                                                    <button className="p-2 flex items-center gap-2 cursor-pointer rounded-full bg-[#F0FDF4] text-[#22C55E] border border-[#BBF7D0]">
+                                                        <img src={successTickIcon} alt="" className="w-4 h-4" />
+                                                        Completed
+                                                    </button>
+                                                )}
+                                                {data.status === "canceled" && (
+                                                    <button className="p-2 flex items-center gap-2 cursor-pointer rounded-full bg-[#FEF2F2] text-[#EF4444] border border-[#FECACA]">
+                                                        <img src={CancelIconRed} alt="" className="w-4 h-4" />
+                                                        Cancel
+                                                    </button>
+                                                )}
                                             </td>
                                         </tr>
                                     )
@@ -155,6 +185,26 @@ function Order() {
                             )}
                         </tbody>
                     </table>
+
+                    <div className="flex justify-end items-center gap-4 py-6">
+                        <button
+                            onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                            disabled={pagination.page === 1}
+                            className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
+                        >
+                            Previous
+                        </button>
+                        <span className="text-[#656565] font-medium">
+                            Page {pagination.page} of {Math.ceil(pagination.totalUsers / pagination.pageSize)}
+                        </span>
+                        <button
+                            onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                            disabled={pagination.page >= Math.ceil(pagination.totalUsers / pagination.pageSize)}
+                            className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
+                        >
+                            Next
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
