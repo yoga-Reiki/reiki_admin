@@ -5,7 +5,7 @@ import UploadIcon from "../../assets/svg/UploadIcon.svg";
 import SuccsessModel from "../component/SuccsessModel";
 import { getAddCourses } from "../../services/courseServices";
 
-function AddCourse({ onClose }) {
+function AddCourse({ onClose,fetchCourse }) {
     const fileInputRef = useRef(null);
     const [formData, setFormData] = useState({
         title: "",
@@ -16,9 +16,13 @@ function AddCourse({ onClose }) {
         onlineOffline: "",
         content: "",
         language: "",
+        certificate: "",
         shippingDetails: ""
     });
-    const [image, setImage] = useState(null);
+    const [images, setImages] = useState({
+        cover: "",
+        detail: "",
+    });
     const [errors, setErrors] = useState({});
     const [isDragging, setIsDragging] = useState(false);
     const [step, setStep] = useState(1);
@@ -30,10 +34,10 @@ function AddCourse({ onClose }) {
         setErrors((p) => ({ ...p, [name]: "" }));
     };
 
-    const handleFileChange = (e) => {
+    const handleFileChange = (e, type) => {
         const file = e.target.files?.[0];
         if (file && file.type.startsWith("image/")) {
-            setImage(file);
+            setImages((prev) => ({ ...prev, [type]: file }));
             setErrors((p) => ({ ...p, image: "" }));
         } else {
             setErrors((p) => ({ ...p, image: "Please upload a valid image." }));
@@ -48,20 +52,21 @@ function AddCourse({ onClose }) {
             reader.readAsDataURL(file);
         });
 
-    const validateImageAndSet = async (file) => {
+    const validateImageAndSet = async (file, type = "cover") => {
         if (!file) return;
         if (!file.type?.startsWith("image/")) {
             setErrors((p) => ({ ...p, image: "Please upload a valid image." }));
             return;
         }
         try {
-            const dataUrl = await readFileAsDataURL(file);
-            setImage(file);
+            await readFileAsDataURL(file);
+            setImages((prev) => ({ ...prev, [type]: file }));
             setErrors((p) => ({ ...p, image: "" }));
         } catch {
             setErrors((p) => ({ ...p, image: "Failed to load image preview." }));
         }
     };
+
 
     const handleDrop = async (e) => {
         e.preventDefault();
@@ -78,17 +83,15 @@ function AddCourse({ onClose }) {
             if (!formData.title.trim()) newErrors.title = "Title is required.";
             if (!formData.newPricing.trim()) newErrors.newPricing = "New Pricing is required.";
             if (!formData.oldPricing.trim()) newErrors.oldPricing = "Old Pricing is required.";
-            // if (!formData.duration.trim()) newErrors.duration = "Duration is required.";
-            // if (!formData.certificate.trim()) newErrors.certificate = "Certificate is required.";
-            // if (!formData.onlineOffline.trim()) newErrors.onlineOffline = "Mode is required.";
             if (!formData.content.trim()) newErrors.content = "Content is required.";
-            if (!image) newErrors.image = "Image is required.";
+            if (!images.cover) newErrors.image = "Cover Image is required.";
         } else if (step === 2) {
-            if (!formData.content.trim()) newErrors.content = "Content is required.";
-            if (!image) newErrors.image = "Image is required.";
+            if (!formData.detailContent.trim()) newErrors.detailContent = "detailContent is required.";
+            if (!images.detail) newErrors.image = "Detail Image is required.";
             if (!formData.language.trim()) newErrors.language = "Language is required.";
             if (!formData.shippingDetails.trim()) newErrors.shippingDetails = "Shipping details are required.";
             if (!formData.duration.trim()) newErrors.duration = "Duration is required.";
+            if (!formData.certificate.trim()) newErrors.certificate = "Certificate is required.";
             if (!formData.onlineOffline.trim()) newErrors.onlineOffline = "Mode is required.";
         }
 
@@ -112,16 +115,17 @@ function AddCourse({ onClose }) {
             Object.keys(formData).forEach((key) => {
                 formDataToSend.append(key, formData[key]);
             });
-            if (image) {
-                formDataToSend.append("image", image);
+            if (images?.cover) {
+                formDataToSend.append("listImage", images?.cover);
             }
 
-            // Call API
-            const res = await getAddCourses(formDataToSend);
+            if (images?.detail) {
+                formDataToSend.append("detailImage", images?.detail);
+            }
 
-            console.log("Course added ✅", res);
-            // Show success modal
+            const res = await getAddCourses(formDataToSend);
             setShowSuccess(true);
+            fetchCourse()
         } catch (error) {
             console.error("Error submitting form:", error);
         }
@@ -213,10 +217,10 @@ function AddCourse({ onClose }) {
                                                 onDrop={handleDrop}
                                                 onClick={() => fileInputRef.current?.click()}
                                             >
-                                                {image ? (
+                                                {images?.cover ? (
                                                     <div className="flex flex-col items-center gap-1">
                                                         <img src={UploadIcon} alt="Not Found" />
-                                                        <span className="text-[#464646] font-medium">{image.name}</span>
+                                                        <span className="text-[#464646] font-medium">{images?.cover.name}</span>
                                                         <span className="text-xs text-[#9a9a9a]">Click Here to Change Image</span>
                                                     </div>
                                                 ) : (
@@ -230,8 +234,8 @@ function AddCourse({ onClose }) {
                                                     type="file"
                                                     accept="image/*"
                                                     className="hidden"
-                                                    onChange={handleFileChange}
-                                                    onInput={handleFileChange}
+                                                    onChange={(e) => handleFileChange(e, "cover")}
+                                                    onInput={(e) => handleFileChange(e, "cover")}
                                                 />
                                             </div>
                                             {errors.image && <p className="text-red-500 text-sm mt-1">{errors.image}</p>}
@@ -243,7 +247,7 @@ function AddCourse({ onClose }) {
                                         <button
                                             type="button"
                                             onClick={handleNext}
-                                            className="w-full flex justify-center items-center gap-2 py-2.5 bg-[#EA7913] text-lg text-white rounded-full"
+                                            className="w-full flex justify-center items-center gap-2 py-2.5 bg-[#EA7913] cursor-pointer text-lg text-white rounded-full"
                                         >
                                             <span>Next</span>
                                             <IoIosArrowRoundForward size={28} />
@@ -256,13 +260,13 @@ function AddCourse({ onClose }) {
                                         <div>
                                             <label className="block text-lg mb-1">Content</label>
                                             <textarea
-                                                name="content"
-                                                value={formData.content}
+                                                name="detailContent"
+                                                value={formData.detailContent}
                                                 onChange={handleChange}
                                                 placeholder="Enter Your Content"
                                                 className="w-full h-[136px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                             />
-                                            {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
+                                            {errors.detailContent && <p className="text-red-500 text-sm mt-1">{errors.detailContent}</p>}
                                         </div>
 
                                         <div>
@@ -283,10 +287,10 @@ function AddCourse({ onClose }) {
                                                 onDrop={handleDrop}
                                                 onClick={() => fileInputRef.current?.click()}
                                             >
-                                                {image ? (
+                                                {images?.detail ? (
                                                     <div className="flex flex-col items-center gap-1">
                                                         <img src={UploadIcon} alt="Not Found" />
-                                                        <span className="text-[#464646] font-medium">{image.name}</span>
+                                                        <span className="text-[#464646] font-medium">{images?.detail.name}</span>
                                                         <span className="text-xs text-[#9a9a9a]">Click Here to Change Image</span>
                                                     </div>
                                                 ) : (
@@ -301,8 +305,8 @@ function AddCourse({ onClose }) {
                                                     type="file"
                                                     accept="image/*"
                                                     className="hidden"
-                                                    onChange={handleFileChange}
-                                                    onInput={handleFileChange}
+                                                    onChange={(e) => handleFileChange(e, "detail")}
+                                                    onInput={(e) => handleFileChange(e, "detail")}
                                                 />
                                             </div>
                                             {errors.image && <p className="text-red-500 text-sm mt-1">{errors.image}</p>}
@@ -356,6 +360,19 @@ function AddCourse({ onClose }) {
                                                 className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
                                             />
                                             {errors.duration && <p className="text-red-500 text-sm mt-1">{errors.duration}</p>}
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-lg mb-1">Certificate</label>
+                                            <input
+                                                type="text"
+                                                name="certificate"
+                                                value={formData.certificate}
+                                                onChange={handleChange}
+                                                placeholder="Enter certificate of Course"
+                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                                            />
+                                            {errors.certificate && <p className="text-red-500 text-sm mt-1">{errors.certificate}</p>}
                                         </div>
 
                                         <div>

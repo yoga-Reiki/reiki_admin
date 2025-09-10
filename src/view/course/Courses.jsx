@@ -1,19 +1,57 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import AddIcon from "../../assets/svg/AddIcon.svg";
 import CourseCard from './CourseCard';
 import CourseSection from './CourseSection';
 import AddCourse from './AddCourse';
 import EditCourseSec from './EditCourseSec';
+import { getCoursesData, getCoursesDelete } from '../../services/courseServices';
+import toast from 'react-hot-toast';
+import DeleteModel from '../component/DeleteModel';
 
 function Courses() {
     const [addCourse, setAddCourse] = useState(null);
     const [isEditingCard, setIsEditingCard] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState(null);
+    const [coursesData, setCoursesData] = useState([])
+    const [coursesDelete, setCoursesDelete] = useState(null);
+    const hasFetched = useRef(false);
+
+    useEffect(() => {
+        if (!hasFetched.current) {
+            fetchCourse();
+            hasFetched.current = true;
+        }
+    }, []);
+
+    const fetchCourse = async () => {
+        try {
+            const response = await getCoursesData();
+
+            toast.success("Courses fetched successfully!")
+            setCoursesData(response?.data?.items || []);
+        } catch (err) {
+            toast.error("Failed to fetch users");
+        }
+    };
+
+    const confirmDelete = async () => {
+        if (!coursesDelete || !coursesDelete._id) return;
+
+        try {
+            await getCoursesDelete(coursesDelete._id);
+            toast.success("Course deleted successfully!");
+            setCoursesDelete(null);
+            fetchCourse();
+        } catch (error) {
+            console.error("Delete failed", error);
+            toast.error("Failed to delete product");
+        }
+    };
 
     return (
         <div>
             {isEditingCard ? (
-                <EditCourseSec selectedCourse={selectedCourse} onCancel={() => setIsEditingCard(false)} />
+                <EditCourseSec selectedCourse={selectedCourse} onCancel={() => setIsEditingCard(false)} fetchCourse={fetchCourse} />
             ) : (
                 <div className="text-[#464646] flex flex-col gap-2">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-3">
@@ -27,7 +65,7 @@ function Courses() {
                         </button>
                     </div>
 
-                    <CourseCard setIsEditingCard={setIsEditingCard} setSelectedCourse={setSelectedCourse} />
+                    <CourseCard setIsEditingCard={setIsEditingCard} setSelectedCourse={setSelectedCourse} coursesData={coursesData} setCoursesDelete={setCoursesDelete} />
 
                     <CourseSection />
 
@@ -39,7 +77,12 @@ function Courses() {
                                 console.log("Blocked:", addCourse.name);
                                 setAddCourse(null);
                             }}
+                            fetchCourse={fetchCourse}
                         />
+                    )}
+
+                    {coursesDelete && (
+                        <DeleteModel onCancel={() => setCoursesDelete(null)} onConfirmCourse={confirmDelete} />
                     )}
                 </div>
             )}

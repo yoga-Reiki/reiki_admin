@@ -1,9 +1,9 @@
 import axios from "axios";
 
-export async function getAllOrder({ page: page, pageSize: pageSize }) {
+export async function getAllOrder({ page: page, pageSize: pageSize, query }) {
     try {
         const response = await axios.get(
-            `${process.env.REACT_APP_URL}/products/admin/orders?page=${page}&limit=${pageSize}`,
+            `${process.env.REACT_APP_URL}/products/admin/orders?page=${page}&limit=${pageSize}&q=${query || ""}`,
             {
                 headers: {
                     Authorization: localStorage.getItem("admin_accessToken"),

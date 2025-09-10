@@ -18,7 +18,7 @@ function Testimonials() {
     const [selectedUser, setSelectedUser] = useState(null);
     const [addTestimonials, setAddTestimonials] = useState(null);
     const [testimonialsDelete, setTestimonialsDelete] = useState(null);
-    const [searchQuery, setSearchQuery] = useState(""); // 🔍 New state
+    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         if (!hasFetched.current) {
@@ -94,8 +94,8 @@ function Testimonials() {
                             <input
                                 type="text"
                                 placeholder="Search Testimonials"
-                                value={searchQuery} // 🔍 bind state
-                                onChange={(e) => setSearchQuery(e.target.value)} // update state
+                                value={searchQuery} 
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full pl-10 pr-4 py-2 md:py-3 rounded-full bg-[#FCEAC9] text-[#656565] placeholder-[#656565] border-2 border-[#FEF8EC] focus:outline-none focus:ring-0 focus:border-[#F3E9D6]"
                             />
                         </div>

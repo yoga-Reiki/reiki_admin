@@ -23,7 +23,8 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
         cover: selectedProduct?.coverImageUrl || '',
         detail: selectedProduct?.detail?.detailImageUrl || '',
     });
-    const fileInputRef = useRef(null);
+    const coverInputRef = useRef(null);
+    const detailInputRef = useRef(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -56,35 +57,12 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
         handleImageChange(file, type);
     };
 
-    const handleDrop = async (e, type) => {
+    const handleDrop = (e, type) => {
         e.preventDefault();
         e.stopPropagation();
         setIsDragging(false);
         const file = e.dataTransfer?.files?.[0];
         handleImageChange(file, type);
-    };
-
-    const readFileAsDataURL = (file) =>
-        new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
-
-    const validateImageAndSet = async (file) => {
-        if (!file) return;
-        if (!file.type?.startsWith("image/")) {
-            setErrors((p) => ({ ...p, image: "Please upload a valid image." }));
-            return;
-        }
-        try {
-            const dataUrl = await readFileAsDataURL(file);
-            setImages(file);
-            setErrors((p) => ({ ...p, image: "" }));
-        } catch {
-            setErrors((p) => ({ ...p, image: "Failed to load image preview." }));
-        }
     };
 
     const handleSubmit = async () => {
@@ -300,8 +278,8 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                             e.stopPropagation();
                                             setIsDragging(false);
                                         }}
-                                        onDrop={handleDrop}
-                                        onClick={() => fileInputRef.current?.click()}
+                                        onDrop={(e) => handleDrop(e, "cover")}
+                                        onClick={() => coverInputRef.current?.click()}
                                     >
                                         {images.cover ? (
                                             <div className="flex flex-col justify-center items-center gap-1">
@@ -318,7 +296,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                         )}
 
                                         <input
-                                            ref={fileInputRef}
+                                            ref={coverInputRef}
                                             type="file"
                                             accept="image/*"
                                             className="hidden"
@@ -389,8 +367,8 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                             e.stopPropagation();
                                             setIsDragging(false);
                                         }}
-                                        onDrop={handleDrop}
-                                        onClick={() => fileInputRef.current?.click()}
+                                        onDrop={(e) => handleDrop(e, "detail")}
+                                        onClick={() => detailInputRef.current?.click()}
                                     >
                                         {images.detail ? (
                                             <div className="flex flex-col justify-center items-center gap-1">
@@ -407,7 +385,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                         )}
 
                                         <input
-                                            ref={fileInputRef}
+                                            ref={detailInputRef}
                                             type="file"
                                             accept="image/*"
                                             className="hidden"

@@ -34,3 +34,21 @@ export async function getUserAccess({ userId }) {
     }
 }
 
+// course toggle edit access 
+export async function getCourseEditAccess({ body }) {
+    try {
+        const response = await axios.patch(
+            `${process.env.REACT_APP_URL}/courses/admin/access/`,
+            body,
+            {
+                headers: {
+                    Authorization: localStorage.getItem("admin_accessToken"),
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+

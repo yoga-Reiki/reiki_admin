@@ -64,7 +64,7 @@ function Blog() {
         try {
             await getBlogDelete(blogDelete._id);
             setBlogDelete(null);
-            toast.success("block deleted successfully!")
+            toast.success("blog deleted successfully!")
             fetchBlog();
         } catch (error) {
             console.error("Delete failed", error);

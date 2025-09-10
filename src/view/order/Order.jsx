@@ -11,6 +11,7 @@ function Order() {
     const [error, setError] = useState(null);
     const hasFetched = useRef(false);
     const [activeTab, setActiveTab] = useState("Pending");
+    const [searchTerm, setSearchTerm] = useState("");
     const [pagination, setPagination] = useState({
         page: 1,
         pageSize: 10,
@@ -18,11 +19,11 @@ function Order() {
     });
 
     useEffect(() => {
-        if (!hasFetched.current) {
-            fetchOrder();
+        if (!hasFetched.current || searchTerm.trim() === "") {
             hasFetched.current = true;
+            fetchOrder();
         }
-    }, []);
+    }, [pagination.page, activeTab, searchTerm]);
 
     const fetchOrder = async () => {
         setLoading(true);
@@ -31,9 +32,16 @@ function Order() {
                 page: pagination.page,
                 pageSize: pagination.pageSize,
                 status: activeTab.toLowerCase(),
+                query: searchTerm.trim() !== "" ? searchTerm.trim() : undefined,
             });
 
             setOrders(response?.data);
+            if (pagination.totalUsers !== response?.data?.total) {
+                setPagination((prev) => ({
+                    ...prev,
+                    totalUsers: response?.data?.total || 0,
+                }));
+            }
         } catch (err) {
             setError("Failed to fetch orders");
         } finally {
@@ -41,14 +49,10 @@ function Order() {
         }
     };
 
-    useEffect(() => {
-        fetchOrder();
-    }, [pagination.page, activeTab]);
-
     const handleStatusChange = async (orderId, status) => {
         try {
             await getOrderUpdate(orderId, { status });
-            fetchOrder(); // refresh list
+            fetchOrder();
         } catch (err) {
             console.error(err);
             setError("Failed to update order status");
@@ -81,6 +85,13 @@ function Order() {
                             <input
                                 type="text"
                                 placeholder="Search Order"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        fetchOrder();
+                                    }
+                                }}
                                 className="w-full pl-10 pr-4 py-2 md:py-3 rounded-full bg-[#FCEAC9] text-[#656565] placeholder-[#656565] border-2 border-[#FEF8EC] focus:outline-none focus:ring-0 focus:border-[#F3E9D6]"
                             />
                         </div>
@@ -101,16 +112,18 @@ function Order() {
                 {/* Table */}
                 <div className="overflow-x-auto px-3">
                     <table className="w-full table-auto">
-                        <thead className="grid grid-cols-6 bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
-                            <th className='px-4 py-3'>Name</th>
-                            <th className='px-4 py-3'>Email</th>
-                            <th className='px-4 py-3'>Order Details</th>
-                            <th className='px-4 py-3'>Mobile Number</th>
-                            <th className='px-4 py-3'>Address</th>
-                            <th className='px-4 py-3'>Actions</th>
+                        <thead>
+                            <tr className="grid grid-cols-6 md:w-[300%] lg:w-[200%] xl:w-full bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
+                                <th className='px-4 py-3'>Name</th>
+                                <th className='px-4 py-3'>Email</th>
+                                <th className='px-4 py-3'>Order Details</th>
+                                <th className='px-4 py-3'>Mobile Number</th>
+                                <th className='px-4 py-3'>Address</th>
+                                <th className='px-4 py-3'>Actions</th>
+                            </tr>
                         </thead >
 
-                        <tbody className="flex flex-col justify-center bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
+                        <tbody className="flex flex-col justify-center md:w-[300%] lg:w-[200%] xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
                             {loading ? (
                                 <tr>
                                     <td colSpan="6" className="flex justify-center py-6">
@@ -124,58 +137,60 @@ function Order() {
                                     </td>
                                 </tr>
                             ) : orders?.items?.length > 0 ? (
-                                orders?.items?.map((data, index) => {
-                                    const isFirst = index === 0;
-                                    const isLast = index === orders.length - 1;
-                                    return (
-                                        <tr
-                                            key={index}
-                                            className={`grid grid-cols-6 items-center bg-white mt-[1px] text-sm ${isFirst ? 'rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
-                                        >
-                                            <td className="whitespace-pre-wrap px-4 py-7">{data.customer?.name}</td>
-                                            <td className="whitespace-pre-wrap px-4 py-7">{data.customer?.email}</td>
-                                            <td className="whitespace-pre-wrap px-4 py-7">{data.product?.title}</td>
-                                            <td className="whitespace-pre-wrap px-4 py-7">{data.customer?.mobile}</td>
-                                            <td className="whitespace-pre-wrap px-4 py-7">{data?.customer?.address}</td>
-                                            <td className="flex gap-2">
-                                                {data.status === "pending" && (
-                                                    <>
-                                                        <button
-                                                            onClick={() =>
-                                                                handleStatusChange(data._id, "completed")
-                                                            }
-                                                            className="p-2 flex items-center gap-2 cursor-pointer rounded-full bg-[#F0FDF4] text-[#22C55E] border border-[#BBF7D0]"
-                                                        >
+                                orders.items
+                                    .filter((data) => data.status === activeTab.toLowerCase())
+                                    .map((data, index) => {
+                                        const isFirst = index === 0;
+                                        const isLast = index === orders.items.length - 1;
+
+                                        return (
+                                            <tr
+                                                key={index}
+                                                className={`grid grid-cols-6 items-center bg-white mt-[1px] text-sm ${isFirst
+                                                    ? "rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]"
+                                                    : ""
+                                                    } ${isLast ? "rounded-b-xl border-b-0" : ""}`}
+                                            >
+                                                <td className="whitespace-pre-wrap px-4 py-7">{data.customer?.name}</td>
+                                                <td className="whitespace-pre-wrap px-4 py-7">{data.customer?.email}</td>
+                                                <td className="whitespace-pre-wrap px-4 py-7">{data.product?.title}</td>
+                                                <td className="whitespace-pre-wrap px-4 py-7">{data.customer?.mobile}</td>
+                                                <td className="whitespace-pre-wrap px-4 py-7">{data?.customer?.address}</td>
+                                                <td className="flex gap-2">
+                                                    {data.status === "pending" && (
+                                                        <>
+                                                            <button
+                                                                onClick={() => handleStatusChange(data._id, "completed")}
+                                                                className="p-3 flex items-center gap-2 cursor-pointer rounded-full bg-[#F0FDF4] text-[#22C55E] border border-[#BBF7D0]"
+                                                            >
+                                                                <img src={successTickIcon} alt="" className="w-4 h-4" />
+                                                                Completed
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleStatusChange(data._id, "canceled")}
+                                                                className="p-3 flex items-center gap-2 cursor-pointer rounded-full bg-[#FEF2F2] text-[#EF4444] border border-[#FECACA]"
+                                                            >
+                                                                <img src={CancelIconRed} alt="" className="w-4 h-4" />
+                                                                Cancel
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                    {data.status === "completed" && (
+                                                        <button className="p-3 flex items-center gap-2 cursor-pointer rounded-full bg-[#F0FDF4] text-[#22C55E] border border-[#BBF7D0]">
                                                             <img src={successTickIcon} alt="" className="w-4 h-4" />
                                                             Completed
                                                         </button>
-                                                        <button
-                                                            onClick={() =>
-                                                                handleStatusChange(data._id, "canceled")
-                                                            }
-                                                            className="p-2 flex items-center gap-2 cursor-pointer rounded-full bg-[#FEF2F2] text-[#EF4444] border border-[#FECACA]"
-                                                        >
+                                                    )}
+                                                    {data.status === "canceled" && (
+                                                        <button className="p-3 flex items-center gap-2 cursor-pointer rounded-full bg-[#FEF2F2] text-[#EF4444] border border-[#FECACA]">
                                                             <img src={CancelIconRed} alt="" className="w-4 h-4" />
                                                             Cancel
                                                         </button>
-                                                    </>
-                                                )}
-                                                {data.status === "completed" && (
-                                                    <button className="p-2 flex items-center gap-2 cursor-pointer rounded-full bg-[#F0FDF4] text-[#22C55E] border border-[#BBF7D0]">
-                                                        <img src={successTickIcon} alt="" className="w-4 h-4" />
-                                                        Completed
-                                                    </button>
-                                                )}
-                                                {data.status === "canceled" && (
-                                                    <button className="p-2 flex items-center gap-2 cursor-pointer rounded-full bg-[#FEF2F2] text-[#EF4444] border border-[#FECACA]">
-                                                        <img src={CancelIconRed} alt="" className="w-4 h-4" />
-                                                        Cancel
-                                                    </button>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    )
-                                })
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
                             ) : (
                                 <tr>
                                     <td colSpan="6" className="text-center py-6">
@@ -184,28 +199,29 @@ function Order() {
                                 </tr>
                             )}
                         </tbody>
+
                     </table>
 
-                    <div className="flex justify-end items-center gap-4 py-6">
-                        <button
-                            onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
-                            disabled={pagination.page === 1}
-                            className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
-                        >
-                            Previous
-                        </button>
-                        <span className="text-[#656565] font-medium">
-                            Page {pagination.page} of {Math.ceil(pagination.totalUsers / pagination.pageSize)}
-                        </span>
-                        <button
-                            onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
-                            disabled={pagination.page >= Math.ceil(pagination.totalUsers / pagination.pageSize)}
-                            className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
-                        >
-                            Next
-                        </button>
-                    </div>
                 </div>
+            </div>
+            <div className="flex justify-end items-center gap-4 py-6">
+                <button
+                    onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                    disabled={pagination.page === 1}
+                    className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
+                >
+                    Previous
+                </button>
+                <span className="text-[#656565] font-medium">
+                    Page {pagination.page} of {Math.ceil(pagination.totalUsers / pagination.pageSize)}
+                </span>
+                <button
+                    onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                    disabled={pagination.page >= Math.ceil(pagination.totalUsers / pagination.pageSize)}
+                    className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
+                >
+                    Next
+                </button>
             </div>
         </div>
     );

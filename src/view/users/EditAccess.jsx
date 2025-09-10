@@ -1,24 +1,70 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import leftBackIcon from "../../assets/svg/leftIcon.svg"
 import UserIcon from "../../assets/svg/userIcon.svg"
+import { getCoursesData } from '../../services/courseServices';
+import toast from 'react-hot-toast';
+import { getCourseEditAccess } from '../../services/userServices';
 
 function EditAccess({ selectedUser, setSelectedUser }) {
 
-    const courseList = [
-        "Course grand Master Reiki",
-        "Full Reiki Course",
-        "Course grand Master Reiki (Advanced)",
-        "Reiki Master Course",
-        "Course grand Master Reiki (Level 2)",
-    ];
-
     const [userCourses, setUserCourses] = useState({});
+    const [coursesData, setCoursesData] = useState([])
+    const hasFetched = useRef(false);
 
-    const toggleCourse = (course) => {
-        setUserCourses((prev) => ({
-            ...prev,
-            [course]: !prev[course],
-        }));
+    useEffect(() => {
+        if (!hasFetched.current) {
+            fetchCourse();
+            hasFetched.current = true;
+        }
+    }, []);
+
+    const fetchCourse = async () => {
+        try {
+            const response = await getCoursesData();
+            const items = response?.data?.items || [];
+
+            setCoursesData(items);
+
+            // Find the first course that is accessible
+            const accessibleCourse = items.find(course => course.isAccessible);
+
+            if (accessibleCourse) {
+                setUserCourses({ [accessibleCourse._id]: true });
+            }
+
+        } catch (err) {
+            toast.error("Failed to fetch users");
+        }
+    };
+
+    const toggleCourse = (courseId) => {
+        setUserCourses((prev) => {
+            if (prev[courseId]) {
+                return {};
+            }
+            return { [courseId]: true };
+        });
+    };
+
+    console.log("coursesData", coursesData);
+
+    const handleCourseEditAccess = async () => {
+        try {
+            const courseIds = Object.keys(userCourses).filter(courseId => userCourses[courseId]);
+
+            const body = {
+                userId: selectedUser._id,
+                courseIds: courseIds, 
+                status: ""
+            };
+
+            const res = await getCourseEditAccess({ body });
+            toast.success("User access updated successfully");
+            setSelectedUser(null);
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to update user access");
+        }
     };
 
     return (
@@ -60,20 +106,20 @@ function EditAccess({ selectedUser, setSelectedUser }) {
                     <div>
                         <h3 className="font-semibold mb-3">Course List</h3>
                         <div className="flex flex-col gap-4">
-                            {courseList.map((course, idx) => (
+                            {coursesData.map((course, idx) => (
                                 <div key={idx} className="flex items-center gap-3">
                                     {/* Toggle */}
                                     <div
-                                        onClick={() => toggleCourse(course)}
-                                        className={`w-10 h-6 flex items-center border border-[#F1F1F1] rounded-full cursor-pointer transition-colors ${userCourses[course] ? "bg-gradient-to-r from-[#EA7913] to-[#EA7913]/50" : "bg-[#F8F8F8]"
+                                        id={idx}
+                                        onClick={() => toggleCourse(course._id)}
+                                        className={`w-10 h-6 flex items-center border border-[#F1F1F1] rounded-full cursor-pointer transition-colors ${userCourses[course._id] ? "bg-gradient-to-r from-[#EA7913] to-[#EA7913]/50" : "bg-[#F8F8F8]"
                                             }`}
                                     >
                                         <div
-                                            className={`w-4 h-4 rounded-full shadow-md transform transition-transform ${userCourses[course] ? "translate-x-5 bg-white" : "translate-x-1 bg-[#656565]"
-                                                }`}
+                                            className={`w-4 h-4 rounded-full shadow-md transform transition-transform ${userCourses[course._id] ? "translate-x-5 bg-white" : "translate-x-1 bg-[#656565]"}`}
                                         />
                                     </div>
-                                    <span className="text-gray-700">{course}</span>
+                                    <span className="text-gray-700">{course?.title}</span>
                                 </div>
                             ))}
                         </div>
@@ -85,6 +131,7 @@ function EditAccess({ selectedUser, setSelectedUser }) {
                     <div className="w-full mt-10 md:mt-14 relative inline-block rounded-full px-[5px] py-[3px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
                         <button
                             type="submit"
+                            onClick={handleCourseEditAccess}
                             className="w-full h-full inline-flex justify-center items-center space-x-1.5 py-2 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
                         >
                             Save the User Access Changes

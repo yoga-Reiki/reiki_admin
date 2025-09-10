@@ -6,7 +6,7 @@ export async function getCoursesData() {
             `${process.env.REACT_APP_URL}/courses`,
             {
                 headers: {
-                    Authorization: localStorage.getItem("admin_accessToken"),
+                    Authorization: `Bearer ${localStorage.getItem("admin_accessToken")}`,
                 },
             }
         );
@@ -38,7 +38,7 @@ export async function getAddCourses(formData) {
 // update courses
 export async function getCoursesUpdate(formData, coursesId) {
     try {
-        const response = await axios.put(
+        const response = await axios.patch(
             `${process.env.REACT_APP_URL}/courses/${coursesId}`,
             formData,
             {
@@ -53,4 +53,22 @@ export async function getCoursesUpdate(formData, coursesId) {
         throw error;
     }
 }
+
+// delete Courses
+export async function getCoursesDelete(coursesId) {
+    try {
+        const response = await axios.delete(
+            `${process.env.REACT_APP_URL}/courses/${coursesId}`,
+            {
+                headers: {
+                    Authorization: localStorage.getItem("admin_accessToken"),
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
 

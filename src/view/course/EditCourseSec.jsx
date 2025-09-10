@@ -3,17 +3,27 @@ import UploadIcon from "../../assets/svg/UploadIcon.svg";
 import { getCoursesUpdate } from '../../services/courseServices';
 import toast from 'react-hot-toast';
 
-function EditCourseSec({ selectedCourse, onCancel }) {
+function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
     const [formData, setFormData] = useState({
         title: selectedCourse?.title || '',
-        newPricing: selectedCourse?.discountedPrice || '',
-        oldPricing: selectedCourse?.price || '',
-        content: selectedCourse?.points?.join('\n') || '',
+        newPricing: selectedCourse?.priceNew || '',
+        oldPricing: selectedCourse?.priceOld || '',
+        content: selectedCourse?.shortContent || '',
+        detailContent: selectedCourse?.descriptionHtml || '',
+        certificate: selectedCourse?.certificate || 1,
+        shippingDetails: selectedCourse?.shippingDetails || 'Free Shipping (T&c applied)',
+        mode: selectedCourse?.mode || '',
+        language: selectedCourse?.language || '',
+        duration: selectedCourse?.audioDurationSec || '',
     });
     const [errors, setErrors] = useState({});
     const [isDragging, setIsDragging] = useState(false);
-    const [image, setImage] = useState(null);
-    const fileInputRef = useRef(null);
+    const [images, setImages] = useState({
+        cover: selectedCourse?.listImageUrl || '',
+        detail: selectedCourse?.detailImageUrl || '',
+    });
+    const coverInputRef = useRef(null);
+    const detailInputRef = useRef(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -32,52 +42,92 @@ function EditCourseSec({ selectedCourse, onCancel }) {
         }
     };
 
-
-    const handleFileChange = (e) => {
-        const file = e.target.files?.[0];
+    const handleImageChange = (file, type) => {
         if (file && file.type.startsWith("image/")) {
-            setImage(file);
+            setImages((prev) => ({
+                ...prev,
+                [type]: file,
+            }));
         }
     };
 
-    const handleDrop = async (e) => {
+    const handleFileChange = (e, type) => {
+        const file = e.target.files?.[0];
+        if (file && file.type.startsWith("image/")) {
+            setImages((prev) => ({
+                ...prev,
+                [type]: file,
+            }));
+
+            setErrors((prevErrors) => {
+                const newErrors = { ...prevErrors };
+                delete newErrors[type];
+                return newErrors;
+            });
+        } else {
+            setErrors((prev) => ({
+                ...prev,
+                [type]: "Please upload a valid image.",
+            }));
+        }
+    };
+
+    const handleDrop = async (e, type) => {
         e.preventDefault();
         e.stopPropagation();
         setIsDragging(false);
         const file = e.dataTransfer?.files?.[0];
-        await validateImageAndSet(file);
+
+        if (file && file.type.startsWith("image/")) {
+            handleImageChange(file, type);
+            setErrors((prevErrors) => {
+                const newErrors = { ...prevErrors };
+                delete newErrors[type];
+                return newErrors;
+            });
+        } else {
+            setErrors((prev) => ({
+                ...prev,
+                [type]: "Please upload a valid image.",
+            }));
+        }
     };
 
-    const readFileAsDataURL = (file) =>
-        new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
+
+    const hasChanges = () => {
+        const originalData = {
+            title: selectedCourse?.title || '',
+            newPricing: selectedCourse?.priceNew || '',
+            oldPricing: selectedCourse?.priceOld || '',
+            content: selectedCourse?.shortContent || '',
+            detailContent: selectedCourse?.descriptionHtml || '',
+            certificate: selectedCourse?.certificate || 1,
+            shippingDetails: selectedCourse?.shippingDetails || 'Free Shipping (T&c applied)',
+            mode: selectedCourse?.mode || '',
+            language: selectedCourse?.language || '',
+            duration: selectedCourse?.audioDurationSec || '',
+        };
+
+        const dataChanged = Object.keys(formData).some((key) => {
+            return formData[key]?.toString().trim() !== originalData[key]?.toString().trim();
         });
 
-    const validateImageAndSet = async (file) => {
-        if (!file) return;
-        if (!file.type?.startsWith("image/")) {
-            setErrors((p) => ({ ...p, image: "Please upload a valid image." }));
-            return;
-        }
-        try {
-            const dataUrl = await readFileAsDataURL(file);
-            setImage(file);
-            setErrors((p) => ({ ...p, image: "" }));
-        } catch {
-            setErrors((p) => ({ ...p, image: "Failed to load image preview." }));
-        }
+        const imagesChanged =
+            images.cover instanceof File ||
+            images.detail instanceof File;
+
+        return dataChanged || imagesChanged;
     };
 
+
     const handleSubmit = async () => {
-        const requiredFields = ["title", "newPricing", "oldPricing", "content", "mode", "language", "duration", "certificate", "shippingDetails"];
+        const requiredFields = ["title", "newPricing", "oldPricing", "content", "detailContent", "mode", "language", "duration", "certificate", "shippingDetails", "cover", "detail"];
         const newErrors = {};
 
         requiredFields.forEach((field) => {
-            if (!formData[field] || formData[field].trim() === "") {
-                newErrors[field] = `${field} is required`;
+            const value = field in formData ? formData[field] : images[field];
+            if (!value || (typeof value === "string" && value.trim() === "")) {
+                newErrors[field] = `${field === 'cover' ? "Cover Image" : field === 'detail' ? "Detail Image" : field} is required`;
             }
         });
 
@@ -86,30 +136,27 @@ function EditCourseSec({ selectedCourse, onCancel }) {
             return;
         }
 
+        if (!hasChanges()) {
+            toast.error("No changes detected.");
+            return;
+        }
+
         try {
             const updatedForm = new FormData();
-            updatedForm.append("title", formData.title);
-            updatedForm.append("discountedPrice", formData.newPricing);
-            updatedForm.append("price", formData.oldPricing);
-            updatedForm.append("mode", formData.mode);
-            updatedForm.append("language", formData.language);
-            updatedForm.append("duration", formData.duration);
-            updatedForm.append("certificate", formData.certificate || "");
-            updatedForm.append("shippingDetails", formData.shippingDetails || "");
-
-            const points = formData.content.split('\n').filter(Boolean);
-            points.forEach((point, index) => {
-                updatedForm.append(`points[${index}]`, point);
-            });
-
-            if (image) {
-                updatedForm.append("image", image);
-            }
-
-            const response = await getCoursesUpdate(updatedForm, selectedCourse.id);
+            Object.entries(formData).forEach(([key, val]) => updatedForm.append(key, val));
+            if (images.cover instanceof File) updatedForm.append("listImage", images.cover);
+            if (images.detail instanceof File) updatedForm.append("detailImage", images.detail);
+            updatedForm.append("isRequired", true);
+            const response = await getCoursesUpdate(updatedForm, selectedCourse._id);
 
             toast.success("Course updated successfully.", + response.message);
-            // onCancel();
+            if (fetchCourse) {
+                await fetchCourse();
+            }
+
+            if (onCancel) {
+                onCancel();
+            }
 
         } catch (error) {
             console.error("Update failed", error);
@@ -172,7 +219,7 @@ function EditCourseSec({ selectedCourse, onCancel }) {
                         <div
                             key={selectedCourse.id}
                             className="relative bg-cover bg-center bg-no-repeat rounded-3xl overflow-hidden"
-                            style={{ backgroundImage: `url(${selectedCourse.image})` }}
+                            style={{ backgroundImage: `url(${selectedCourse.listImageUrl})` }}
                         >
                             <div
                                 className={`flex flex-col md:flex-row items-stretch justify-between min-h-[349px] p-3`}
@@ -187,20 +234,16 @@ function EditCourseSec({ selectedCourse, onCancel }) {
                                             <h3 className="text-2xl sm:text-3xl font-Raleway font-medium text-[#292929] pb-3">
                                                 {selectedCourse.title}
                                             </h3>
-                                            <ul className="list-disc pl-5 text-sm sm:text-base text-[#656565] space-y-1">
-                                                {selectedCourse.points.map((point, i) => (
-                                                    <li key={i}>{point}</li>
-                                                ))}
-                                            </ul>
+                                            <p className="text-sm text-[#525252]">{selectedCourse?.shortContent}</p>
                                         </div>
 
                                         <div className="flex flex-col items-start mt-4">
                                             <div className="flex items-center gap-2 mb-3">
                                                 <span className="text-lg sm:text-xl md:text-2xl font-Raleway text-[#292929]">
-                                                    {selectedCourse.discountedPrice}
+                                                    ${selectedCourse.priceNew}
                                                 </span>
                                                 <span className="text-sm sm:text-base text-red-400 line-through">
-                                                    {selectedCourse.price}
+                                                    ${selectedCourse.priceOld}
                                                 </span>
                                             </div>
                                             <div className="relative inline-block rounded-full px-[4px] py-[2.5px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900]">
@@ -252,6 +295,9 @@ function EditCourseSec({ selectedCourse, onCancel }) {
                                     placeholder="Enter Your Content Here"
                                     className="w-full h-[133px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                 />
+                                {errors?.content && (
+                                    <p className="text-red-500 text-sm">{errors?.content}</p>
+                                )}
                             </div>
 
                             {/* Image Upload */}
@@ -270,14 +316,14 @@ function EditCourseSec({ selectedCourse, onCancel }) {
                                         e.stopPropagation();
                                         setIsDragging(false);
                                     }}
-                                    onDrop={handleDrop}
-                                    onClick={() => fileInputRef.current?.click()}
+                                    onDrop={(e) => handleDrop(e, "cover")}
+                                    onClick={() => coverInputRef.current?.click()}
                                 >
-                                    {image || selectedCourse?.image ? (
+                                    {images.cover ? (
                                         <div className="flex flex-col justify-center items-center gap-1">
 
                                             <span className="text-[#464646] text-sm font-medium w-full text-center break-words">
-                                                {image?.name || selectedCourse?.image?.split("/").pop()}
+                                                {images.cover?.name || selectedCourse?.listImageUrl?.split("/").pop()}
                                             </span>
                                             <span className="text-xs text-center text-[#9a9a9a]">Click Here to Change Image</span>
                                         </div>
@@ -289,14 +335,76 @@ function EditCourseSec({ selectedCourse, onCancel }) {
                                     )}
 
                                     <input
-                                        ref={fileInputRef}
+                                        ref={coverInputRef}
                                         type="file"
                                         accept="image/*"
                                         className="hidden"
-                                        onChange={handleFileChange}
+                                        onChange={(e) => handleFileChange(e, "cover")}
                                     />
-
                                 </div>
+                                {errors.cover && <p className="text-red-500 text-sm mt-1">{errors.cover}</p>}
+                            </div>
+                        </div>
+
+                        {/*course detail Content + Image */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4.5">
+                            <div>
+                                <label className="block text-lg mb-1">Detail Content</label>
+                                <textarea
+                                    name="detailContent"
+                                    value={formData.detailContent}
+                                    onChange={handleChange}
+                                    placeholder="Enter Your Content Here"
+                                    className="w-full h-[133px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                />
+                                {errors?.detailContent && (
+                                    <p className="text-red-500 text-sm">{errors?.detailContent}</p>
+                                )}
+                            </div>
+
+                            {/* Image Upload */}
+                            <div>
+                                <label className="block text-lg mb-1">Detail Upload Image</label>
+                                <div
+                                    className={`flex flex-col items-center justify-center h-[133px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
+                                        }`}
+                                    onDragOver={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setIsDragging(true);
+                                    }}
+                                    onDragLeave={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setIsDragging(false);
+                                    }}
+                                    onDrop={(e) => handleDrop(e, "detail")}
+                                    onClick={() => detailInputRef.current?.click()}
+                                >
+                                    {images.detail ? (
+                                        <div className="flex flex-col justify-center items-center gap-1">
+
+                                            <span className="text-[#464646] text-sm font-medium w-full text-center break-words">
+                                                {images.detail.name || selectedCourse?.detailImageUrl?.split("/").pop()}
+                                            </span>
+                                            <span className="text-xs text-center text-[#9a9a9a]">Click Here to Change Image</span>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col items-center gap-2 px-12">
+                                            <img src={UploadIcon} alt="Upload Icon" />
+                                            <span className="text-[#989898]">Upload Image Here</span>
+                                        </div>
+                                    )}
+
+                                    <input
+                                        ref={detailInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => handleFileChange(e, "detail")}
+                                    />
+                                </div>
+                                {errors.detail && <p className="text-red-500 text-sm mt-1">{errors.detail}</p>}
                             </div>
                         </div>
 
@@ -326,7 +434,7 @@ function EditCourseSec({ selectedCourse, onCancel }) {
                                                     </option>
                                                 ))}
                                             {field.name === "language" &&
-                                                ["English", "Hindi", "Spanish", "French"].map((option) => (
+                                                ["English", "Hindi", "Hindi + English"].map((option) => (
                                                     <option key={option} value={option}>
                                                         {option}
                                                     </option>

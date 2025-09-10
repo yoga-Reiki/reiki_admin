@@ -55,7 +55,6 @@ function Login() {
       };
 
       const res = await userLogin({ body });
-      console.log('res ******', res);
 
       localStorage.setItem("admin_accessToken", res?.data?.tokens?.accessToken);
       localStorage.setItem("admin_refreshToken", res?.data?.tokens?.refreshToken);
