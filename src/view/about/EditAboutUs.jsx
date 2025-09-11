@@ -116,11 +116,11 @@ function EditAboutUs({ onCancel }) {
             {/* Form Box */}
             <div className="p-3">
                 <div className="bg-white border-t border-t-[#EA7913] rounded-3xl w-full p-2.5 space-y-5.5">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
                         <h2 className="text-2xl text-[#656565]">About Us Hero Section</h2>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 md:w-full lg:w-auto">
                             <button
-                                className="bg-[#FCEAC9] text-[#656565] px-6 py-2.5 rounded-full hover:bg-[#FCEAC2] cursor-pointer"
+                                className="w-full lg:w-auto bg-[#FCEAC9] text-[#656565] px-6 py-2.5 rounded-full hover:bg-[#FCEAC2] cursor-pointer"
                                 onClick={onCancel}
                             >
                                 Cancel

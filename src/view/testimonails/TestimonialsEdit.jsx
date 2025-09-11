@@ -94,11 +94,11 @@ console.log("formData", formData);
 
       {/* Form Container */}
       <div className="bg-white border-t-2 border-t-[#EA7913] rounded-3xl p-5 space-y-5.5">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <h2 className="text-2xl text-[#656565] font-Raleway">Edit Testimonial</h2>
-          <div className="flex gap-3">
+          <div className="flex gap-3 w-full lg:w-auto">
             <button
-              className="bg-[#FCEAC9] text-[#656565] px-6 py-2.5 rounded-full hover:bg-[#FCEAC2] cursor-pointer"
+              className="w-full lg:w-auto bg-[#FCEAC9] text-[#656565] px-6 py-2.5 rounded-full hover:bg-[#FCEAC2] cursor-pointer"
               onClick={handleCancel}
             >
               Cancel
@@ -115,7 +115,7 @@ console.log("formData", formData);
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-y-2.5 gap-x-5">
+        <div className="grid lg:grid-cols-2 gap-y-2.5 gap-x-5">
           {/* Name */}
           <div>
             <label className="block text-lg mb-1.5">Name</label>

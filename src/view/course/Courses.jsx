@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import AddIcon from "../../assets/svg/AddIcon.svg";
 import CourseCard from './CourseCard';
 import CourseSection from './CourseSection';
@@ -7,6 +7,7 @@ import EditCourseSec from './EditCourseSec';
 import { getCoursesData, getCoursesDelete } from '../../services/courseServices';
 import toast from 'react-hot-toast';
 import DeleteModel from '../component/DeleteModel';
+import { useLocation } from 'react-router-dom';
 
 function Courses() {
     const [addCourse, setAddCourse] = useState(null);
@@ -15,6 +16,8 @@ function Courses() {
     const [coursesData, setCoursesData] = useState([])
     const [coursesDelete, setCoursesDelete] = useState(null);
     const hasFetched = useRef(false);
+    const location = useLocation()
+    const userId = useMemo(() => location.search.split("?selectedUserId=")?.[1], [location])
 
     useEffect(() => {
         if (!hasFetched.current) {
@@ -25,7 +28,7 @@ function Courses() {
 
     const fetchCourse = async () => {
         try {
-            const response = await getCoursesData();
+            const response = await getCoursesData({ userId });
 
             toast.success("Courses fetched successfully!")
             setCoursesData(response?.data?.items || []);
@@ -67,7 +70,7 @@ function Courses() {
 
                     <CourseCard setIsEditingCard={setIsEditingCard} setSelectedCourse={setSelectedCourse} coursesData={coursesData} setCoursesDelete={setCoursesDelete} />
 
-                    <CourseSection />
+                    <CourseSection coursesData={coursesData} />
 
                     {addCourse && (
                         <AddCourse

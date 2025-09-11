@@ -8,8 +8,10 @@ import EditAccess from "./EditAccess";
 import { getAllUser } from "../../services/userServices";
 import ViewActivity from "./ViewActivity";
 import BlockUserModal from "./BlockUserModel";
+import { useNavigate } from "react-router-dom";
 
 function Users() {
+  const navigate = useNavigate()
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -17,6 +19,11 @@ function Users() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [viewUser, setViewUser] = useState(null);
   const [blockUser, setBlockUser] = useState(null);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: 10,
+    totalUsers: 0,
+  });
 
   useEffect(() => {
     if (!hasFetched.current) {
@@ -28,10 +35,12 @@ function Users() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await getAllUser({ page: 1, pageSize: 10 });
-
-      console.log("response", response);
+      const response = await getAllUser({ page: pagination.page, pageSize: pagination.pageSize });
       setUsers(response?.data?.users || []);
+      setPagination((prev) => ({
+        ...prev,
+        totalUsers: response?.data?.totalUsers || 0,
+      }));
     } catch (err) {
       setError("Failed to fetch users");
     } finally {
@@ -80,16 +89,18 @@ function Users() {
           {/* Table */}
           <div className="overflow-x-auto px-3">
             <table className="w-full table-auto">
-              <thead className="grid grid-cols-6 bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
-                <th className='px-4 py-3'>Name</th>
-                <th className='px-4 py-3'>Email</th>
-                <th className='px-4 py-3'>Mobile Number</th>
-                <th className='px-4 py-3'>Aadhar Card</th>
-                <th className='px-4 py-3'>Address</th>
-                <th className='px-4 py-3'>Actions</th>
+              <thead>
+                <tr className="grid grid-cols-6 md:w-[300%] lg:w-[200%] xl:w-[120%] 2xl:w-full bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
+                  <th className='px-4 py-3'>Name</th>
+                  <th className='px-4 py-3'>Email</th>
+                  <th className='px-4 py-3'>Mobile Number</th>
+                  <th className='px-4 py-3'>Aadhar Card</th>
+                  <th className='px-4 py-3'>Address</th>
+                  <th className='px-4 py-3'>Actions</th>
+                </tr>
               </thead >
 
-              <tbody className="flex flex-col justify-center bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
+              <tbody className="flex flex-col justify-center md:w-[300%] lg:w-[200%] xl:w-[120%] 2xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
                 {loading ? (
                   <tr>
                     <td colSpan="6" className="flex justify-center py-6">
@@ -121,7 +132,10 @@ function Users() {
                             : "-"}
                         </td>
                         <td className="flex gap-1 items-center flex-wrap mt-2 md:mt-0">
-                          <button onClick={() => setSelectedUser(user)} className="flex items-center gap-1 p-3 bg-[#FEF8EC] text-[#EA7913] border border-[#F9D38E] rounded-full text-sm hover:bg-[#FCEAC9] cursor-pointer">
+                          <button onClick={() => {
+                            setSelectedUser(user)
+                            navigate(`?selectedUserId=${user._id}`);
+                          }} className="flex items-center gap-1 p-3 bg-[#FEF8EC] text-[#EA7913] border border-[#F9D38E] rounded-full text-sm hover:bg-[#FCEAC9] cursor-pointer">
                             <img src={EditIcon} alt='Download Icon' className='w-5 h-5' /><span>Edit Access</span>
                           </button>
                           <button onClick={() => setViewUser(user)} className="p-3 rounded-full bg-[#E8F1FF] border border-[#B3CCFF] hover:bg-[#cdddff] cursor-pointer">
@@ -144,9 +158,28 @@ function Users() {
               </tbody>
             </table>
           </div>
+          <div className="flex justify-end items-center gap-4 py-6 px-3">
+            <button
+              onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+              disabled={pagination.page === 1}
+              className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span className="text-[#656565] font-medium">
+              Page {pagination.page} of {Math.ceil(pagination.totalUsers / pagination.pageSize)}
+            </span>
+            <button
+              onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+              disabled={pagination.page >= Math.ceil(pagination.totalUsers / pagination.pageSize)}
+              className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
-      
+
       {blockUser && (
         <BlockUserModal
           blockUser={blockUser}
@@ -155,6 +188,7 @@ function Users() {
             console.log("Blocked:", blockUser.name);
             setBlockUser(null);
           }}
+          fetchUsers={fetchUsers}
         />
       )}
     </div>

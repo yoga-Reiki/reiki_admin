@@ -1,12 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import leftBackIcon from "../../assets/svg/leftIcon.svg"
 import UserIcon from "../../assets/svg/userIcon.svg"
 import { getCoursesData } from '../../services/courseServices';
 import toast from 'react-hot-toast';
 import { getCourseEditAccess } from '../../services/userServices';
+import { useLocation } from 'react-router-dom';
 
 function EditAccess({ selectedUser, setSelectedUser }) {
-
+    const location = useLocation()
+    const userId = useMemo(() => location.search.split("?selectedUserId=")?.[1], [location])
     const [userCourses, setUserCourses] = useState({});
     const [coursesData, setCoursesData] = useState([])
     const hasFetched = useRef(false);
@@ -20,12 +22,11 @@ function EditAccess({ selectedUser, setSelectedUser }) {
 
     const fetchCourse = async () => {
         try {
-            const response = await getCoursesData();
+            const response = await getCoursesData({ userId });
             const items = response?.data?.items || [];
 
             setCoursesData(items);
 
-            // Find the first course that is accessible
             const accessibleCourse = items.find(course => course.isAccessible);
 
             if (accessibleCourse) {
@@ -37,33 +38,27 @@ function EditAccess({ selectedUser, setSelectedUser }) {
         }
     };
 
-    const toggleCourse = (courseId) => {
-        setUserCourses((prev) => {
-            if (prev[courseId]) {
-                return {};
-            }
-            return { [courseId]: true };
-        });
-    };
+    const toggleCourse = async (courseId) => {
+        const isCurrentlyActive = !!userCourses[courseId];
+        const updatedStatus = isCurrentlyActive ? "revoked" : "approved";
 
-    console.log("coursesData", coursesData);
+        const body = {
+            userId: selectedUser._id,
+            courseId: courseId,
+            status: updatedStatus,
+        };
 
-    const handleCourseEditAccess = async () => {
         try {
-            const courseIds = Object.keys(userCourses).filter(courseId => userCourses[courseId]);
+            await getCourseEditAccess({ body });
+            toast.success(`User access ${updatedStatus === "approved" ? "approved" : "revoked"} successfully`);
 
-            const body = {
-                userId: selectedUser._id,
-                courseIds: courseIds, 
-                status: ""
-            };
-
-            const res = await getCourseEditAccess({ body });
-            toast.success("User access updated successfully");
-            setSelectedUser(null);
+            setUserCourses((prev) => ({
+                ...prev,
+                [courseId]: !isCurrentlyActive,
+            }));
         } catch (error) {
             console.error(error);
-            toast.error("Failed to update user access");
+            toast.error("Failed to update course access");
         }
     };
 
@@ -127,17 +122,16 @@ function EditAccess({ selectedUser, setSelectedUser }) {
                 </div>
 
                 {/* Buttons */}
-                <div className="mt-14 flex gap-4">
+                {/* <div className="mt-14 flex gap-4">
                     <div className="w-full mt-10 md:mt-14 relative inline-block rounded-full px-[5px] py-[3px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
                         <button
                             type="submit"
-                            onClick={handleCourseEditAccess}
                             className="w-full h-full inline-flex justify-center items-center space-x-1.5 py-2 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
                         >
                             Save the User Access Changes
                         </button>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     );

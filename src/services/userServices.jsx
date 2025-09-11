@@ -6,7 +6,7 @@ export async function getAllUser({ page: page, pageSize: pageSize }) {
             `${process.env.REACT_APP_URL}/users?page=${page}&limit=${pageSize}`,
             {
                 headers: {
-                    Authorization: localStorage.getItem("admin_accessToken"),
+                    Authorization: `Bearer ${localStorage.getItem("admin_accessToken")}`,
                 },
             }
         );
@@ -24,7 +24,7 @@ export async function getUserAccess({ userId }) {
             {},
             {
                 headers: {
-                    Authorization: localStorage.getItem("admin_accessToken"),
+                    Authorization: `Bearer ${localStorage.getItem("admin_accessToken")}`,
                 },
             }
         );
@@ -42,7 +42,24 @@ export async function getCourseEditAccess({ body }) {
             body,
             {
                 headers: {
-                    Authorization: localStorage.getItem("admin_accessToken"),
+                    Authorization: `Bearer ${localStorage.getItem("admin_accessToken")}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+// get course Activity 
+export async function getCourseActivity({userId, courseId}) {
+    try {
+        const response = await axios.get(
+            `${process.env.REACT_APP_URL}/courses/admin/${userId}/${courseId}/activity`,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("admin_accessToken")}`,
                 },
             }
         );

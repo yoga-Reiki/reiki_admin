@@ -11,7 +11,7 @@ const CourseCard = ({ setIsEditingCard, setSelectedCourse, coursesData, setCours
 
     useEffect(() => {
         function handleResize() {
-            if (window.innerWidth < 640) {
+            if (window.innerWidth < 1024) {
                 setCardsToShow(1)
             } else {
                 setCardsToShow(2)
@@ -68,8 +68,12 @@ const CourseCard = ({ setIsEditingCard, setSelectedCourse, coursesData, setCours
                 <div className="overflow-hidden relative">
                     <div
                         className="flex gap-6 transition-transform duration-500 ease-in-out"
+                        // style={{
+                        //     transform: `translateX(-${(100 / cardsToShow) * currentSlide}%)`,
+                        //     width: `${(100 / cardsToShow) * coursesData.length}%`,
+                        // }}
                         style={{
-                            transform: `translateX(-${(100 / cardsToShow) * currentSlide}%)`,
+                            transform: `translateX(-${(100 / coursesData.length) * currentSlide}%)`,
                             width: `${(100 / cardsToShow) * coursesData.length}%`,
                         }}
                     >
@@ -77,9 +81,13 @@ const CourseCard = ({ setIsEditingCard, setSelectedCourse, coursesData, setCours
                             <div
                                 key={index}
                                 className="relative rounded-3xl overflow-hidden"
+                                // style={{
+                                //     flex: `0 0 ${100 / coursesData}%`,
+                                //     maxWidth: `${100 / cardsToShow}%`,
+                                // }}
                                 style={{
                                     flex: `0 0 ${100 / coursesData.length}%`,
-                                    maxWidth: `${100 / coursesData.length}%`,
+                                    maxWidth: `${96 / coursesData.length}%`,
                                 }}
                             >
                                 {/* Image */}
@@ -106,7 +114,7 @@ const CourseCard = ({ setIsEditingCard, setSelectedCourse, coursesData, setCours
                                 <div className="absolute flex flex-col justify-between top-3 right-3 bottom-3 w-[80%] sm:w-[75%] md:w-[56%] bg-white rounded-3xl px-6 py-4.5">
                                     <div>
                                         <h3 className="text-xl text-[#292929] mb-2">{data.title}</h3>
-                                        <p className="text-sm text-[#525252]">{data?.shortContent}</p>
+                                        <p className="text-sm text-[#525252] lg:line-clamp-4 line-clamp-none">{data?.shortContent}</p>
                                     </div>
                                     <div className="flex items-end gap-2">
                                         <span className="text-lg md:text-[32px] md:leading-[40px] font-Raleway text-[#292929]">

@@ -53,7 +53,7 @@ function Gallery() {
                 toast.error("Failed to update image.");
                 console.error(error);
             } finally {
-                setUpdatedFile(null); // Reset state
+                setUpdatedFile(null);
             }
         };
 
@@ -71,9 +71,8 @@ function Gallery() {
             const updatedImages = [...images];
             updatedImages[selectedImageIndex].imageUrl = imageUrl;
             setImages(updatedImages);
-            setUpdatedFile(file); // Save for API update
+            setUpdatedFile(file);
         } else {
-            // Add new image
             const tempImage = { _id: null, imageUrl };
             setImages(prev => [...prev, tempImage]);
             setUploadedFiles(prev => [...prev, file]);
@@ -93,11 +92,9 @@ function Gallery() {
             const res = await getAddGalleryImg(formData);
             toast.success(res?.message || "Images uploaded successfully!");
 
-            // Refresh gallery
             const refreshed = await getAllGalleryImg();
             setImages(refreshed?.data?.items || []);
 
-            // Reset upload state
             setUploadedFiles([]);
         } catch (error) {
             toast.error("Image upload failed.");
@@ -187,7 +184,7 @@ function Gallery() {
                     </div>
                 </div>
 
-                <div className='w-full lg:w-1/4 flex flex-col gap-6'>
+                <div className='w-full lg:w-1/3 xl:w-1/4 flex flex-col gap-6'>
                     <div>
                         <h2 className='text-lg mb-2'>Upload Image</h2>
                         <div className={`bg-white border ${selectedImageIndex !== null ? "border-[#EA7913]" : "border-[#DCDCDC]"} rounded-xl h-48 flex items-center justify-center overflow-hidden`}>

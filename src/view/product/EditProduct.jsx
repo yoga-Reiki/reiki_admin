@@ -195,7 +195,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
 
                     <div className="grid grid-col-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         {/* left side card */}
-                        <div className="col-span-1 sticky top-24 self-start">
+                        <div className="col-span-1 lg:sticky lg:top-24 lg:self-start">
                             <div
                                 key={selectedProduct.id}
                             >

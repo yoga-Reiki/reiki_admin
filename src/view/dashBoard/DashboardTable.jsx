@@ -29,15 +29,17 @@ function DashboardTable({ dashboardData, loading, error, pagination, setPaginati
             {/* Table */}
             <div className="overflow-x-auto px-3">
                 <table className="w-full table-auto">
-                    <thead className="grid grid-cols-5 bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
-                        <th className='px-4 py-3'>Name</th>
-                        <th className='px-4 py-3'>Email</th>
-                        <th className='px-4 py-3'>Mobile Number</th>
-                        <th className='px-4 py-3'>Address</th>
-                        <th className='px-4 py-3'>Action</th>
+                    <thead>
+                        <tr className="grid grid-cols-5 md:w-[160%] lg:w-[130%] xl:w-full bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
+                            <th className='px-4 py-3'>Name</th>
+                            <th className='px-4 py-3'>Email</th>
+                            <th className='px-4 py-3'>Mobile Number</th>
+                            <th className='px-4 py-3'>Address</th>
+                            <th className='px-4 py-3 text-end'>Action</th>
+                        </tr>
                     </thead >
 
-                    <tbody className="flex flex-col justify-center bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
+                    <tbody className="flex flex-col justify-center md:w-[160%] lg:w-[130%] xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
                         {loading ? (
                             <tr>
                                 <td colSpan="6" className="flex justify-center py-6">
@@ -60,14 +62,16 @@ function DashboardTable({ dashboardData, loading, error, pagination, setPaginati
                                         className={`grid grid-cols-5 items-center bg-white mt-[1px] text-sm ${isFirst ? 'rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
                                     >
                                         <td className="whitespace-pre-wrap px-4 py-7.5">{Data.name}</td>
-                                        <td className="whitespace-pre-wrap px-4 py-7.5">{Data.email}</td>
+                                        <td className="px-4 py-7.5">
+                                            <p className="md:w-24 lg:w-30 xl:w-full break-all">{Data.email}</p>
+                                        </td>
                                         <td className="whitespace-pre-wrap px-4 py-7.5">{Data.mobileNumber}</td>
                                         <td className="whitespace-pre-wrap px-4 py-7">
                                             {Data?.address
                                                 ? `${Data.address.street}, ${Data.address.city}, ${Data.address.state}, ${Data.address.pincode}, ${Data.address.country}`
                                                 : "-"}
                                         </td>
-                                        <td className="flex gap-3.5 items-center flex-wrap mt-2 md:mt-0 px-4 py-7.5">
+                                        <td className="flex justify-end gap-3.5 items-center flex-wrap mt-2 md:mt-0 px-4 py-7.5">
                                             <button className="p-3 flex items-center gap-2 rounded-full bg-[#F0FDF4] text-[#22C55E] border border-[#BBF7D0] cursor-pointer">
                                                 <img src={successTickIcon} alt='Not Found' className='w-4 h-4' />
                                                 <span>Contacted</span>

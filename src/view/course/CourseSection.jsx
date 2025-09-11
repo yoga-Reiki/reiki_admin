@@ -5,46 +5,46 @@ import CC3 from "../../assets/img/CC3.png";
 import Right from "../../assets/svg/right.svg";
 import Left from "../../assets/svg/left.svg";
 
-const courses = [
-  {
-    title: "Reike Full Course",
-    description:
-      "Start your spiritual journey with Reiki Level I. Learn how to heal your body, mind, emotion with the power of universal energy.",
-    image: CC1,
-  },
-  {
-    title: "Reike Full Course",
-    description:
-      "Start your spiritual journey with Reiki Level I. Learn how to heal your body, mind, emotion with the power of universal energy.",
-    image: CC2,
-  },
-  {
-    title: "Reike Full Course",
-    description:
-      "Start your spiritual journey with Reiki Level I. Learn how to heal your body, mind, emotion with the power of universal energy.",
-    image: CC3,
-  },
-  {
-    title: "Reike Full Course",
-    description:
-      "Start your spiritual journey with Reiki Level I. Learn how to heal your body, mind, emotion with the power of universal energy.",
-    image: CC1,
-  },
-  {
-    title: "Reike Full Course",
-    description:
-      "Start your spiritual journey with Reiki Level I. Learn how to heal your body, mind, emotion with the power of universal energy.",
-    image: CC2,
-  },
-  {
-    title: "Reike Full Course",
-    description:
-      "Start your spiritual journey with Reiki Level I. Learn how to heal your body, mind, emotion with the power of universal energy.",
-    image: CC3,
-  },
-];
+// const courses = [
+//   {
+//     title: "Reike Full Course",
+//     description:
+//       "Start your spiritual journey with Reiki Level I. Learn how to heal your body, mind, emotion with the power of universal energy.",
+//     image: CC1,
+//   },
+//   {
+//     title: "Reike Full Course",
+//     description:
+//       "Start your spiritual journey with Reiki Level I. Learn how to heal your body, mind, emotion with the power of universal energy.",
+//     image: CC2,
+//   },
+//   {
+//     title: "Reike Full Course",
+//     description:
+//       "Start your spiritual journey with Reiki Level I. Learn how to heal your body, mind, emotion with the power of universal energy.",
+//     image: CC3,
+//   },
+//   {
+//     title: "Reike Full Course",
+//     description:
+//       "Start your spiritual journey with Reiki Level I. Learn how to heal your body, mind, emotion with the power of universal energy.",
+//     image: CC1,
+//   },
+//   {
+//     title: "Reike Full Course",
+//     description:
+//       "Start your spiritual journey with Reiki Level I. Learn how to heal your body, mind, emotion with the power of universal energy.",
+//     image: CC2,
+//   },
+//   {
+//     title: "Reike Full Course",
+//     description:
+//       "Start your spiritual journey with Reiki Level I. Learn how to heal your body, mind, emotion with the power of universal energy.",
+//     image: CC3,
+//   },
+// ];
 
-function CourseSection() {
+function CourseSection({ coursesData }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [cardsToShow, setCardsToShow] = useState(4);
 
@@ -67,14 +67,14 @@ function CourseSection() {
 
   // Clamp currentSlide when cardsToShow changes
   useEffect(() => {
-    if (currentSlide > courses.length - cardsToShow) {
-      setCurrentSlide(Math.max(0, courses.length - cardsToShow));
+    if (currentSlide > coursesData.length - cardsToShow) {
+      setCurrentSlide(Math.max(0, coursesData.length - cardsToShow));
     }
   }, [cardsToShow, currentSlide]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) =>
-      Math.min(prev + 1, courses.length - cardsToShow)
+      Math.min(prev + 1, coursesData.length - cardsToShow)
     );
   };
 
@@ -94,22 +94,20 @@ function CourseSection() {
             <button
               onClick={prevSlide}
               disabled={currentSlide === 0}
-              className={`w-12 h-12 bg-[#FCEAC9] hover:bg-[#FEF8EC] rounded-full flex items-center justify-center transition-all duration-300 ${
-                currentSlide === 0
-                  ? "bg-[#FEF8EC] cursor-not-allowed"
-                  : "cursor-pointer"
-              }`}
+              className={`w-12 h-12 bg-[#FCEAC9] hover:bg-[#FEF8EC] rounded-full flex items-center justify-center transition-all duration-300 ${currentSlide === 0
+                ? "bg-[#FEF8EC] cursor-not-allowed"
+                : "cursor-pointer"
+                }`}
             >
               <img src={Left} alt="Previous" className="w-3 h-2.5" />
             </button>
             <button
               onClick={nextSlide}
-              disabled={currentSlide >= courses.length - cardsToShow}
-              className={`w-12 h-12 bg-[#FCEAC9] hover:bg-[#FEF8EC] rounded-full flex items-center justify-center transition-all duration-300 ${
-                currentSlide >= courses.length - cardsToShow
-                  ? "bg-[#FEF8EC] cursor-not-allowed"
-                  : "cursor-pointer"
-              }`}
+              disabled={currentSlide >= coursesData.length - cardsToShow}
+              className={`w-12 h-12 bg-[#FCEAC9] hover:bg-[#FEF8EC] rounded-full flex items-center justify-center transition-all duration-300 ${currentSlide >= coursesData.length - cardsToShow
+                ? "bg-[#FEF8EC] cursor-not-allowed"
+                : "cursor-pointer"
+                }`}
             >
               <img src={Right} alt="Next" className="w-3 h-2.5" />
             </button>
@@ -121,26 +119,29 @@ function CourseSection() {
           <div
             className="flex transition-transform duration-500 ease-in-out"
             style={{
-              width: `${(courses.length * 100) / cardsToShow}%`,
+              width: `${(coursesData.length * 100) / cardsToShow}%`,
               transform: `translateX(-${currentSlide * cardWidthPercent}%)`,
             }}
           >
-            {courses.map((item, index) => (
+            {coursesData.map((item, index) => (
               <div
                 key={index}
                 className="px-1.5 md:px-3"
-                style={{ width: `${cardWidthPercent}%`, minWidth: 0 }}
+                style={{
+                  flex: `0 0 ${100 / coursesData.length}%`,
+                  maxWidth: `${96 / coursesData.length}%`,
+                }}
               >
                 <div className="bg-white rounded-3xl shadow-md">
                   <div className="relative overflow-hidden rounded-3xl">
                     <img
-                      src={item.image}
+                      src={item.listImageUrl}
                       alt={item.title}
                       className="w-full h-[450px] md:h-[360px] object-cover"
                     />
-                    <div className="text-center absolute bottom-1 left-1 right-1 bg-white bg-opacity-90 backdrop-blur-md p-4 rounded-2xl space-y-1">
+                    <div className="text-center absolute bottom-1 left-1 right-1 h-32 bg-white bg-opacity-90 backdrop-blur-md p-4 rounded-2xl space-y-1">
                       <h3 className="text-lg text-[#292929]">{item.title}</h3>
-                      <p className="text-xs text-[#525252]">{item.description}</p>
+                      <p className="text-xs text-[#525252] md:line-clamp-3 line-clamp-none">{item.shortContent}</p>
                     </div>
                   </div>
                 </div>

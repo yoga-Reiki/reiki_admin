@@ -1,37 +1,67 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import leftBackIcon from "../../assets/svg/leftIcon.svg"
 import UserIcon from "../../assets/svg/userIcon.svg"
+import { getCourseActivity } from '../../services/userServices';
+import toast from 'react-hot-toast';
+import { getCoursesData } from '../../services/courseServices';
+import { useLocation } from 'react-router-dom';
 
 function ViewActivity({ viewUser, setViewUser }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [activity, setActivity] = useState([]);
+    const hasFetchedCourses = useRef(false);
+    const [selectedCourseId, setSelectedCourseId] = useState('');
+    const [coursesData, setCoursesData] = useState([])
+    const location = useLocation()
+    const userId = useMemo(() => location.search.split("?selectedUserId=")?.[1], [location])
 
-    const activity = [
-        {
-            Day: "Day 1",
-            Date: "10/02/2025",
-            Start_Time: "6:00:01 AM",
-            End_Time: "7:00:01 AM"
-        },
-        {
-            Day: "Day 2",
-            Date: "11/02/2025",
-            Start_Time: "6:30:26 AM",
-            End_Time: "7:30:26 AM"
-        },
-        {
-            Day: "Day 3",
-            Date: "12/02/2025",
-            Start_Time: "8:12:20 AM",
-            End_Time: "9:12:20 AM"
-        },
-        {
-            Day: "Day 4",
-            Date: "13/02/2025",
-            Start_Time: "3:15:10 PM",
-            End_Time: "4:15:10 PM"
+    useEffect(() => {
+        if (!hasFetchedCourses.current) {
+            fetchCourse();
+            hasFetchedCourses.current = true;
         }
-    ]
+    }, []);
+
+    const fetchCourse = async () => {
+        try {
+            const response = await getCoursesData({ userId });
+            const items = response?.data?.items || [];
+
+            setCoursesData(items);
+
+            if (items.length > 0) {
+                const firstCourseId = items[0]._id;
+                setSelectedCourseId(firstCourseId);
+                fetchActivity(firstCourseId);
+            }
+        } catch (err) {
+            toast.error("Failed to fetch users");
+        }
+    };
+
+    const fetchActivity = async (selectedCourseId) => {
+        if (!selectedCourseId) return;
+
+        try {
+            setLoading(true);
+            const response = await getCourseActivity({
+                userId: viewUser._id,
+                courseId: selectedCourseId,
+            });
+
+            toast.success("Activity fetched successfully!");
+            setActivity(response?.data || []);
+            setLoading(false);
+        } catch (err) {
+            toast.error("No access record");
+            setError("No access record");
+            setLoading(false);
+        }
+    };
+
+    console.log("viewUser", viewUser);
+    console.log("activity", activity);
 
     return (
         <div className="text-[#464646] pt-2">
@@ -69,7 +99,29 @@ function ViewActivity({ viewUser, setViewUser }) {
                     </div>
 
                     <div className='flex flex-col gap-7'>
-                        <p className='text-[#525252] text-lg'>Activities</p>
+                        <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
+                            <p className='text-[#525252] text-lg'>Activities</p>
+
+                            <div className='abcd w-full md:w-[300px]'>
+                                <label className="block mb-1">Select Course</label>
+                                <select
+                                    value={selectedCourseId}
+                                    onChange={(e) => {
+                                        const selectedId = e.target.value;
+                                        setSelectedCourseId(selectedId);
+                                        fetchActivity(selectedId);
+                                    }}
+                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl outline-none text-[#464646]"
+                                >
+                                    {coursesData.map((course) => (
+                                        <option key={course._id} value={course._id}>
+                                            {course.title}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
 
                         <div className="overflow-x-auto w-full">
                             {/* table  */}
@@ -95,7 +147,7 @@ function ViewActivity({ viewUser, setViewUser }) {
                                             </td>
                                         </tr>
                                     ) : activity.length > 0 ? (
-                                        activity.map((user, index) => {
+                                        activity.map((data, index) => {
                                             const isFirst = index === 0;
                                             const isLast = index === activity.length - 1;
                                             return (
@@ -103,10 +155,10 @@ function ViewActivity({ viewUser, setViewUser }) {
                                                     key={index}
                                                     className={`grid grid-cols-4 items-center text-[#656565] bg-white border-b border-[#DCDCDC] mt-[1px] text-sm ${isFirst ? 'rounded-t-xl border-y border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
                                                 >
-                                                    <td className="whitespace-pre-wrap px-4 py-7">{user.Day}</td>
-                                                    <td className="whitespace-pre-wrap px-4 py-7">{user.Date}</td>
-                                                    <td className="whitespace-pre-wrap px-4 py-7">{user.Start_Time}</td>
-                                                    <td className="whitespace-pre-wrap px-4 py-7">{user.End_Time}</td>
+                                                    <td className="whitespace-pre-wrap px-4 py-7">{data.completedDays}</td>
+                                                    <td className="whitespace-pre-wrap px-4 py-7">{data.Date}</td>
+                                                    <td className="whitespace-pre-wrap px-4 py-7">{data.Start_Time}</td>
+                                                    <td className="whitespace-pre-wrap px-4 py-7">{data.End_Time}</td>
                                                 </tr>
                                             )
                                         })

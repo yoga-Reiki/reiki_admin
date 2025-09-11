@@ -6,12 +6,15 @@ import logoutIcon from "../assets/svg/logoutIcon.svg";
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { userLogout } from '../services/LoginServices';
+import { getNotification } from '../services/notificationServices';
 
 function Header() {
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef(null);
   const [activeButton, setActiveButton] = useState(null);
+  const hasFetched = useRef(false);
+  const [notifications, setNotifications] = useState([])
 
   const handleLogout = async () => {
     try {
@@ -28,7 +31,6 @@ function Header() {
     }
   };
 
-  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (notifRef.current && !notifRef.current.contains(event.target)) {
@@ -40,14 +42,22 @@ function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [activeButton]);
 
+  useEffect(() => {
+    if (!hasFetched.current) {
+      fetchNotification();
+      hasFetched.current = true;
+    }
+  }, []);
 
-  // Sample notifications
-  const notifications = [
-    { id: 1, message: "John doe is request for a call", time: "2 min ago" },
-    { id: 2, message: "John doe is request for a call", time: "16 min ago" },
-    { id: 3, message: "John doe is request for a call", time: "35 min ago" },
-    { id: 4, message: "John doe is request for a call", time: "1 hour ago" },
-  ];
+  const fetchNotification = async () => {
+    try {
+      const response = await getNotification({ limit: 5, skip: 0 });
+
+      setNotifications(response?.data?.items || []);
+    } catch (err) {
+      toast.error("Failed to fetch users");
+    }
+  };
 
   const getButtonClasses = (name) =>
     `flex items-center gap-2 border border-[#FCEAC9] px-4 py-2 rounded-full transition cursor-pointer
@@ -87,8 +97,8 @@ function Header() {
                   className={`${index === 0 ? "rounded-t-2xl" : index === notifications.length - 1 && "rounded-b-2xl"} px-4.5 py-3 border-b border-[#989898] last:border-b-0 hover:bg-orange-50 transition cursor-pointer flex justify-between items-center`}
                 >
                   <div>
-                    <p className="">{notif.message}</p>
-                    <p className="text-xs mt-1">{notif.time}</p>
+                    <p className="">{notif.title}</p>
+                    <p className="text-xs mt-1">{notif.message}</p>
                   </div>
                   <span className="text-[#EA7913] text-xl">›</span>
                 </div>

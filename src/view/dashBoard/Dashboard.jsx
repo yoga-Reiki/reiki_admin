@@ -105,7 +105,7 @@ function Dashboard() {
       </div>
 
       {/* Stats Cards Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-3 py-2.5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 px-3 py-2.5">
         {/* Card 1 */}
         <div className="flex justify-between items-center bg-white rounded-3xl border-l border-l-[#EA7913] shadow-[0_4px_6px_rgba(0,0,0,0.08)]">
           <div className='py-[17px] px-8 w-full flex flex-col gap-1.5'>

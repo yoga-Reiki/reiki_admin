@@ -3,7 +3,7 @@ import UserIcon from "../../assets/svg/userIcon.svg"
 import { MdOutlineClose } from "react-icons/md";
 import { getUserAccess } from '../../services/userServices';
 
-function BlockUserModal({ onClose, blockUser, onConfirm }) {
+function BlockUserModal({ onClose, blockUser, onConfirm, fetchUsers }) {
     const [loading, setLoading] = useState(false);
 
     const handleBlockUser = async () => {
@@ -14,6 +14,7 @@ function BlockUserModal({ onClose, blockUser, onConfirm }) {
                 onConfirm(res);
             }
             onClose();
+            fetchUsers()
         } catch (err) {
             console.error("Block user failed:", err);
             alert("Something went wrong while blocking user!");
@@ -78,7 +79,9 @@ function BlockUserModal({ onClose, blockUser, onConfirm }) {
                             disabled={loading}
                             className="w-full h-full inline-flex justify-center items-center space-x-1.5 py-2.5 bg-[#EA7913] text-xl text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
                         >
-                            {loading ? "Blocking..." : "Confirm to Block User"}
+                            {loading
+                                ? blockUser?.isActive ? "Blocking..." : "Unblocking..."
+                                : blockUser?.isActive ? "Confirm to Block User" : "Confirm to Unblock User"}
                         </button>
                     </div>
                 </div>

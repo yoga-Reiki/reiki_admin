@@ -118,13 +118,15 @@ function Blog() {
                     {/* Table */}
                     <div className="overflow-x-auto px-3">
                         <table className="w-full table-auto">
-                            <thead className="grid grid-cols-3 bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
-                                <th className='px-4 py-3'>Title</th>
-                                <th className='px-4 py-3'>Description</th>
-                                <th className='px-4 py-3'>Actions</th>
+                            <thead>
+                                <tr className="grid grid-cols-3 md:w-[110%] lg:w-full bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
+                                    <th className='px-4 py-3'>Title</th>
+                                    <th className='px-4 py-3'>Description</th>
+                                    <th className='px-4 py-3'>Actions</th>
+                                </tr>
                             </thead >
 
-                            <tbody className="flex flex-col justify-center bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
+                            <tbody className="flex flex-col justify-center md:w-[110%] lg:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
                                 {loading ? (
                                     <tr>
                                         <td colSpan="6" className="flex justify-center py-6">

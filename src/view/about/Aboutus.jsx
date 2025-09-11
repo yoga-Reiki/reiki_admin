@@ -45,7 +45,7 @@ function Aboutus() {
                 <EditChooseCard aboutData={aboutData} onCancel={() => setIsEditingChooseCard(false)} />
             ) : (
                 <div className="text-[#464646] space-y-2">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-3">
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 p-3">
                         <div>
                             <h1 className="text-[32px] font-Raleway Raleway-medium">About Us</h1>
                             <p className="text-[#656565] pt-1">Change Content and Image of About Us Page</p>

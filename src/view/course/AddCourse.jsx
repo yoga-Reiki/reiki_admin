@@ -5,7 +5,7 @@ import UploadIcon from "../../assets/svg/UploadIcon.svg";
 import SuccsessModel from "../component/SuccsessModel";
 import { getAddCourses } from "../../services/courseServices";
 
-function AddCourse({ onClose,fetchCourse }) {
+function AddCourse({ onClose, fetchCourse }) {
     const fileInputRef = useRef(null);
     const [formData, setFormData] = useState({
         title: "",
@@ -144,7 +144,7 @@ function AddCourse({ onClose,fetchCourse }) {
                 />
             ) : (
                 <div className="fixed inset-0 flex justify-center items-center bg-black/40 z-50 text-[#464646] p-6">
-                    <div className="bg-white w-full max-w-[971px] p-5 rounded-3xl border-t-2 border-t-[#EA7913] flex flex-col gap-5.5">
+                    <div className="bg-white w-full mx-4 sm:mx-6 md:mx-8 lg:mx-0 p-5 max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-[971px] flex flex-col justify-between gap-5.5 border-t-2 border-t-[#EA7913] rounded-3xl">
                         <div className="flex justify-between items-center p-3">
                             <h2 className="text-[32px] font-Raleway Raleway-medium">Add Course</h2>
                             <button

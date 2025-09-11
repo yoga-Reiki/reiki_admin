@@ -12,11 +12,11 @@ function EditContact_us({ onCancel }) {
 
             <div className="p-2">
                 <div className="bg-white border-t border-t-[#EA7913] rounded-3xl w-full space-y-6 p-5">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
                         <h2 className="text-[#656565] text-2xl">Contact Us Section</h2>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 w-full lg:w-auto">
                             <button
-                                className="bg-[#FCEAC9] text-[#656565] px-6 py-2.5 rounded-full hover:bg-[#FCEAC2] cursor-pointer"
+                                className="w-full lg:w-auto bg-[#FCEAC9] text-[#656565] px-6 py-2.5 rounded-full hover:bg-[#FCEAC2] cursor-pointer"
                                 onClick={onCancel}
                             >
                                 Cancel
@@ -35,7 +35,7 @@ function EditContact_us({ onCancel }) {
 
                     <div className="space-y-2.5">
                         {/* Vision + Mission Content */}
-                        <div className="grid md:grid-cols-2 gap-6">
+                        <div className="grid lg:grid-cols-2 gap-6">
                             <div className="flex flex-col h-full">
                                 <h3 className="text-lg font-medium mb-2">Hero Section Content</h3>
                                 <textarea

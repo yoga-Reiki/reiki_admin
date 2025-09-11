@@ -56,7 +56,7 @@ function ContactUs() {
 
                             <div className="space-y-2.5">
                                 {/* Vision + Mission Content */}
-                                <div className="grid md:grid-cols-2 gap-6">
+                                <div className="grid lg:grid-cols-2 gap-6">
                                     <div className="flex flex-col h-full">
                                         <h3 className="text-lg font-medium mb-2">Hero Section Content</h3>
                                         <div className="flex-1 border border-[#DCDCDC] rounded-xl p-4">

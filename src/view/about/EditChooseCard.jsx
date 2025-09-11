@@ -27,7 +27,7 @@ const ChooseUsSliderCard = ({ index, data, handleChange, fileInputRef, handleDro
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div className="col-span-1">
                             <label className="block text-lg mb-2">Hero Section Content</label>
                             <textarea
@@ -39,7 +39,7 @@ const ChooseUsSliderCard = ({ index, data, handleChange, fileInputRef, handleDro
                                 rows={5}
                             />
                         </div>
-                        <div className='flex gap-6'>
+                        <div className='flex flex-col lg:flex-row gap-6'>
                             {[0, 1].map((imgIndex) => (
                                 <div key={imgIndex} className='w-full'>
                                     <div>
@@ -221,7 +221,7 @@ function EditChooseCard({ onCancel, aboutData }) {
     return (
         <div className="flex flex-col gap-4 pt-2">
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-[#464646] py-4 px-3">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 text-[#464646] py-4 px-3">
                 <h2 className="text-2xl md:text-[32px] font-Raleway Raleway-medium">
                     <span onClick={onCancel} className="cursor-pointer">About Us</span> &gt;{" "}
                     <span className="text-2xl font-Raleway">Why Choose Us Content</span>

@@ -1,9 +1,9 @@
 import axios from "axios";
 
-export async function getCoursesData() {
+export async function getCoursesData({userId}) {
     try {
         const response = await axios.get(
-            `${process.env.REACT_APP_URL}/courses`,
+            `${userId ? `${process.env.REACT_APP_URL}/courses?userId=${userId}` : `${process.env.REACT_APP_URL}/courses`}`,
             {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("admin_accessToken")}`,

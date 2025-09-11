@@ -166,7 +166,7 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
                     </div>
 
                     {/* Blog Content & Image Upload */}
-                    <div className="flex flex-col md:flex-row gap-6">
+                    <div className="flex flex-col lg:flex-row gap-6">
                         <div className="flex-1">
                             <label className="block text-lg mb-1.5">Content For Blog</label>
                             <textarea
@@ -174,7 +174,7 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
                                 value={formData.content}
                                 onChange={handleChange}
                                 rows={6}
-                                className="w-full h-[231px] border border-[#BDBDBD] rounded-xl py-2.5 px-4.5 focus:outline-none focus:border-[#EA7913]"
+                                className="w-full md:h-[150px] lg:h-[231px] border border-[#BDBDBD] rounded-xl py-2.5 px-4.5 focus:outline-none focus:border-[#EA7913]"
                                 placeholder="Enter blog content..."
                             />
                         </div>
@@ -182,7 +182,7 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
                         <div className="flex-1">
                             <label className="block text-lg mb-1.5">Image for Blog Section</label>
                             <div
-                                className="w-full h-[231px] flex flex-col items-center justify-center border border-[#BDBDBD] rounded-md text-center cursor-pointer hover:border-[#EA7913] transition"
+                                className="w-full md:h-[150px] lg:h-[231px] flex flex-col items-center justify-center border border-[#BDBDBD] rounded-md text-center cursor-pointer hover:border-[#EA7913] transition"
                                 onClick={handleFileClick}
                             >
                                 <input
