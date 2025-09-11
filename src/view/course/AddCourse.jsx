@@ -67,7 +67,6 @@ function AddCourse({ onClose, fetchCourse }) {
         }
     };
 
-
     const handleDrop = async (e) => {
         e.preventDefault();
         e.stopPropagation();

@@ -1,32 +1,33 @@
 import React, { useEffect, useRef, useState } from "react";
-import { getAboutPageData } from "../../services/aboutServices";
 import editIconWhite from "../../assets/svg/editIconWhite.svg"
 import galleryIconOrange from "../../assets/svg/galleryIconOrange.svg"
 import EditContact_us from "./EditContact_us";
+import { getContactUsData } from "../../services/contactUsServices";
+import toast from "react-hot-toast";
 
 function ContactUs() {
-    const [aboutData, setAboutData] = useState(null);
+    const [contactUsData, setContactUsData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const hasFetched = useRef(false);
 
     useEffect(() => {
-        async function fetchData() {
-            try {
-                const res = await getAboutPageData();
-                if (res?.data?.about) {
-                    setAboutData(res.data.about);
-                }
-            } catch (err) {
-                console.error("Error fetching about page data:", err);
-            }
-        }
         if (!hasFetched.current) {
-            fetchData();
+            fetchContactData();
             hasFetched.current = true;
         }
     }, []);
 
-    if (!aboutData) {
+    const fetchContactData = async () => {
+        try {
+            const res = await getContactUsData();
+            toast.success("Contact Us fetched successfully!")
+            setContactUsData(res.data?.contact);
+        } catch (err) {
+            console.error("Error fetching about page data:", err);
+        }
+    }
+
+    if (!contactUsData) {
         return <div className="text-center py-10">Loading...</div>;
     }
 
@@ -62,7 +63,7 @@ function ContactUs() {
                                         <div className="flex-1 border border-[#DCDCDC] rounded-xl p-4">
                                             <textarea
                                                 className="w-full h-full border-none outline-none text-[#989898]"
-                                                value={aboutData.heroContent}
+                                                value={contactUsData.heroContent}
                                                 readOnly
                                             />
                                         </div>
@@ -70,9 +71,9 @@ function ContactUs() {
                                     <div>
                                         <h3 className="text-lg font-medium mb-2">Hero Section Upload Image</h3>
                                         <div className="flex flex-col gap-2.5 h-[168px] items-center justify-center border border-[#DCDCDC] rounded-xl px-20 py-4">
-                                            <img src={galleryIconOrange} alt="Not Found" />
-                                            {/* <span className="text-[#989898]">{getFilename(aboutData.visionImageUrl)}</span> */}
-                                            <span className="text-[#989898]">Click Here to Upload Image or Drag & drop here</span>
+                                            {/* <img src={contactUsData?.heroImageUrl} alt="Not Found" /> */}
+                                            <span className="text-[#989898]">{getFilename(contactUsData?.heroImageUrl)}</span>
+                                            <span className="text-[#989898] text-center">Click Here to Upload Image or Drag & drop here</span>
                                         </div>
                                     </div>
                                 </div>
@@ -83,9 +84,9 @@ function ContactUs() {
                                         <label className="block text-sm font-medium mb-1">Mobile Number</label>
                                         <input
                                             type="text"
-                                            value={aboutData.mobileNumber}
+                                            value={contactUsData.mobileNumber}
                                             readOnly
-                                            className="w-full border border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#DCDCDC] rounded-xl px-4 py-2 text-[#DCDCDC]"
+                                            className="w-full border border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#DCDCDC] rounded-xl px-4 py-2 text-[#656565]"
                                         />
                                     </div>
 
@@ -94,7 +95,7 @@ function ContactUs() {
                                         <label className="block text-sm font-medium mb-1">E-mail</label>
                                         <input
                                             type="email"
-                                            value={aboutData.email}
+                                            value={contactUsData.email}
                                             readOnly
                                             className="w-full border border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#DCDCDC] rounded-xl px-4 py-2 text-[#656565]"
                                         />
@@ -105,7 +106,7 @@ function ContactUs() {
                                         <label className="block text-sm font-medium mb-1">Youtube</label>
                                         <input
                                             type="text"
-                                            value={aboutData.youtube}
+                                            value={contactUsData.youtube}
                                             readOnly
                                             className="w-full border border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#DCDCDC] rounded-xl px-4 py-2 text-[#656565]"
                                         />
@@ -116,7 +117,7 @@ function ContactUs() {
                                         <label className="block text-sm font-medium mb-1">Linkedin</label>
                                         <input
                                             type="text"
-                                            value={aboutData.linkedin}
+                                            value={contactUsData.linkedin}
                                             readOnly
                                             className="w-full border border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#DCDCDC] rounded-xl px-4 py-2 text-[#656565]"
                                         />
@@ -127,7 +128,7 @@ function ContactUs() {
                                         <label className="block text-sm font-medium mb-1">Twitter</label>
                                         <input
                                             type="text"
-                                            value={aboutData.twitter}
+                                            value={contactUsData.twitter}
                                             readOnly
                                             className="w-full border border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#DCDCDC] rounded-xl px-4 py-2 text-[#656565]"
                                         />
@@ -138,7 +139,7 @@ function ContactUs() {
                                         <label className="block text-sm font-medium mb-1">Instagram</label>
                                         <input
                                             type="text"
-                                            value={aboutData.instagram}
+                                            value={contactUsData.instagram}
                                             readOnly
                                             className="w-full border border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#DCDCDC] rounded-xl px-4 py-2 text-[#656565]"
                                         />
@@ -149,7 +150,7 @@ function ContactUs() {
                                         <label className="block text-sm font-medium mb-1">Location</label>
                                         <input
                                             type="text"
-                                            value={aboutData.location}
+                                            value={contactUsData.location}
                                             readOnly
                                             className="w-full border border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#DCDCDC] rounded-xl px-4 py-2 text-[#656565]"
                                         />
@@ -161,7 +162,7 @@ function ContactUs() {
 
                 </div>
             ) : (
-                <EditContact_us onCancel={() => setIsEditing(false)} />
+                <EditContact_us fetchContactData={fetchContactData} contactData={contactUsData} onCancel={() => setIsEditing(false)} />
             )}
         </div>
     );

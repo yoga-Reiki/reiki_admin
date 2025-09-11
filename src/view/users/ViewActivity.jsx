@@ -155,7 +155,7 @@ function ViewActivity({ viewUser, setViewUser }) {
                                                     key={index}
                                                     className={`grid grid-cols-4 items-center text-[#656565] bg-white border-b border-[#DCDCDC] mt-[1px] text-sm ${isFirst ? 'rounded-t-xl border-y border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
                                                 >
-                                                    <td className="whitespace-pre-wrap px-4 py-7">{data.completedDays}</td>
+                                                    <td className="whitespace-pre-wrap px-4 py-7">{data?.rows?.day}</td>
                                                     <td className="whitespace-pre-wrap px-4 py-7">{data.Date}</td>
                                                     <td className="whitespace-pre-wrap px-4 py-7">{data.Start_Time}</td>
                                                     <td className="whitespace-pre-wrap px-4 py-7">{data.End_Time}</td>

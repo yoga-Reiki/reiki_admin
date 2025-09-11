@@ -1,12 +1,12 @@
 import axios from "axios";
 
-export async function getContactPageData() {
+export async function getContactUsData() {
     try {
         const response = await axios.get(
-            `${process.env.REACT_APP_URL}/contact`,
+            `${process.env.REACT_APP_URL}/contact/`,
             {
                 headers: {
-                    Authorization: localStorage.getItem("admin_accessToken"),
+                    Authorization: localStorage.getItem("accessToken"),
                 },
             }
         );
@@ -16,15 +16,15 @@ export async function getContactPageData() {
     }
 }
 
+// contact us update api 
 export async function getContactUsUpdate(formData) {
     try {
-        const response = await axios.put(
-            `${process.env.REACT_APP_URL}/contact`,
+        const response = await axios.patch(
+            `${process.env.REACT_APP_URL}/contact/`,
             formData,
             {
                 headers: {
                     Authorization: localStorage.getItem("admin_accessToken"),
-                    "Content-Type": "multipart/form-data",
                 },
             }
         );
@@ -33,5 +33,4 @@ export async function getContactUsUpdate(formData) {
         throw error;
     }
 }
-
 
