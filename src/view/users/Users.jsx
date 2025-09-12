@@ -19,6 +19,7 @@ function Users() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [viewUser, setViewUser] = useState(null);
   const [blockUser, setBlockUser] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [pagination, setPagination] = useState({
     page: 1,
     pageSize: 10,
@@ -30,7 +31,7 @@ function Users() {
       fetchUsers();
       hasFetched.current = true;
     }
-  }, []);
+  }, [pagination.page, searchQuery]);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -47,6 +48,15 @@ function Users() {
       setLoading(false);
     }
   };
+
+  const filteredUsers = users.filter((user) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      user.name?.toLowerCase().includes(query) ||
+      user.email?.toLowerCase().includes(query) ||
+      user.mobileNumber?.toLowerCase().includes(query)
+    );
+  });
 
   return (
     <div className="text-[#464646]">
@@ -81,6 +91,8 @@ function Users() {
               <input
                 type="text"
                 placeholder="Search User by Name/ Mobile no./ Email"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 md:py-3 rounded-full bg-[#FCEAC9] text-[#656565] placeholder-[#656565] border-2 border-[#FEF8EC] focus:outline-none focus:ring-0 focus:border-[#F3E9D6]"
               />
             </div>
@@ -113,41 +125,41 @@ function Users() {
                       {error}
                     </td>
                   </tr>
-                ) : users.length > 0 ? (
-                  users.map((user, index) => {
-                    const isFirst = index === 0;
-                    const isLast = index === users.length - 1;
-                    return (
-                      <tr
-                        key={index}
-                        className={`grid grid-cols-6 items-center bg-white mt-[1px] text-sm ${isFirst ? 'rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
-                      >
-                        <td className="whitespace-pre-wrap px-4 py-7">{user.name}</td>
-                        <td className="whitespace-pre-wrap px-4 py-7">{user.email}</td>
-                        <td className="whitespace-pre-wrap px-4 py-7">{user.mobileNumber}</td>
-                        <td className="whitespace-pre-wrap px-4 py-7">{user.adharCardNumber}</td>
-                        <td className="whitespace-pre-wrap px-4 py-7">
-                          {user?.address
-                            ? `${user.address.street}, ${user.address.city}, ${user.address.state}, ${user.address.pincode}, ${user.address.country}`
-                            : "-"}
-                        </td>
-                        <td className="flex gap-1 items-center flex-wrap mt-2 md:mt-0">
-                          <button onClick={() => {
-                            setSelectedUser(user)
-                            navigate(`?selectedUserId=${user._id}`);
-                          }} className="flex items-center gap-1 p-3 bg-[#FEF8EC] text-[#EA7913] border border-[#F9D38E] rounded-full text-sm hover:bg-[#FCEAC9] cursor-pointer">
-                            <img src={EditIcon} alt='Download Icon' className='w-5 h-5' /><span>Edit Access</span>
-                          </button>
-                          <button onClick={() => setViewUser(user)} className="p-3 rounded-full bg-[#E8F1FF] border border-[#B3CCFF] hover:bg-[#cdddff] cursor-pointer">
-                            <img src={EyeopenIcon} alt='Download Icon' className='w-5 h-5' />
-                          </button>
-                          <button onClick={() => setBlockUser(user)} className="p-3 rounded-full bg-[#FEF2F2] border border-[#FECACA] hover:bg-[#fee3e3] cursor-pointer">
-                            <img src={blockIcon} alt='Download Icon' className='w-5 h-5' />
-                          </button>
-                        </td>
-                      </tr>
-                    )
-                  })
+                ) : filteredUsers.length > 0 ? (
+                  filteredUsers?.map((user, index) => {
+                      const isFirst = index === 0;
+                      const isLast = index === users.length - 1;
+                      return (
+                        <tr
+                          key={index}
+                          className={`grid grid-cols-6 items-center bg-white mt-[1px] text-sm ${isFirst ? 'rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
+                        >
+                          <td className="whitespace-pre-wrap px-4 py-7">{user.name}</td>
+                          <td className="whitespace-pre-wrap px-4 py-7">{user.email}</td>
+                          <td className="whitespace-pre-wrap px-4 py-7">{user.mobileNumber}</td>
+                          <td className="whitespace-pre-wrap px-4 py-7">{user.adharCardNumber}</td>
+                          <td className="whitespace-pre-wrap px-4 py-7">
+                            {user?.address
+                              ? `${user.address.street}, ${user.address.city}, ${user.address.state}, ${user.address.pincode}, ${user.address.country}`
+                              : "-"}
+                          </td>
+                          <td className="flex gap-1 items-center flex-wrap mt-2 md:mt-0">
+                            <button onClick={() => {
+                              setSelectedUser(user)
+                              navigate(`?selectedUserId=${user._id}`);
+                            }} className="flex items-center gap-1 p-3 bg-[#FEF8EC] text-[#EA7913] border border-[#F9D38E] rounded-full text-sm hover:bg-[#FCEAC9] cursor-pointer">
+                              <img src={EditIcon} alt='Download Icon' className='w-5 h-5' /><span>Edit Access</span>
+                            </button>
+                            <button onClick={() => setViewUser(user)} className="p-3 rounded-full bg-[#E8F1FF] border border-[#B3CCFF] hover:bg-[#cdddff] cursor-pointer">
+                              <img src={EyeopenIcon} alt='Download Icon' className='w-5 h-5' />
+                            </button>
+                            <button onClick={() => setBlockUser(user)} className="p-3 rounded-full bg-[#FEF2F2] border border-[#FECACA] hover:bg-[#fee3e3] cursor-pointer">
+                              <img src={blockIcon} alt='Download Icon' className='w-5 h-5' />
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                    })
                 ) : (
                   <tr>
                     <td colSpan="6" className="text-center py-6">

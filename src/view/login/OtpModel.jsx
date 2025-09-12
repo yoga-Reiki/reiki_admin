@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import toast from "react-hot-toast";
 
-function OtpModel({ form, setForm, errors, verifyOtp }) {
+function OtpModel({ form, setForm, errors, verifyOtp, loading }) {
     const inputsRef = useRef([]);
     const [timer, setTimer] = useState(300);
     const [isResendActive, setIsResendActive] = useState(false);
@@ -45,7 +45,7 @@ function OtpModel({ form, setForm, errors, verifyOtp }) {
     const handleResend = () => {
         if (isResendActive) {
             toast.success("OTP resent successfully!");
-            setTimer(300); // Reset 5 minutes
+            setTimer(300);
             setIsResendActive(false);
         }
     };
@@ -89,14 +89,20 @@ function OtpModel({ form, setForm, errors, verifyOtp }) {
                 </div>
             </div>
 
-            <div className="w-full h-full relative inline-block rounded-full px-[5px] py-[3px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
+            <div className="w-full h-full relative inline-block rounded-full px-[5px] py-[4px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
                 <button
                     type="button"
                     onClick={verifyOtp}
-                    className="w-full h-full inline-flex justify-center items-center space-x-1.5 px-5 sm:px-6 py-2 sm:py-2.5 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
+                    className="w-full h-full inline-flex justify-center items-center space-x-1.5 px-5 sm:px-6 py-2 sm:py-2 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
                 >
-                    <span>Verify</span>
-                    <IoIosArrowRoundForward size={28} />
+                    {loading ? (
+                        <span>Verify...</span>
+                    ) : (
+                        <>
+                            <span>Verify</span>
+                            <IoIosArrowRoundForward size={28} />
+                        </>
+                    )}
                 </button>
             </div>
         </div>

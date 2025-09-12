@@ -9,6 +9,12 @@ import toast from 'react-hot-toast';
 import { getProductData, getProductDelete } from '../../services/productServices';
 import DeleteModel from '../component/DeleteModel';
 
+function SkeletonBox() {
+    return (
+        <div className="bg-gray-300 animate-pulse rounded-3xl h-[542px] w-full"></div>
+    );
+}
+
 function Product() {
     const [productData, setProductData] = useState([]);
     const [error, setError] = useState(null);
@@ -115,52 +121,54 @@ function Product() {
                             </div>
 
                             <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-                                {productData.map((item) => (
-                                    <div
-                                        key={item._id}
-                                    >
-                                        <div className="bg-white rounded-3xl overflow-hidden">
-                                            {/* products Image */}
-                                            <div className="relative overflow-hidden">
-                                                <img
-                                                    src={item.coverImageUrl}
-                                                    alt={item.title}
-                                                    className="w-full h-[542px] object-cover"
-                                                />
+                                {loading
+                                    ? Array.from({ length: 6 }).map((_, i) => <SkeletonBox key={i} />)
+                                    : productData.map((item) => (
+                                        <div
+                                            key={item._id}
+                                        >
+                                            <div className="bg-white rounded-3xl overflow-hidden">
+                                                {/* products Image */}
+                                                <div className="relative overflow-hidden">
+                                                    <img
+                                                        src={item.coverImageUrl}
+                                                        alt={item.title}
+                                                        className="w-full h-[542px] object-cover"
+                                                    />
 
-                                                {/* Buttons */}
-                                                <button
-                                                    onClick={() => {
-                                                        setSelectedProduct(item);
-                                                        setIsEditingProduct(true);
-                                                    }} className="absolute flex items-center gap-2 top-5 left-5 bg-[#FFFFFF] p-3 text-[#656565] rounded-full border border-[#989898] cursor-pointer hover:bg-gray-100">
-                                                    <img src={editIconGrey} alt="Edit" className="p-0.5" /> <span>Edit</span>
-                                                </button>
-                                                <button onClick={() => setProductDelete(item)} className="absolute top-5 right-5 bg-white p-3 rounded-full border border-[#989898] cursor-pointer hover:bg-gray-100">
-                                                    <img src={deleteIconGrey} alt="Delete" />
-                                                </button>
+                                                    {/* Buttons */}
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedProduct(item);
+                                                            setIsEditingProduct(true);
+                                                        }} className="absolute flex items-center gap-2 top-5 left-5 bg-[#FFFFFF] p-3 text-[#656565] rounded-full border border-[#989898] cursor-pointer hover:bg-gray-100">
+                                                        <img src={editIconGrey} alt="Edit" className="p-0.5" /> <span>Edit</span>
+                                                    </button>
+                                                    <button onClick={() => setProductDelete(item)} className="absolute top-5 right-5 bg-white p-3 rounded-full border border-[#989898] cursor-pointer hover:bg-gray-100">
+                                                        <img src={deleteIconGrey} alt="Delete" />
+                                                    </button>
 
-                                                {/* product Content */}
-                                                <div className="absolute bottom-1 left-1 right-1 bg-white bg-opacity-90 backdrop-blur-md p-6 rounded-3xl">
-                                                    <h3 className="text-xl md:text-2xl font-Raleway Raleway-bold">
-                                                        {item.title}
-                                                    </h3>
-                                                    <p className="text-[#525252] text-sm pt-2 pb-3.5">
-                                                        {item.summary}
-                                                    </p>
-                                                    <div className='space-x-1.5 space-y-2 md:space-y-0 pb-7 md:pb-5'>
-                                                        <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{item?.chips[0]}</button>
-                                                        <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{item?.chips[1]}</button>
-                                                    </div>
-                                                    <div className="flex items-end gap-2 text-[#464646]">
-                                                        <span className="text-lg md:text-[32px] md:leading-[40px] font-Raleway Raleway-bold">${item?.detail?.priceNew}</span>
-                                                        <span className="mb-1">${item?.detail?.priceOld}</span>
+                                                    {/* product Content */}
+                                                    <div className="absolute bottom-1 left-1 right-1 bg-white bg-opacity-90 backdrop-blur-md p-6 rounded-3xl">
+                                                        <h3 className="text-xl md:text-2xl font-Raleway Raleway-bold">
+                                                            {item.title}
+                                                        </h3>
+                                                        <p className="text-[#525252] text-sm pt-2 pb-3.5">
+                                                            {item.summary}
+                                                        </p>
+                                                        <div className='space-x-1.5 space-y-2 md:space-y-0 pb-7 md:pb-5'>
+                                                            <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{item?.chips[0]}</button>
+                                                            <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{item?.chips[1]}</button>
+                                                        </div>
+                                                        <div className="flex items-end gap-2 text-[#464646]">
+                                                            <span className="text-lg md:text-[32px] md:leading-[40px] font-Raleway Raleway-bold">${item?.detail?.priceNew}</span>
+                                                            <span className="mb-1">${item?.detail?.priceOld}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
                             </div>
                         </div>
                     </div>
@@ -178,7 +186,7 @@ function Product() {
                     )}
 
                     {productDelete && (
-                        <DeleteModel onCancel={() => setProductDelete(null)} onConfirmProduct={confirmDelete} />
+                        <DeleteModel productLoading={loading} onCancel={() => setProductDelete(null)} onConfirmProduct={confirmDelete} />
                     )}
                 </div>
             )}

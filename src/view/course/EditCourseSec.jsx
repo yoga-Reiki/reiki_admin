@@ -93,7 +93,6 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
         }
     };
 
-
     const hasChanges = () => {
         const originalData = {
             title: selectedCourse?.title || '',

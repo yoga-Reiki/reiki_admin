@@ -10,7 +10,7 @@ function SuccessModel({ setStep0 }) {
                     alt="Not Found"
                     className="w-[287px] h-[287px]"
                 />
-                <div className="w-full mt-6 relative inline-block rounded-full px-[5px] py-[3px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
+                <div className="w-full mt-6 relative inline-block rounded-full px-[5px] py-[4px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
                     <button
                         type="submit"
                         onClick={setStep0}

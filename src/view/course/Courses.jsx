@@ -16,6 +16,7 @@ function Courses() {
     const [coursesData, setCoursesData] = useState([])
     const [coursesDelete, setCoursesDelete] = useState(null);
     const hasFetched = useRef(false);
+    const [loading, setLoading] = useState(false);
     const location = useLocation()
     const userId = useMemo(() => location.search.split("?selectedUserId=")?.[1], [location])
 
@@ -27,6 +28,7 @@ function Courses() {
     }, []);
 
     const fetchCourse = async () => {
+        setLoading(true);
         try {
             const response = await getCoursesData({ userId });
 
@@ -34,12 +36,14 @@ function Courses() {
             setCoursesData(response?.data?.items || []);
         } catch (err) {
             toast.error("Failed to fetch users");
+        } finally {
+            setLoading(false);
         }
     };
 
     const confirmDelete = async () => {
         if (!coursesDelete || !coursesDelete._id) return;
-
+        setLoading(true);
         try {
             await getCoursesDelete(coursesDelete._id);
             toast.success("Course deleted successfully!");
@@ -48,6 +52,8 @@ function Courses() {
         } catch (error) {
             console.error("Delete failed", error);
             toast.error("Failed to delete product");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -68,9 +74,9 @@ function Courses() {
                         </button>
                     </div>
 
-                    <CourseCard setIsEditingCard={setIsEditingCard} setSelectedCourse={setSelectedCourse} coursesData={coursesData} setCoursesDelete={setCoursesDelete} />
+                    <CourseCard loading={loading} setIsEditingCard={setIsEditingCard} setSelectedCourse={setSelectedCourse} coursesData={coursesData} setCoursesDelete={setCoursesDelete} />
 
-                    <CourseSection coursesData={coursesData} />
+                    <CourseSection loading={loading} coursesData={coursesData} />
 
                     {addCourse && (
                         <AddCourse
@@ -85,7 +91,7 @@ function Courses() {
                     )}
 
                     {coursesDelete && (
-                        <DeleteModel onCancel={() => setCoursesDelete(null)} onConfirmCourse={confirmDelete} />
+                        <DeleteModel courseLoading={loading} onCancel={() => setCoursesDelete(null)} onConfirmCourse={confirmDelete} />
                     )}
                 </div>
             )}

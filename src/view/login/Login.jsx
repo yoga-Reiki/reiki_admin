@@ -88,6 +88,7 @@ function Login() {
     }
 
     try {
+      setLoading(true);
       setErrors({});
       const body = { email: form.email.trim() };
 
@@ -100,19 +101,10 @@ function Login() {
       setErrors({
         api: err.response?.data?.message || "Failed to send reset email. Try again."
       });
+    } finally {
+      setLoading(false);
     }
   };
-
-  // const verifyOtp = () => {
-  //   let tempErrors = {};
-  //   if (form.otp.length !== 6) {
-  //     tempErrors.otp = "Please enter a valid 6-digit OTP";
-  //   }
-  //   setErrors(tempErrors);
-  //   if (Object.keys(tempErrors).length > 0) return;
-
-  //   setStep(3);
-  // };
 
   const verifyOtp = async (e) => {
     e.preventDefault();
@@ -127,15 +119,13 @@ function Login() {
     }
 
     try {
+      setLoading(true);
       const body = {
         email: form.email.trim(),
         otp: form.otp.trim()
       };
 
       const res = await userVerifyOtp({ body });
-
-      console.log("OTP verification response:", res);
-
       if (res.success) {
         setResetToken(res?.data?.resetToken);
         setStep(3)
@@ -148,6 +138,8 @@ function Login() {
       setErrors({
         api: err.response?.data?.message || "Failed to verify OTP. Try again."
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -186,6 +178,7 @@ function Login() {
     }
 
     try {
+      setLoading(true);
       setErrors({});
       const body = {
         email: form.email.trim(),
@@ -201,6 +194,8 @@ function Login() {
       setErrors({
         api: err.response?.data?.message || "Failed to reset password. Try again."
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -209,9 +204,9 @@ function Login() {
       className="min-h-screen bg-cover bg-center flex items-center justify-center px-4 xl:px-0 text-[#464646]"
       style={{ backgroundImage: `url(${loginBG})` }}
     >
-      <div className="bg-white bg-opacity-90 rounded-2xl p-6 md:p-14 w-full max-w-[501px] h-[673px]">
+      <div className="bg-white bg-opacity-90 border-t-[5px] border-t-[#EA7913] rounded-3xl p-6 md:p-14 w-full max-w-[501px] h-full">
         <div className="flex flex-col justify-between gap-10 md:gap-14">
-          <div className="flex flex-col items-center justify-between gap-5 md:gap-8">
+          <div className="flex flex-col items-center justify-between gap-5 md:gap-9">
             <Link to="/" className="flex items-center">
               <img
                 src={reikiLogo}
@@ -220,7 +215,7 @@ function Login() {
               />
             </Link>
             <div className="flex flex-col gap-2">
-              <h1 className="text-2xl md:text-[32px] md:leading-[40px] font-semibold font-Raleway text-center text-[#3D3D3D]">
+              <h1 className="text-2xl md:text-[32px] md:leading-[40px] font-semibold font-Raleway Raleway-medium text-center text-[#3D3D3D]">
                 {step === 0 ? "Welcome to Shree Sai Yog & Reiki Healing Centre" : step === 1 ? "Forgot Password"
                   : step === 2 ? "OTP Verification" : step === 3 ? "Change Password" : "Success"}
               </h1>
@@ -230,7 +225,7 @@ function Login() {
           </div>
 
           {step === 0 && (
-            < form className="space-y-5" onSubmit={onSubmit}>
+            < form className="space-y-6" onSubmit={onSubmit}>
               {/* Email */}
               <div>
                 <label htmlFor="email" className="block text-sm md:text-lg mb-2">
@@ -338,15 +333,15 @@ function Login() {
           )}
 
           {step === 2 && (
-            <OtpModel form={form} setForm={setForm} errors={errors} setErrors={setErrors} verifyOtp={verifyOtp} />
+            <OtpModel form={form} setForm={setForm} errors={errors} setErrors={setErrors} verifyOtp={verifyOtp} loading={loading} />
           )}
 
           {step === 3 && (
-            <ResetPasswordModel form={form} setForm={setForm} errors={errors} handleChangePassword={handleChangePassword} />
+            <ResetPasswordModel form={form} setForm={setForm} errors={errors} handleChangePassword={handleChangePassword} loading={loading} />
           )}
 
           {step === 4 && (
-            <SuccessModel setStep0={setStep(0)}/>
+            <SuccessModel setStep0={setStep(0)} />
           )}
         </div>
       </div>

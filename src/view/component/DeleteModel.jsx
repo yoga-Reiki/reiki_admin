@@ -1,6 +1,6 @@
 import React from "react";
 
-function DeleteModel({ onCancel, onConfirm, onCancelImg, onfirmGalleryImgDelete, onConfirmBlog, onConfirmProduct, onConfirmCourse }) {
+function DeleteModel({ onCancel, onConfirm, onCancelImg, onfirmGalleryImgDelete, onConfirmBlog, onConfirmProduct, onConfirmCourse, courseLoading, productLoading }) {
     return (
         <div className="fixed inset-0 bg-black/40 z-50 text-[#464646] flex justify-center items-center">
             <div className="bg-white p-14 w-full max-w-[670px] border-t-2 border-t-[#EA7913] rounded-3xl flex flex-col gap-14">
@@ -24,7 +24,10 @@ function DeleteModel({ onCancel, onConfirm, onCancelImg, onfirmGalleryImgDelete,
                             onClick={onConfirm ? onConfirm : onConfirmBlog ? onConfirmBlog : onConfirmProduct ? onConfirmProduct : onConfirmCourse ? onConfirmCourse : onfirmGalleryImgDelete}
                             className="w-full h-full inline-flex justify-center items-center space-x-1.5 px-6 py-2.5 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
                         >
-                            Confirm to delete
+                            {courseLoading || productLoading ? (<span>Deleting...</span>
+                            ) : (
+                                <span>Confirm to delete</span>
+                            )}
                         </button>
                     </div>
                 </div>

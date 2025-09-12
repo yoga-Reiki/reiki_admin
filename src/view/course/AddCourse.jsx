@@ -19,6 +19,7 @@ function AddCourse({ onClose, fetchCourse }) {
         certificate: "",
         shippingDetails: ""
     });
+    const [loading, setLoading] = useState(false);
     const [images, setImages] = useState({
         cover: "",
         detail: "",
@@ -30,8 +31,14 @@ function AddCourse({ onClose, fetchCourse }) {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((p) => ({ ...p, [name]: value }));
-        setErrors((p) => ({ ...p, [name]: "" }));
+
+        if (name === "newPricing" || name === "oldPricing") {
+            if (value === "" || /^\d*\.?\d*$/.test(value)) {
+                setFormData(prev => ({ ...prev, [name]: value }));
+            }
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleFileChange = (e, type) => {
@@ -108,7 +115,7 @@ function AddCourse({ onClose, fetchCourse }) {
     // Submit button handler
     const handleConfirmSubmit = async () => {
         if (!validateForm()) return;
-
+        setLoading(true);
         try {
             const formDataToSend = new FormData();
             Object.keys(formData).forEach((key) => {
@@ -127,6 +134,8 @@ function AddCourse({ onClose, fetchCourse }) {
             fetchCourse()
         } catch (error) {
             console.error("Error submitting form:", error);
+        } finally {
+            setLoading(false); // stop loading
         }
     };
 
@@ -159,22 +168,21 @@ function AddCourse({ onClose, fetchCourse }) {
                                 <div>
                                     <div className="grid grid-cols-3 gap-y-2.5 gap-x-4.5">
                                         {[
-                                            { label: "Title", name: "title" },
-                                            { label: "New Pricing", name: "newPricing" },
-                                            { label: "Old Pricing", name: "oldPricing" },
-                                            // { label: "Duration", name: "duration" },
-                                            // { label: "Certificate", name: "certificate" },
-                                            // { label: "Online/Offline", name: "onlineOffline" }
+                                            { label: "Title", name: "title", type: "text" },
+                                            { label: "New Pricing", name: "newPricing", type: "number" },
+                                            { label: "Old Pricing", name: "oldPricing", type: "number" },
                                         ].map((field) => (
                                             <div key={field.name}>
                                                 <label className="block text-lg mb-1">{field.label}</label>
                                                 <input
-                                                    type="text"
+                                                    type={field.type}
                                                     name={field.name}
                                                     value={formData[field.name]}
                                                     onChange={handleChange}
                                                     placeholder={`Enter ${field.label}`}
                                                     className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                                    // Optionally prevent non-numeric input by pattern
+                                                    {...(field.type === "number" ? { min: 0, step: "any" } : {})}
                                                 />
                                                 {errors[field.name] && (
                                                     <p className="text-red-500 text-sm mt-1">{errors[field.name]}</p>
@@ -394,10 +402,14 @@ function AddCourse({ onClose, fetchCourse }) {
                                             <button
                                                 type="button"
                                                 onClick={handleConfirmSubmit}
-                                                className="w-full flex justify-center items-center gap-2 py-2.5 bg-[#EA7913] text-lg text-white rounded-full"
+                                                className="w-full flex justify-center items-center gap-2 cursor-pointer py-2.5 bg-[#EA7913] text-lg text-white rounded-full"
                                             >
-                                                <span>Submit</span>
-                                                <IoIosArrowRoundForward size={28} />
+                                                {loading ? (<span>Submitting...</span>) : (
+                                                    <>
+                                                        <span>Submit</span>
+                                                        <IoIosArrowRoundForward size={28} />
+                                                    </>
+                                                )}
                                             </button>
                                         </div>
                                     </div>

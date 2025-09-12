@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 
 function AddProduct({ onClose, fetchProduct }) {
     const fileInputRef = useRef(null);
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         title: "",
         priceNew: "",
@@ -99,7 +100,7 @@ function AddProduct({ onClose, fetchProduct }) {
     const handleConfirmSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-
+        setLoading(true);
         try {
             const formDataToSend = new FormData();
             Object.keys(formData).forEach((key) => {
@@ -115,6 +116,8 @@ function AddProduct({ onClose, fetchProduct }) {
             setShowSuccess(true);
         } catch (error) {
             console.error("Error submitting form:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -252,7 +255,7 @@ function AddProduct({ onClose, fetchProduct }) {
                                         <button
                                             type="button"
                                             onClick={handleNext}
-                                            className="w-full flex justify-center items-center gap-2 py-2.5 bg-[#EA7913] text-lg text-white rounded-full"
+                                            className="w-full flex justify-center items-center gap-2 py-2.5 bg-[#EA7913] cursor-pointer text-lg text-white rounded-full"
                                         >
                                             <span>Next</span>
                                             <IoIosArrowRoundForward size={28} />
@@ -388,10 +391,15 @@ function AddProduct({ onClose, fetchProduct }) {
                                             <button
                                                 type="submit"
                                                 onClick={(e) => handleConfirmSubmit(e)}
-                                                className="w-full h-full inline-flex justify-center items-center space-x-1.5 py-2 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
+                                                className="w-full h-full inline-flex justify-center items-center space-x-1.5 py-2 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
                                             >
-                                                <span>Submit</span>
-                                                <IoIosArrowRoundForward size={28} />
+                                                {loading ? (<span>Submitting...</span>) : (
+                                                    <>
+                                                        <span>Submit</span>
+                                                        <IoIosArrowRoundForward size={28} />
+                                                    </>
+                                                )}
+
                                             </button>
                                         </div>
                                     </div>

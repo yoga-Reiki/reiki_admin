@@ -113,7 +113,7 @@ function Order() {
                 <div className="overflow-x-auto px-3">
                     <table className="w-full table-auto">
                         <thead>
-                            <tr className="grid grid-cols-6 md:w-[300%] lg:w-[200%] xl:w-full bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
+                            <tr className="grid grid-cols-6 md:w-[300%] lg:w-[200%] xl:w-[125%] 2xl:w-full bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
                                 <th className='px-4 py-3'>Name</th>
                                 <th className='px-4 py-3'>Email</th>
                                 <th className='px-4 py-3'>Order Details</th>
@@ -123,7 +123,7 @@ function Order() {
                             </tr>
                         </thead >
 
-                        <tbody className="flex flex-col justify-center md:w-[300%] lg:w-[200%] xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
+                        <tbody className="flex flex-col justify-center md:w-[300%] lg:w-[200%] xl:w-[125%] 2xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
                             {loading ? (
                                 <tr>
                                     <td colSpan="6" className="flex justify-center py-6">
