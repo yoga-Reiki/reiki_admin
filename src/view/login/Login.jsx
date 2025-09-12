@@ -24,6 +24,7 @@ function Login() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const dispatch = useDispatch()
+  const [resetToken, setResetToken] = useState("");
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -113,34 +114,42 @@ function Login() {
   //   setStep(3);
   // };
 
-  const verifyOtp = async () => {
-    let tempErrors = {};
-    if (form.otp.length !== 6) {
-      tempErrors.otp = "Please enter a valid 6-digit OTP";
-      setErrors(tempErrors);
+  const verifyOtp = async (e) => {
+    e.preventDefault();
+    setErrors({});
+
+    if (!form.otp) {
+      setErrors({ otp: "OTP is required" });
       return;
+    } else if (form.otp.length !== 6) {
+      setErrors.otp = "Please enter a valid 6-digit OTP";
+      return
     }
 
     try {
       const body = {
         email: form.email.trim(),
-        otp: form.otp.trim(),
+        otp: form.otp.trim()
       };
 
       const res = await userVerifyOtp({ body });
-      console.log("OTP verification success:", res);
 
-      toast.success("OTP Verified Successfully!");
-      setStep(3);
+      console.log("OTP verification response:", res);
+
+      if (res.success) {
+        setResetToken(res?.data?.resetToken);
+        setStep(3)
+      } else {
+        toast.error(res.message || "OTP verification failed.");
+        setErrors("Invalid OTP");
+      }
     } catch (err) {
-      console.error("OTP verification failed:", err);
-
-      const message = err?.response?.data?.message || "OTP verification failed. Please try again.";
-      setErrors({ otp: message });
-      toast.error(message);
+      toast.error(err.response?.data?.message || "Failed to verify OTP.");
+      setErrors({
+        api: err.response?.data?.message || "Failed to verify OTP. Try again."
+      });
     }
   };
-
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
@@ -182,6 +191,7 @@ function Login() {
         email: form.email.trim(),
         otp: form.otp.trim(),
         newPassword: form.newPassword,
+        resetToken: resetToken,
       };
       const res = await userResetPassword({ body });
       console.log("Reset password response:", res);
@@ -332,11 +342,11 @@ function Login() {
           )}
 
           {step === 3 && (
-            <ResetPasswordModel form={form} setForm={setForm} setStep={setStep} errors={errors} setErrors={setErrors} handleChangePassword={handleChangePassword} />
+            <ResetPasswordModel form={form} setForm={setForm} errors={errors} handleChangePassword={handleChangePassword} />
           )}
 
           {step === 4 && (
-            <SuccessModel />
+            <SuccessModel setStep0={setStep(0)}/>
           )}
         </div>
       </div>
