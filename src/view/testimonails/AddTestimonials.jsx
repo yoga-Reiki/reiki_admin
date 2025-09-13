@@ -6,7 +6,6 @@ import toast from "react-hot-toast";
 import SuccsessModel from "../component/SuccsessModel";
 
 function AddTestimonials({ onClose, selectedUser, fetchTestimonials }) {
-  const inputId = "testimonial-image-upload";
   const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     name: selectedUser?.name || "",

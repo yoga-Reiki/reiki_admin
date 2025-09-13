@@ -144,7 +144,7 @@ function Testimonials() {
                                                 <td className="whitespace-pre-wrap px-4 py-4">{Data.roleOrAddress}</td>
                                                 <td className="whitespace-pre-wrap px-4 py-4 flex items-center gap-2">
                                                     <img src={downloadIconGrey} alt="Not download" className="w-4 h-4" />
-                                                    {Data.imageUrl ? Data.imageUrl.split("/").pop() : "-"}
+                                                    <p className="md:w-26 lg:w-32 xl:w-40 break-words">{Data.imageUrl ? Data.imageUrl.split("/").pop() : "-"}</p>
                                                 </td>
                                                 <td className="pl-4 pr-8 py-4">
                                                     <div className="line-clamp-3 whitespace-pre-wrap">{Data.message}</div>

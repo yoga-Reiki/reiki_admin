@@ -4,6 +4,7 @@ import { FiUploadCloud } from "react-icons/fi";
 import toast from "react-hot-toast";
 import SuccsessModel from "../component/SuccsessModel";
 import { getAddBlog } from "../../services/blogServices";
+import { Editor } from "@tinymce/tinymce-react";
 
 function AddBlog({ onClose, selectedUser, fetchBlog }) {
     const fileInputRef = useRef(null);
@@ -150,7 +151,7 @@ function AddBlog({ onClose, selectedUser, fetchBlog }) {
                                 </div>
 
                                 {/* Content */}
-                                <div>
+                                {/* <div>
                                     <label className="block text-lg mb-1">Content For Blog</label>
                                     <textarea
                                         name="content"
@@ -159,6 +160,39 @@ function AddBlog({ onClose, selectedUser, fetchBlog }) {
                                         onChange={handleChange}
                                         placeholder="Write your blog content here"
                                         className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                                    />
+                                    {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
+                                </div> */}
+                                <div>
+                                    <label className="block text-lg mb-1">Content For Blog</label>
+                                    <Editor
+                                        apiKey="w0h75l9p91ijk4a35sioyvhphj294qox82aq9wntohg9iees"
+                                        value={formData.content}
+                                        onChange={handleChange}
+                                        name="content"
+                                        placeholder="Write your blog content here"
+                                        init={{
+                                            plugins: [
+                                                // Core editing features
+                                                'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+                                                // Your account includes a free trial of TinyMCE premium features
+                                                // Try the most popular premium features until Sep 27, 2025:
+                                                'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'advtemplate', 'ai', 'uploadcare', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown', 'importword', 'exportword', 'exportpdf'
+                                            ],
+                                            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography uploadcare | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                                            tinycomments_mode: 'embedded',
+                                            tinycomments_author: 'Author name',
+                                            mergetags_list: [
+                                                { value: 'First.Name', title: 'First Name' },
+                                                { value: 'Email', title: 'Email' },
+                                            ],
+                                            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                                            uploadcare_public_key: '5e7e532088944fab02a1',
+                                        }}
+                                        onEditorChange={(content) => {
+                                            setFormData((p) => ({ ...p, content }));
+                                            setErrors((p) => ({ ...p, content: "" }));
+                                        }}
                                     />
                                     {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
                                 </div>

@@ -81,9 +81,6 @@ function TestimonialsEdit({ selectedUser, setSelectedUser, fetchTestimonials }) 
     }
   };
 
-console.log("formData", formData);
-
-
   return (
     <div className="bg-[#FAFAFA] text-[#464646] flex flex-col gap-2 px-3">
       {/* Header */}
