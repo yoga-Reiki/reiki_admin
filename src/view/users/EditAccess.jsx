@@ -12,6 +12,7 @@ function EditAccess({ selectedUser, setSelectedUser }) {
     const [userCourses, setUserCourses] = useState({});
     const [coursesData, setCoursesData] = useState([])
     const hasFetched = useRef(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (!hasFetched.current) {
@@ -21,6 +22,7 @@ function EditAccess({ selectedUser, setSelectedUser }) {
     }, []);
 
     const fetchCourse = async () => {
+        setLoading(true);
         try {
             const response = await getCoursesData({ userId });
             const items = response?.data?.items || [];
@@ -35,10 +37,13 @@ function EditAccess({ selectedUser, setSelectedUser }) {
 
         } catch (err) {
             toast.error("Failed to fetch users");
+        } finally {
+            setLoading(false);
         }
     };
 
     const toggleCourse = async (courseId) => {
+        setLoading(true);
         const isCurrentlyActive = !!userCourses[courseId];
         const updatedStatus = isCurrentlyActive ? "revoked" : "approved";
 
@@ -59,6 +64,8 @@ function EditAccess({ selectedUser, setSelectedUser }) {
         } catch (error) {
             console.error(error);
             toast.error("Failed to update course access");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -100,24 +107,28 @@ function EditAccess({ selectedUser, setSelectedUser }) {
                     {/* Course Toggles */}
                     <div>
                         <h3 className="font-semibold mb-3">Course List</h3>
-                        <div className="flex flex-col gap-4">
-                            {coursesData.map((course, idx) => (
-                                <div key={idx} className="flex items-center gap-3">
-                                    {/* Toggle */}
-                                    <div
-                                        id={idx}
-                                        onClick={() => toggleCourse(course._id)}
-                                        className={`w-10 h-6 flex items-center border border-[#F1F1F1] rounded-full cursor-pointer transition-colors ${userCourses[course._id] ? "bg-gradient-to-r from-[#EA7913] to-[#EA7913]/50" : "bg-[#F8F8F8]"
-                                            }`}
-                                    >
+                        {loading ? (
+                            <div className="text-center py-6 text-gray-500">Loading...</div>
+                        ) : (
+                            <div className="flex flex-col gap-4">
+                                {coursesData.map((course, idx) => (
+                                    <div key={idx} className="flex items-center gap-3">
+                                        {/* Toggle */}
                                         <div
-                                            className={`w-4 h-4 rounded-full shadow-md transform transition-transform ${userCourses[course._id] ? "translate-x-5 bg-white" : "translate-x-1 bg-[#656565]"}`}
-                                        />
+                                            id={idx}
+                                            onClick={() => toggleCourse(course._id)}
+                                            className={`w-10 h-6 flex items-center border border-[#F1F1F1] rounded-full cursor-pointer transition-colors ${userCourses[course._id] ? "bg-gradient-to-r from-[#EA7913] to-[#EA7913]/50" : "bg-[#F8F8F8]"
+                                                }`}
+                                        >
+                                            <div
+                                                className={`w-4 h-4 rounded-full shadow-md transform transition-transform ${userCourses[course._id] ? "translate-x-5 bg-white" : "translate-x-1 bg-[#656565]"}`}
+                                            />
+                                        </div>
+                                        <span className="text-gray-700">{course?.title}</span>
                                     </div>
-                                    <span className="text-gray-700">{course?.title}</span>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
 

@@ -88,7 +88,7 @@ function Testimonials() {
                     <div className="flex flex-col md:flex-row justify-between items-center mt-6 mb-6 gap-4 px-3">
                         <p className="text-2xl text-[#656565]">Testimonial Data List</p>
                         <div className="relative w-full md:w-72 lg:w-74.5">
-                            <span className="absolute inset-y-0 left-3 flex items-center text-[#EA7913]">
+                            <span className="absolute inset-y-0 left-3 px-1 flex items-center text-[#EA7913]">
                                 <img src={SearchIcon} alt="search" className="w-5 h-5" />
                             </span>
                             <input

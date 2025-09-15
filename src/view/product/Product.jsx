@@ -101,7 +101,7 @@ function Product() {
                             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                                 <p className="text-2xl text-[#656565]">Product Section</p>
                                 <div className="relative w-full md:w-72 lg:w-74.5">
-                                    <span className="absolute inset-y-0 left-3 flex items-center text-[#EA7913]">
+                                    <span className="absolute inset-y-0 left-3 px-1 flex items-center text-[#EA7913]">
                                         <img src={SearchIcon} alt="search" className="w-5 h-5" />
                                     </span>
                                     <input
@@ -116,7 +116,6 @@ function Product() {
                                         }}
                                         className="w-full pl-10 pr-4 py-2 md:py-3 rounded-full bg-[#FCEAC9] text-[#656565] placeholder-[#656565] border-2 border-[#FEF8EC] focus:outline-none focus:ring-0 focus:border-[#F3E9D6]"
                                     />
-
                                 </div>
                             </div>
 

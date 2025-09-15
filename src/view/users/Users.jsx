@@ -70,7 +70,7 @@ function Users() {
       ) : (
         <div>
           {/* Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-3">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 p-3">
             <div>
               <h1 className="text-[32px] font-bold">User Management</h1>
               <p className="text-[#656565] pt-1">Manage all your users</p>
@@ -85,7 +85,7 @@ function Users() {
           <div className="flex flex-col md:flex-row justify-between items-center mt-6 mb-6 gap-4 px-3">
             <p className="text-xl font-semibold text-[#656565]">All Users</p>
             <div className="relative w-full md:w-72 lg:w-90 xl:w-[451px]">
-              <span className="absolute inset-y-0 left-3 flex items-center text-[#EA7913]">
+              <span className="absolute inset-y-0 left-3 px-1 flex items-center text-[#EA7913]">
                 <img src={SearchIcon} alt="search" className="w-5 h-5" />
               </span>
               <input
