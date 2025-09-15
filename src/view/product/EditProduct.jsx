@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast';
 import { getProductUpdate } from '../../services/productServices';
 import UploadIcon from "../../assets/svg/UploadIcon.svg";
+import { Editor } from '@tinymce/tinymce-react';
 
 function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
 
@@ -14,7 +15,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
         newPricing: selectedProduct?.detail?.priceNew || '',
         oldPricing: selectedProduct?.detail?.priceOld || '',
         shippingDetails: selectedProduct?.detail?.shippingDetails || '',
-        detailContent: selectedProduct?.detail?.content || '',
+        detailContent: selectedProduct?.detail?.content || 'Amplifies energy during healing...',
     });
 
     const [errors, setErrors] = useState({});
@@ -75,7 +76,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
             formData.newPricing !== (selectedProduct?.detail?.priceNew || "") ||
             formData.oldPricing !== (selectedProduct?.detail?.priceOld || "") ||
             formData.shippingDetails !== (selectedProduct?.detail?.shippingDetails || "") ||
-            formData.detailContent !== (selectedProduct?.detail?.content || "") ||
+            formData.detailContent !== (selectedProduct?.detail?.content || "Amplifies energy during healing...") ||
             (images.cover && images.cover instanceof File) ||
             (images.detail && images.detail instanceof File);
 
@@ -109,7 +110,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
             updatedForm.append("discountedPrice", formData.newPricing);
             updatedForm.append("price", formData.oldPricing);
             updatedForm.append("shippingDetails", formData.shippingDetails || "");
-            updatedForm.append("content", formData.detailContent || "");
+            updatedForm.append("content", formData.detailContent || "Amplifies energy during healing...");
 
             const points = formData.summary.split('\n').filter(Boolean);
             points.forEach((point, index) => {
@@ -203,7 +204,11 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                     {/* products Image */}
                                     <div className="relative overflow-hidden">
                                         <img
-                                            src={selectedProduct.coverImageUrl}
+                                            src={
+                                                images.cover instanceof File
+                                                    ? URL.createObjectURL(images.cover) // preview uploaded image
+                                                    : images.cover || selectedProduct.coverImageUrl
+                                            }
                                             alt={selectedProduct.title}
                                             className="w-full h-[542px] object-cover"
                                         />
@@ -211,18 +216,18 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                         {/* product Content */}
                                         <div className="absolute bottom-1 left-1 right-1 bg-white bg-opacity-90 backdrop-blur-md p-6 rounded-3xl">
                                             <h3 className="text-xl md:text-2xl font-Raleway Raleway-bold">
-                                                {selectedProduct.title}
+                                                {formData.title || selectedProduct.title}
                                             </h3>
                                             <p className="text-[#525252] text-sm pt-2 pb-3.5">
-                                                {selectedProduct.summary}
+                                                {formData.summary || selectedProduct.summary}
                                             </p>
                                             <div className='space-x-1.5 space-y-2 md:space-y-0 pb-7 md:pb-5'>
-                                                <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{selectedProduct?.chips[0]}</button>
-                                                <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{selectedProduct?.chips[1]}</button>
+                                                <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{formData?.chip1 || selectedProduct?.chips[0]}</button>
+                                                <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{formData?.chip2 || selectedProduct?.chips[1]}</button>
                                             </div>
                                             <div className="flex items-end gap-2 text-[#464646]">
-                                                <span className="text-lg md:text-[32px] md:leading-[40px] font-Raleway Raleway-bold">${selectedProduct?.detail?.priceNew}</span>
-                                                <span className="mb-1">${selectedProduct?.detail?.priceOld}</span>
+                                                <span className="text-lg md:text-[32px] md:leading-[40px] font-Raleway Raleway-bold">${formData.newPricing || selectedProduct?.detail?.priceNew}</span>
+                                                <span className="mb-1">${formData.oldPricing || selectedProduct?.detail?.priceOld}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -336,15 +341,35 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                             </div>
 
                             {/* Content + Image */}
-                            <div className="flex flex-col lg:flex-row gap-x-4.5">
+                            <div className="flex flex-col gap-x-4.5 gap-y-2">
                                 <div className='w-full'>
                                     <label className="block text-lg mb-1">Product Detail Content</label>
-                                    <textarea
-                                        name="detailContent"
-                                        value={formData.detailContent}
+                                    <Editor
+                                        apiKey="w0h75l9p91ijk4a35sioyvhphj294qox82aq9wntohg9iees"
+                                        value={formData.detailContent || "Amplifies energy during healing..."}
                                         onChange={handleChange}
-                                        placeholder="Enter Your Content Here"
-                                        className="w-full h-[133px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                        onEditorChange={(detailContent) => {
+                                            setFormData((prev) => ({ ...prev, detailContent }));
+                                            setErrors((prev) => ({ ...prev, detailContent: "" }));
+                                        }}
+                                        init={{
+                                            plugins: [
+                                                'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+                                                'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste',
+                                                'advtable', 'advcode', 'advtemplate', 'ai', 'uploadcare', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect',
+                                                'typography', 'inlinecss', 'markdown', 'importword', 'exportword', 'exportpdf'
+                                            ],
+                                            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography uploadcare | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                                            tinycomments_mode: 'embedded',
+                                            tinycomments_author: 'Author name',
+                                            mergetags_list: [
+                                                { value: 'First.Name', title: 'First Name' },
+                                                { value: 'Email', title: 'Email' },
+                                            ],
+                                            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                                            uploadcare_public_key: '5e7e532088944fab02a1',
+                                            height: 200
+                                        }}
                                     />
                                     {errors?.detailContent && (
                                         <p className="text-red-500 text-sm mt-1">{errors?.detailContent}</p>

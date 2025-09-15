@@ -5,6 +5,7 @@ import UploadIcon from "../../assets/svg/UploadIcon.svg";
 import SuccsessModel from "../component/SuccsessModel";
 import { getAddProduct } from "../../services/productServices";
 import toast from "react-hot-toast";
+import { Editor } from "@tinymce/tinymce-react";
 
 function AddProduct({ onClose, fetchProduct }) {
     const fileInputRef = useRef(null);
@@ -265,7 +266,7 @@ function AddProduct({ onClose, fetchProduct }) {
                             ) : (
                                 <div className="grid grid-cols-2 gap-y-5.5 gap-x-4.5">
                                     <div className="flex flex-col gap-4.5">
-                                        <div>
+                                        {/* <div>
                                             <label className="block text-lg mb-1">Product Detail Content</label>
                                             <textarea
                                                 name="content1"
@@ -275,6 +276,37 @@ function AddProduct({ onClose, fetchProduct }) {
                                                 className="w-full h-[217px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                             />
                                             {errors.content1 && <p className="text-red-500 text-sm mt-1">{errors.content1}</p>}
+                                        </div> */}
+                                        <div>
+                                            <label className="block text-lg mb-1">Product Detail Content</label>
+                                            <Editor
+                                                apiKey="w0h75l9p91ijk4a35sioyvhphj294qox82aq9wntohg9iees"
+                                                name="content1"
+                                                value={formData.content1}
+                                                onEditorChange={(content) => {
+                                                    setFormData((prev) => ({ ...prev, content1: content }));
+                                                    setErrors((prev) => ({ ...prev, content1: "" }));
+                                                }}
+                                                init={{
+                                                    plugins: [
+                                                        'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+                                                        'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste',
+                                                        'advtable', 'advcode', 'advtemplate', 'ai', 'uploadcare', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect',
+                                                        'typography', 'inlinecss', 'markdown', 'importword', 'exportword', 'exportpdf'
+                                                    ],
+                                                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography uploadcare | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                                                    tinycomments_mode: 'embedded',
+                                                    tinycomments_author: 'Author name',
+                                                    mergetags_list: [
+                                                        { value: 'First.Name', title: 'First Name' },
+                                                        { value: 'Email', title: 'Email' },
+                                                    ],
+                                                    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                                                    uploadcare_public_key: '5e7e532088944fab02a1',
+                                                    height: 250
+                                                }}
+                                            />
+                                            {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
                                         </div>
 
                                         <div>
@@ -344,7 +376,7 @@ function AddProduct({ onClose, fetchProduct }) {
                                         <div>
                                             <label className="block text-lg mb-1">Image for Blog Section</label>
                                             <div
-                                                className={`flex flex-col items-center justify-center h-[185px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
+                                                className={`flex flex-col items-center justify-center h-[212px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
                                                     }`}
                                                 onDragOver={(e) => {
                                                     e.preventDefault();

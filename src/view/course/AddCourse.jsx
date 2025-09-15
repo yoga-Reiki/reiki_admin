@@ -4,6 +4,7 @@ import { IoIosArrowRoundForward } from "react-icons/io";
 import UploadIcon from "../../assets/svg/UploadIcon.svg";
 import SuccsessModel from "../component/SuccsessModel";
 import { getAddCourses } from "../../services/courseServices";
+import { Editor } from "@tinymce/tinymce-react";
 
 function AddCourse({ onClose, fetchCourse }) {
     const fileInputRef = useRef(null);
@@ -193,7 +194,7 @@ function AddCourse({ onClose, fetchCourse }) {
 
                                     {/* Content + Image */}
                                     <div className="grid grid-cols-2 pt-2.5 gap-x-4.5 pb-5.5">
-                                        <div>
+                                        {/* <div>
                                             <label className="block text-lg mb-1">Content</label>
                                             <textarea
                                                 name="content"
@@ -201,6 +202,36 @@ function AddCourse({ onClose, fetchCourse }) {
                                                 onChange={handleChange}
                                                 placeholder="Enter Your Content Here"
                                                 className="w-full h-[280px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                            />
+                                            {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
+                                        </div> */}
+                                        <div>
+                                            <label className="block text-lg mb-1">Content</label>
+                                            <Editor
+                                                apiKey="w0h75l9p91ijk4a35sioyvhphj294qox82aq9wntohg9iees"
+                                                value={formData.content}
+                                                onEditorChange={(content) => {
+                                                    setFormData((prev) => ({ ...prev, content }));
+                                                    setErrors((prev) => ({ ...prev, content: "" }));
+                                                }}
+                                                init={{
+                                                    plugins: [
+                                                        'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+                                                        'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste',
+                                                        'advtable', 'advcode', 'advtemplate', 'ai', 'uploadcare', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect',
+                                                        'typography', 'inlinecss', 'markdown', 'importword', 'exportword', 'exportpdf'
+                                                    ],
+                                                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography uploadcare | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                                                    tinycomments_mode: 'embedded',
+                                                    tinycomments_author: 'Author name',
+                                                    mergetags_list: [
+                                                        { value: 'First.Name', title: 'First Name' },
+                                                        { value: 'Email', title: 'Email' },
+                                                    ],
+                                                    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                                                    uploadcare_public_key: '5e7e532088944fab02a1',
+                                                    height: 280
+                                                }}
                                             />
                                             {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
                                         </div>
