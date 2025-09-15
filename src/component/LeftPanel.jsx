@@ -63,7 +63,7 @@ function LeftPanel({ isCollapsed, setIsCollapsed }) {
                         key={index}
                         to={item.path}
                         className={({ isActive }) =>
-                            `flex ${isCollapsed ? "justify-center px-3 py-3.5" : "p-3"} items-center gap-3 rounded-full transition-all duration-300 ${isActive
+                            `flex ${isCollapsed ? "justify-center" : ""} px-3 py-3.5 items-center gap-3 rounded-full transition-all duration-300 ${isActive
                                 ? 'bg-gradient-to-r from-[#EA7913] to-[#EA7913]/50 text-white shadow-sm'
                                 : 'text-[#656565] hover:bg-orange-50'}`
                         }
