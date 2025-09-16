@@ -126,7 +126,7 @@ function Order() {
                         <h1 className="text-[32px] font-bold">Order Management</h1>
                         <p className="text-[#656565] pt-1">Manage all your Orders</p>
                     </div>
-                    <button onClick={handleDownloadAllOrders} className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full">
+                    <button onClick={handleDownloadAllOrders} className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 cursor-pointer rounded-full">
                         <img src={downloadIcon} alt="Download Icon" />
                         <span>Download all order details</span>
                     </button>

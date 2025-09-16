@@ -9,6 +9,7 @@ import { getAllUser } from "../../services/userServices";
 import ViewActivity from "./ViewActivity";
 import BlockUserModal from "./BlockUserModel";
 import { useNavigate } from "react-router-dom";
+import * as XLSX from 'xlsx';
 
 function Users() {
   const navigate = useNavigate()
@@ -58,6 +59,43 @@ function Users() {
     );
   });
 
+  const handleDownload = async () => {
+    try {
+      const response = await getAllUser({ page: 1, pageSize: 10000 });
+      const allUsers = response?.data?.users || [];
+
+      if (allUsers.length === 0) {
+        alert("No users to download.");
+        return;
+      }
+
+      const excelData = allUsers.map((user) => ({
+        Name: user.name || "-",
+        Email: user.email || "-",
+        "Mobile Number": user.mobileNumber || "-",
+        "Aadhar Card": user.adharCardNumber || "-",
+        Address: user?.address
+          ? `${user.address.street}, ${user.address.city}, ${user.address.state}, ${user.address.pincode}, ${user.address.country}`
+          : "-",
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(excelData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+
+      const columnWidths = Object.keys(excelData[0]).map((key) => ({
+        wch: Math.max(...excelData.map((row) => (row[key]?.toString().length || 0)), key.length) + 2
+      }));
+      worksheet['!cols'] = columnWidths;
+
+      XLSX.writeFile(workbook, "User_Details.xlsx");
+    } catch (err) {
+      console.error("Failed to export user data", err);
+      alert("Something went wrong while downloading user details.");
+    }
+  };
+
+
   return (
     <div className="text-[#464646]">
       {viewUser ? (
@@ -75,7 +113,7 @@ function Users() {
               <h1 className="text-[32px] font-bold">User Management</h1>
               <p className="text-[#656565] pt-1">Manage all your users</p>
             </div>
-            <button className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full">
+            <button onClick={handleDownload} className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 cursor-pointer rounded-full">
               <img src={downloadIcon} alt="Download Icon" />
               <span>Download user details</span>
             </button>
@@ -127,39 +165,39 @@ function Users() {
                   </tr>
                 ) : filteredUsers.length > 0 ? (
                   filteredUsers?.map((user, index) => {
-                      const isFirst = index === 0;
-                      const isLast = index === users.length - 1;
-                      return (
-                        <tr
-                          key={index}
-                          className={`grid grid-cols-6 items-center bg-white mt-[1px] text-sm ${isFirst ? 'rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
-                        >
-                          <td className="whitespace-pre-wrap px-4 py-7">{user.name}</td>
-                          <td className="whitespace-pre-wrap px-4 py-7">{user.email}</td>
-                          <td className="whitespace-pre-wrap px-4 py-7">{user.mobileNumber}</td>
-                          <td className="whitespace-pre-wrap px-4 py-7">{user.adharCardNumber}</td>
-                          <td className="whitespace-pre-wrap px-4 py-7">
-                            {user?.address
-                              ? `${user.address.street}, ${user.address.city}, ${user.address.state}, ${user.address.pincode}, ${user.address.country}`
-                              : "-"}
-                          </td>
-                          <td className="flex gap-1 items-center flex-wrap mt-2 md:mt-0">
-                            <button onClick={() => {
-                              setSelectedUser(user)
-                              navigate(`?selectedUserId=${user._id}`);
-                            }} className="flex items-center gap-1 p-3 bg-[#FEF8EC] text-[#EA7913] border border-[#F9D38E] rounded-full text-sm hover:bg-[#FCEAC9] cursor-pointer">
-                              <img src={EditIcon} alt='Download Icon' className='w-5 h-5' /><span>Edit Access</span>
-                            </button>
-                            <button onClick={() => setViewUser(user)} className="p-3 rounded-full bg-[#E8F1FF] border border-[#B3CCFF] hover:bg-[#cdddff] cursor-pointer">
-                              <img src={EyeopenIcon} alt='Download Icon' className='w-5 h-5' />
-                            </button>
-                            <button onClick={() => setBlockUser(user)} className="p-3 rounded-full bg-[#FEF2F2] border border-[#FECACA] hover:bg-[#fee3e3] cursor-pointer">
-                              <img src={blockIcon} alt='Download Icon' className='w-5 h-5' />
-                            </button>
-                          </td>
-                        </tr>
-                      )
-                    })
+                    const isFirst = index === 0;
+                    const isLast = index === users.length - 1;
+                    return (
+                      <tr
+                        key={index}
+                        className={`grid grid-cols-6 items-center bg-white mt-[1px] text-sm ${isFirst ? 'rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
+                      >
+                        <td className="whitespace-pre-wrap px-4 py-7">{user.name}</td>
+                        <td className="whitespace-pre-wrap px-4 py-7">{user.email}</td>
+                        <td className="whitespace-pre-wrap px-4 py-7">{user.mobileNumber}</td>
+                        <td className="whitespace-pre-wrap px-4 py-7">{user.adharCardNumber}</td>
+                        <td className="whitespace-pre-wrap px-4 py-7">
+                          {user?.address
+                            ? `${user.address.street}, ${user.address.city}, ${user.address.state}, ${user.address.pincode}, ${user.address.country}`
+                            : "-"}
+                        </td>
+                        <td className="flex gap-1 items-center flex-wrap mt-2 md:mt-0">
+                          <button onClick={() => {
+                            setSelectedUser(user)
+                            navigate(`?selectedUserId=${user._id}`);
+                          }} className="flex items-center gap-1 p-3 bg-[#FEF8EC] text-[#EA7913] border border-[#F9D38E] rounded-full text-sm hover:bg-[#FCEAC9] cursor-pointer">
+                            <img src={EditIcon} alt='Download Icon' className='w-5 h-5' /><span>Edit Access</span>
+                          </button>
+                          <button onClick={() => setViewUser(user)} className="p-3 rounded-full bg-[#E8F1FF] border border-[#B3CCFF] hover:bg-[#cdddff] cursor-pointer">
+                            <img src={EyeopenIcon} alt='Download Icon' className='w-5 h-5' />
+                          </button>
+                          <button onClick={() => setBlockUser(user)} className="p-3 rounded-full bg-[#FEF2F2] border border-[#FECACA] hover:bg-[#fee3e3] cursor-pointer">
+                            <img src={blockIcon} alt='Download Icon' className='w-5 h-5' />
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })
                 ) : (
                   <tr>
                     <td colSpan="6" className="text-center py-6">

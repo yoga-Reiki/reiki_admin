@@ -3,9 +3,9 @@ import addIconBlack from "../../assets/svg/addIconBlack.svg";
 import DeleteModel from '../component/DeleteModel';
 import { getAddGalleryImg, getAllGalleryImg, getGalleryImgDelete, getUpdateGalleryImg } from '../../services/galleryServices';
 import toast from 'react-hot-toast';
-import CameraIcon from "../../assets/svg/CameraIcon.svg";
+import editPencilGreyIcon from "../../assets/svg/editPencilGreyIcon.svg";
 import EditGallery from './EditGallery';
-import DotMenuIcon from "../../assets/svg/3DotMenuIcon.svg";
+import eyeIconGrey from "../../assets/svg/eyeIconGrey.svg";
 import deleteIconGrey from "../../assets/svg/deleteIconGrey.svg";
 
 function Gallery() {
@@ -16,12 +16,11 @@ function Gallery() {
     const fileInputRef = useRef(null);
     const hasFetched = useRef(false);
     const [galleyImgDelete, setGalleyImgDelete] = useState(null);
-    const [uploadedFiles, setUploadedFiles] = useState([]); // for batch/new uploads
     const [updatedFile, setUpdatedFile] = useState(null); // last selected file (used for edit/add modal)
     const [showChangeModal, setShowChangeModal] = useState(null); // null | 'edit' | 'add'
     const [uploading, setUploading] = useState(false);
     const [changingImageLoading, setChangingImageLoading] = useState(false);
-    const [showMenuIndex, setShowMenuIndex] = useState(null);
+    const [previewImage, setPreviewImage] = useState(null);
 
     useEffect(() => {
         if (!hasFetched.current) {
@@ -116,7 +115,6 @@ function Gallery() {
                 setImages(refreshed?.data?.items || []);
             }
 
-            setUploadedFiles([]);
             setUpdatedFile(null);
             setShowChangeModal(null);
             fetchImages()
@@ -206,49 +204,46 @@ function Gallery() {
                                 <img
                                     src={img.imageUrl}
                                     alt={`Gallery ${index + 1}`}
-                                    className="w-full h-48 md:h-60 lg:h-72 object-cover rounded-3xl"
+                                    className="w-full h-48 md:h-60 lg:h-72 object-cover rounded-3xl transition duration-300 group-hover:blur-xs"
                                 />
 
-                                {/* 3-dot menu */}
-                                <div className="absolute top-4 right-4 z-10">
+                                {/* Hover Overlay with Icons */}
+                                <div className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition duration-300">
+                                    {/* Eye Icon */}
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            setShowMenuIndex(showMenuIndex === index ? null : index);
+                                            setPreviewImage(img.imageUrl);
                                         }}
-                                        className="p-2 bg-white rounded-full border border-[#FCEAC9] cursor-pointer"
+                                        className="bg-white p-2 rounded-full shadow-md hover:bg-[#] cursor-pointer"
                                     >
-                                        <img src={DotMenuIcon} alt="Options" />
+                                        <img src={eyeIconGrey} alt="Preview" className="w-7 h-7" />
                                     </button>
 
-                                    {showMenuIndex === index && (
-                                        <div className="absolute space-y-3 right-0 mt-2 w-50 bg-white rounded-3xl p-4.5 cursor-pointer border border-[#BDBDBD] z-20">
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setSelectedImageIndex(index);
-                                                    setUpdatedFile(null); // reset any previous selection
-                                                    setShowChangeModal('edit'); // open modal in edit mode
-                                                    setShowMenuIndex(null);
-                                                }}
-                                                className="flex items-center gap-2.5 w-full rounded-xl p-3 text-left cursor-pointer text-sm hover:bg-[#FEF8EC]"
-                                            >
-                                                <img src={CameraIcon} alt="CameraIcon Not Found" />
-                                                <p>Change Image</p>
-                                            </button>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setGalleyImgDelete(img);
-                                                    setShowMenuIndex(null);
-                                                }}
-                                                className="flex items-center gap-2.5 w-full rounded-xl p-3 text-left text-sm hover:bg-[#FEF8EC]"
-                                            >
-                                                <img src={deleteIconGrey} alt="deleteIcon Not Found" />
-                                                <p>Delete Image</p>
-                                            </button>
-                                        </div>
-                                    )}
+
+                                    {/* Edit Icon */}
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setSelectedImageIndex(index);
+                                            setUpdatedFile(null);
+                                            setShowChangeModal('edit');
+                                        }}
+                                        className="bg-white p-3 rounded-full shadow-md hover:bg-[#] cursor-pointer"
+                                    >
+                                        <img src={editPencilGreyIcon} alt="Edit" className="w-5 h-5" />
+                                    </button>
+
+                                    {/* Delete Icon */}
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setGalleyImgDelete(img);
+                                        }}
+                                        className="bg-white p-3 rounded-full shadow-md hover:bg-[#] cursor-pointer"
+                                    >
+                                        <img src={deleteIconGrey} alt="Delete" className="w-5 h-5" />
+                                    </button>
                                 </div>
                             </div>
                         ))
@@ -267,6 +262,26 @@ function Gallery() {
                     </div>
                 </div>
             </div>
+
+            {previewImage && (
+                <div className="fixed inset-0 flex justify-center items-center bg-black/40 backdrop-blur-sm z-50 text-[#464646] w-full p-4">
+                    <div className="relative">
+                        {/* Close Button */}
+                        <button
+                            onClick={() => setPreviewImage(null)}
+                            className="absolute top-4 right-4 bg-white py-2 px-3.5 rounded-full shadow-md hover:bg-[#] cursor-pointer z-50"
+                        >
+                            ✕
+                        </button>
+
+                        <img
+                            src={previewImage}
+                            alt="Preview"
+                            className="w-full max-h-[80vh] object-contain rounded-2xl"
+                        />
+                    </div>
+                </div>
+            )}
 
             {galleyImgDelete && (
                 <DeleteModel
