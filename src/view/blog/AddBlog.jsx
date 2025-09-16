@@ -188,6 +188,7 @@ function AddBlog({ onClose, selectedUser, fetchBlog }) {
                                             ],
                                             ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
                                             uploadcare_public_key: '5e7e532088944fab02a1',
+                                            height: 250
                                         }}
                                         onEditorChange={(content) => {
                                             setFormData((p) => ({ ...p, content }));

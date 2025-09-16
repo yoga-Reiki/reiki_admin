@@ -126,23 +126,25 @@ function ViewActivity({ viewUser, setViewUser }) {
                         <div className="overflow-x-auto w-full">
                             {/* table  */}
                             <table className="w-full table-auto">
-                                <thead className="grid grid-cols-4 bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
-                                    <th className='px-4 py-3'>Day</th>
-                                    <th className='px-4 py-3'>Date</th>
-                                    <th className='px-4 py-3'>Start Time</th>
-                                    <th className='px-4 py-3'>End Time</th>
+                                <thead>
+                                    <tr className="grid grid-cols-4 bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
+                                        <th className='px-4 py-3'>Day</th>
+                                        <th className='px-4 py-3'>Date</th>
+                                        <th className='px-4 py-3'>Start Time</th>
+                                        <th className='px-4 py-3'>End Time</th>
+                                    </tr>
                                 </thead >
 
                                 <tbody className="flex flex-col bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
                                     {loading ? (
                                         <tr>
-                                            <td colSpan="6" className="text-center py-6">
+                                            <td colSpan="6" className="flex justify-center py-6">
                                                 Loading...
                                             </td>
                                         </tr>
                                     ) : error ? (
                                         <tr>
-                                            <td colSpan="6" className="text-center py-6 text-red-500">
+                                            <td colSpan="6" className="flex justify-center py-6 text-red-500">
                                                 {error}
                                             </td>
                                         </tr>
@@ -164,7 +166,7 @@ function ViewActivity({ viewUser, setViewUser }) {
                                         })
                                     ) : (
                                         <tr>
-                                            <td colSpan="6" className="text-center py-6">
+                                            <td colSpan="6" className="flex justify-center py-6">
                                                 No users found
                                             </td>
                                         </tr>

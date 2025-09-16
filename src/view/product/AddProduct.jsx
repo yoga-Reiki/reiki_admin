@@ -194,7 +194,7 @@ function AddProduct({ onClose, fetchProduct }) {
                                                     e.stopPropagation();
                                                     setIsDragging(false);
                                                 }}
-                                                onDrop={handleDrop}
+                                                onDrop={(e) => handleDrop(e, "cover")}
                                                 onClick={() => fileInputRef.current?.click()}
                                             >
                                                 {images.cover ? (
@@ -388,7 +388,7 @@ function AddProduct({ onClose, fetchProduct }) {
                                                     e.stopPropagation();
                                                     setIsDragging(false);
                                                 }}
-                                                onDrop={handleDrop}
+                                                onDrop={(e) => handleDrop(e, "detail")}
                                                 onClick={() => fileInputRef.current?.click()}
                                             >
                                                 {images.detail ? (

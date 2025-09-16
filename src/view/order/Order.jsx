@@ -136,7 +136,7 @@ function Order() {
                                 </tr>
                             ) : error ? (
                                 <tr>
-                                    <td colSpan="6" className="text-center py-6 text-red-500">{error}</td>
+                                    <td colSpan="6" className="flex justify-center py-6 text-red-500">{error}</td>
                                 </tr>
                             ) : orders?.items?.length > 0 ? (
                                 orders.items.map((data, index) => {
@@ -190,7 +190,7 @@ function Order() {
                                 })
                             ) : (
                                 <tr>
-                                    <td colSpan="6" className="text-center flex justify-center py-6">No orders found</td>
+                                    <td colSpan="6" className="flex justify-center py-6">No orders found</td>
                                 </tr>
                             )}
                         </tbody>

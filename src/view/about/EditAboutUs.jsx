@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import { getAboutUsUpdate } from "../../services/aboutServices";
 import toast from "react-hot-toast";
@@ -35,11 +35,20 @@ const DropImage = ({ onDropFile, inputId, file, error, setErrors }) => {
                     htmlFor={inputId}
                 >
                     <FiUploadCloud size={20} className="text-[#EA7913]" />
-                    {file ? <p className="text-sm text-[#989898]">{file.name}</p> :
+                    {file ? (
+                        typeof file === "string" ? (
+                            <p className="text-sm text-[#989898]">
+                                {file.split("/").pop()}
+                            </p>
+                        ) : (
+                            <p className="text-sm text-[#989898]">{file.name}</p>
+                        )
+                    ) : (
                         <span className="text-[#989898] text-sm">
                             Click Here to Upload Image or Drag & drop here
                         </span>
-                    }
+                    )}
+
                 </label>
                 <input
                     type="file"
@@ -53,7 +62,7 @@ const DropImage = ({ onDropFile, inputId, file, error, setErrors }) => {
     );
 };
 
-function EditAboutUs({ onCancel }) {
+function EditAboutUs({ onCancel, aboutData, fetchAboutData }) {
     const [visionContent, setVisionContent] = useState("");
     const [missionContent, setMissionContent] = useState("");
     const [heroContent, setHeroContent] = useState("");
@@ -61,6 +70,18 @@ function EditAboutUs({ onCancel }) {
     const [missionImage, setMissionImage] = useState(null);
     const [heroImage, setHeroImage] = useState(null);
     const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        if (aboutData) {
+            setVisionContent(aboutData.visionContent || "");
+            setMissionContent(aboutData.missionContent || "");
+            setHeroContent(aboutData.heroContent || "");
+            setVisionImage(aboutData.visionImageUrl || null);
+            setMissionImage(aboutData.missionImageUrl || null);
+            setHeroImage(aboutData.heroImageUrl || null);
+        }
+    }, [aboutData]);
+
 
     const validateForm = () => {
         const newErrors = {};
@@ -90,15 +111,8 @@ function EditAboutUs({ onCancel }) {
             await getAboutUsUpdate(formData);
             toast.success("About Us content updated successfully!")
 
-            setVisionContent("");
-            setMissionContent("");
-            setHeroContent("");
-            setVisionImage(null);
-            setMissionImage(null);
-            setHeroImage(null);
-            setErrors({});
-
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            // window.scrollTo({ top: 0, behavior: "smooth" });
+            fetchAboutData()
         } catch (err) {
             console.error(err);
             alert("Failed to update About Us. Please try again.");

@@ -4,6 +4,7 @@ import leftBackIcon from "../../assets/svg/leftIcon.svg"
 import imageIconOrange from "../../assets/svg/imageIconOrange.svg"
 import { getBlogUpdate } from "../../services/blogServices";
 import toast from "react-hot-toast";
+import { Editor } from "@tinymce/tinymce-react";
 
 function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
     const [formData, setFormData] = useState({
@@ -16,6 +17,9 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [originalImage, setOriginalImage] = useState("");
     const fileInputRef = useRef(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const coverInputRef = useRef(null);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         if (selectedUser) {
@@ -45,6 +49,34 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
 
     const handleFileClick = () => {
         if (fileInputRef.current) fileInputRef.current.click();
+    };
+
+    const handleImageChange = (file, type) => {
+        if (file && file.type.startsWith("image/")) {
+            setImageName(file.name);
+            setSelectedFile(file);
+        }
+    };
+
+    const handleDrop = async (e, type) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+        const file = e.dataTransfer?.files?.[0];
+
+        if (file && file.type.startsWith("image/")) {
+            handleImageChange(file, type);
+            setErrors((prevErrors) => {
+                const newErrors = { ...prevErrors };
+                delete newErrors[type];
+                return newErrors;
+            });
+        } else {
+            setErrors((prev) => ({
+                ...prev,
+                [type]: "Please upload a valid image.",
+            }));
+        }
     };
 
     const handleFileChange = (e) => {
@@ -166,22 +198,52 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
                     </div>
 
                     {/* Blog Content & Image Upload */}
-                    <div className="flex flex-col lg:flex-row gap-6">
+                    <div className="">
                         <div className="flex-1">
                             <label className="block text-lg mb-1.5">Content For Blog</label>
-                            <textarea
+                            {/* <textarea
                                 name="content"
                                 value={formData.content}
                                 onChange={handleChange}
                                 rows={6}
                                 className="w-full md:h-[150px] lg:h-[231px] border border-[#BDBDBD] rounded-xl py-2.5 px-4.5 focus:outline-none focus:border-[#EA7913]"
                                 placeholder="Enter blog content..."
+                            /> */}
+                            <Editor
+                                apiKey="w0h75l9p91ijk4a35sioyvhphj294qox82aq9wntohg9iees"
+                                value={formData.content}
+                                onChange={handleChange}
+                                name="content"
+                                placeholder="Write your blog content here"
+                                init={{
+                                    plugins: [
+                                        // Core editing features
+                                        'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+                                        // Your account includes a free trial of TinyMCE premium features
+                                        // Try the most popular premium features until Sep 27, 2025:
+                                        'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'advtemplate', 'ai', 'uploadcare', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown', 'importword', 'exportword', 'exportpdf'
+                                    ],
+                                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography uploadcare | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                                    tinycomments_mode: 'embedded',
+                                    tinycomments_author: 'Author name',
+                                    mergetags_list: [
+                                        { value: 'First.Name', title: 'First Name' },
+                                        { value: 'Email', title: 'Email' },
+                                    ],
+                                    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                                    uploadcare_public_key: '5e7e532088944fab02a1',
+                                    height: 250
+                                }}
+                                onEditorChange={(content) => {
+                                    setFormData((p) => ({ ...p, content }));
+                                    setErrors((p) => ({ ...p, content: "" }));
+                                }}
                             />
                         </div>
 
                         <div className="flex-1">
                             <label className="block text-lg mb-1.5">Image for Blog Section</label>
-                            <div
+                            {/* <div
                                 className="w-full md:h-[150px] lg:h-[231px] flex flex-col items-center justify-center border border-[#BDBDBD] rounded-md text-center cursor-pointer hover:border-[#EA7913] transition"
                                 onClick={handleFileClick}
                             >
@@ -199,6 +261,44 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
                                         <p >Click Here to Change Image</p>
                                     </div>
                                 </div>
+                            </div> */}
+                            <div
+                                className={`flex flex-col items-center justify-center h-[133px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
+                                    }`}
+                                onDragOver={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setIsDragging(true);
+                                }}
+                                onDragLeave={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setIsDragging(false);
+                                }}
+                                onDrop={(e) => handleDrop(e, "cover")}
+                                onClick={() => coverInputRef.current?.click()}
+                            >
+                                {imageName ? (
+                                    <div className="flex flex-col justify-center items-center gap-1">
+                                        <span className="text-[#464646] text-sm font-medium w-full text-center break-words">
+                                            {imageName}
+                                        </span>
+                                        <span className="text-xs text-center text-[#9a9a9a]">Click Here to Change Image</span>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center gap-2 px-12">
+                                        <img src={imageIconOrange} alt="Upload Icon" />
+                                        <span className="text-[#989898]">Upload Image Here</span>
+                                    </div>
+                                )}
+
+                                <input
+                                    ref={coverInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => handleFileChange(e, "cover")}
+                                />
                             </div>
                         </div>
                     </div>

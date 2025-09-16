@@ -23,7 +23,6 @@ function Testimonials() {
     useEffect(() => {
         if (!hasFetched.current) {
             fetchTestimonials();
-            toast.success("Testimonials Fetched Successfully");
             hasFetched.current = true;
         }
     }, []);
@@ -33,6 +32,7 @@ function Testimonials() {
         try {
             const response = await getTestimonialsData({ page: 1, pageSize: 10 });
             setTestimonialsData(response?.data?.items || []);
+            toast.success("Testimonials Fetched Successfully");
         } catch (err) {
             setError("Failed to fetch users");
         } finally {
@@ -123,7 +123,7 @@ function Testimonials() {
                                     </tr>
                                 ) : error ? (
                                     <tr>
-                                        <td colSpan="6" className="text-center py-6 text-red-500">
+                                        <td colSpan="6" className="flex justify-center py-6 text-red-500">
                                             {error}
                                         </td>
                                     </tr>
@@ -168,7 +168,7 @@ function Testimonials() {
                                     })
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className="text-center py-6">
+                                        <td colSpan="6" className="flex justify-center py-6">
                                             No testimonials found
                                         </td>
                                     </tr>

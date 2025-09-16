@@ -12,21 +12,22 @@ function Aboutus() {
     const hasFetched = useRef(false);
 
     useEffect(() => {
-        async function fetchData() {
-            try {
-                const res = await getAboutPageData();
-                if (res?.data?.about) {
-                    setAboutData(res.data.about);
-                }
-            } catch (err) {
-                console.error("Error fetching about page data:", err);
-            }
-        }
         if (!hasFetched.current) {
-            fetchData();
+            fetchAboutData();
             hasFetched.current = true;
         }
     }, []);
+
+    const fetchAboutData = async () => {
+        try {
+            const res = await getAboutPageData();
+            if (res?.data?.about) {
+                setAboutData(res.data.about);
+            }
+        } catch (err) {
+            console.error("Error fetching about page data:", err);
+        }
+    }
 
     if (!aboutData) {
         return <div className="text-center py-10">Loading...</div>;
@@ -40,7 +41,7 @@ function Aboutus() {
     return (
         <div>
             {isEditing ? (
-                <EditAboutUs onCancel={() => setIsEditing(false)} />
+                <EditAboutUs fetchAboutData={fetchAboutData} aboutData={aboutData} onCancel={() => setIsEditing(false)} />
             ) : isEditingChooseCard ? (
                 <EditChooseCard aboutData={aboutData} onCancel={() => setIsEditingChooseCard(false)} />
             ) : (

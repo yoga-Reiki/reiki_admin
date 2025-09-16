@@ -70,7 +70,7 @@ const ChooseUsSliderCard = ({ index, data, handleChange, fileInputRef, handleDro
                                                 onChange={(e) => handleFileChange(index, imgIndex, e)}
                                             />
                                             <img src={EditIcon} alt="" className='w-6 h-6' />
-                                            <p className="text-[#464646] w-52">
+                                            <p className="text-[#464646] w-52 break-all">
                                                 {data.images[imgIndex]
                                                     ? typeof data.images[imgIndex] === 'string'
                                                         ? data.images[imgIndex].split('/').pop()

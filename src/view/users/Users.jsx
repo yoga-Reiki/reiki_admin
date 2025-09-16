@@ -121,7 +121,7 @@ function Users() {
                   </tr>
                 ) : error ? (
                   <tr>
-                    <td colSpan="6" className="text-center py-6 text-red-500">
+                    <td colSpan="6" className="flex justify-center py-6 text-red-500">
                       {error}
                     </td>
                   </tr>

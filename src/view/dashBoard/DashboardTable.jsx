@@ -48,7 +48,7 @@ function DashboardTable({ dashboardData, loading, error, pagination, setPaginati
                             </tr>
                         ) : error ? (
                             <tr>
-                                <td colSpan="6" className="text-center py-6 text-red-500">
+                                <td colSpan="6" className="flex justify-center py-6 text-red-500">
                                     {error}
                                 </td>
                             </tr>
@@ -82,7 +82,7 @@ function DashboardTable({ dashboardData, loading, error, pagination, setPaginati
                             })
                         ) : (
                             <tr>
-                                <td colSpan="6" className="text-center py-6">
+                                <td colSpan="6" className="flex justify-center py-6">
                                     No users found
                                 </td>
                             </tr>
