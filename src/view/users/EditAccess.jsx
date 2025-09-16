@@ -28,12 +28,12 @@ function EditAccess({ selectedUser, setSelectedUser }) {
             const items = response?.data?.items || [];
 
             setCoursesData(items);
-
-            const accessibleCourse = items.find(course => course.isAccessible);
-
-            if (accessibleCourse) {
-                setUserCourses({ [accessibleCourse._id]: true });
-            }
+            
+            const accessibleCoursesMap = items.reduce((acc, course) => {
+                acc[course._id] = course.isAccessible;
+                return acc;
+            }, {});
+            setUserCourses(accessibleCoursesMap);
 
         } catch (err) {
             toast.error("Failed to fetch users");

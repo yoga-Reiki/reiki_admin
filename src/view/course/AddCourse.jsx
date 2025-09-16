@@ -194,7 +194,7 @@ function AddCourse({ onClose, fetchCourse }) {
 
                                     {/* Content + Image */}
                                     <div className="grid grid-cols-2 pt-2.5 gap-x-4.5 pb-5.5">
-                                        {/* <div>
+                                        <div>
                                             <label className="block text-lg mb-1">Content</label>
                                             <textarea
                                                 name="content"
@@ -204,8 +204,8 @@ function AddCourse({ onClose, fetchCourse }) {
                                                 className="w-full h-[280px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                             />
                                             {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
-                                        </div> */}
-                                        <div>
+                                        </div>
+                                        {/* <div>
                                             <label className="block text-lg mb-1">Content</label>
                                             <Editor
                                                 apiKey="w0h75l9p91ijk4a35sioyvhphj294qox82aq9wntohg9iees"
@@ -234,7 +234,7 @@ function AddCourse({ onClose, fetchCourse }) {
                                                 }}
                                             />
                                             {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
-                                        </div>
+                                        </div> */}
 
                                         {/* Image Upload */}
                                         <div>
@@ -280,12 +280,11 @@ function AddCourse({ onClose, fetchCourse }) {
                                         </div>
                                     </div>
 
-                                    {/* Next button */}
                                     <div className="w-full relative inline-block rounded-full bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900]">
                                         <button
                                             type="button"
                                             onClick={handleNext}
-                                            className="w-full flex justify-center items-center gap-2 py-2.5 bg-[#EA7913] cursor-pointer text-lg text-white rounded-full"
+                                            className="w-full flex justify-center items-center gap-2 cursor-pointer py-2.5 bg-[#EA7913] text-lg text-white rounded-full"
                                         >
                                             <span>Next</span>
                                             <IoIosArrowRoundForward size={28} />

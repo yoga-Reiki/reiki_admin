@@ -239,10 +239,9 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
                                             <h3 className="text-2xl sm:text-3xl font-Raleway font-medium text-[#292929] pb-3">
                                                 {formData?.title || selectedCourse.title}
                                             </h3>
-                                            <div
-                                                className="text-sm text-[#525252] list-disc ml-4"
-                                                dangerouslySetInnerHTML={{ __html: formData?.content || selectedCourse?.shortContent }}
-                                            />
+                                            <p className="text-sm text-[#525252] whitespace-pre-line">
+                                                {(formData?.content || selectedCourse?.shortContent)}
+                                            </p>
                                         </div>
 
                                         <div className="flex flex-col items-start mt-4">
@@ -296,7 +295,7 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4.5">
                             <div>
                                 <label className="block text-lg mb-1">Content</label>
-                                <Editor
+                                {/* <Editor
                                     apiKey="w0h75l9p91ijk4a35sioyvhphj294qox82aq9wntohg9iees"
                                     value={formData.content}
                                     onChange={handleChange}
@@ -320,8 +319,15 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
                                         ],
                                         ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
                                         uploadcare_public_key: '5e7e532088944fab02a1',
-                                        height: 200
+                                        height: 280
                                     }}
+                                /> */}
+                                <textarea
+                                    name="content"
+                                    value={formData.content}
+                                    onChange={handleChange}
+                                    placeholder="Enter Your Content Here"
+                                    className="w-full h-[133px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                 />
                                 {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
                             </div>
@@ -330,7 +336,7 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
                             <div>
                                 <label className="block text-lg mb-1">Upload Image</label>
                                 <div
-                                    className={`flex flex-col items-center justify-center h-49.5 border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
+                                    className={`flex flex-col items-center justify-center h-[133px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
                                         }`}
                                     onDragOver={(e) => {
                                         e.preventDefault();

@@ -49,18 +49,16 @@ function CourseSection({ coursesData, loading }) {
             <button
               onClick={prevSlide}
               disabled={currentSlide === 0}
-              className={`w-12 h-12 bg-[#FCEAC9] hover:bg-[#FEF8EC] rounded-full flex items-center justify-center transition-all duration-300 ${
-                currentSlide === 0 ? "bg-[#FEF8EC] cursor-not-allowed" : "cursor-pointer"
-              }`}
+              className={`w-12 h-12 bg-[#FCEAC9] hover:bg-[#FEF8EC] rounded-full flex items-center justify-center transition-all duration-300 ${currentSlide === 0 ? "bg-[#FEF8EC] cursor-not-allowed" : "cursor-pointer"
+                }`}
             >
               <img src={Left} alt="Previous" className="w-3 h-2.5" />
             </button>
             <button
               onClick={nextSlide}
               disabled={currentSlide >= coursesData.length - cardsToShow}
-              className={`w-12 h-12 bg-[#FCEAC9] hover:bg-[#FEF8EC] rounded-full flex items-center justify-center transition-all duration-300 ${
-                currentSlide >= coursesData.length - cardsToShow ? "bg-[#FEF8EC] cursor-not-allowed" : "cursor-pointer"
-              }`}
+              className={`w-12 h-12 bg-[#FCEAC9] hover:bg-[#FEF8EC] rounded-full flex items-center justify-center transition-all duration-300 ${currentSlide >= coursesData.length - cardsToShow ? "bg-[#FEF8EC] cursor-not-allowed" : "cursor-pointer"
+                }`}
             >
               <img src={Right} alt="Next" className="w-3 h-2.5" />
             </button>
@@ -105,10 +103,13 @@ function CourseSection({ coursesData, loading }) {
                         alt={item.title}
                         className="w-full h-[450px] md:h-[360px] object-cover"
                       />
-                      <div className="text-center absolute bottom-1 left-1 right-1 h-32 bg-white bg-opacity-90 backdrop-blur-md p-4 rounded-2xl space-y-1">
+                      <div className="absolute bottom-1 left-1 right-1 h-32 bg-white bg-opacity-90 backdrop-blur-md p-4 rounded-2xl space-y-1">
                         <h3 className="text-lg text-[#292929]">{item.title}</h3>
-                        <p className="text-xs text-[#525252] md:line-clamp-3 line-clamp-none">
+                        {/* <p className="text-xs text-[#525252] md:line-clamp-3 line-clamp-none">
                           {item.shortContent}
+                        </p> */}
+                        <p className="text-sm text-[#525252] whitespace-pre-line line-clamp-3">
+                          {item?.shortContent}
                         </p>
                       </div>
                     </div>

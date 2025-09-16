@@ -54,10 +54,9 @@ const CourseCard = ({ setIsEditingCard, setSelectedCourse, coursesData, setCours
                             onClick={nextSlide}
                             disabled={currentSlide >= coursesData.length - cardsToShow}
                             className={`w-12 h-12 bg-[#FCEAC9] hover:bg-[#FEF8EC] rounded-full flex items-center justify-center transition-all duration-300
-                                ${
-                                    currentSlide >= coursesData.length - cardsToShow
-                                        ? "bg-[#FEF8EC] cursor-not-allowed"
-                                        : "cursor-pointer"
+                                ${currentSlide >= coursesData.length - cardsToShow
+                                    ? "bg-[#FEF8EC] cursor-not-allowed"
+                                    : "cursor-pointer"
                                 }`}
                         >
                             <img src={Right} alt="Next" className="w-3 h-2.5" />
@@ -119,7 +118,10 @@ const CourseCard = ({ setIsEditingCard, setSelectedCourse, coursesData, setCours
                                     <div className="absolute flex flex-col justify-between top-3 right-3 bottom-3 w-[80%] sm:w-[75%] md:w-[56%] bg-white rounded-3xl px-6 py-4.5">
                                         <div>
                                             <h3 className="text-xl text-[#292929] mb-2">{data.title}</h3>
-                                            <p className="text-sm text-[#525252] lg:line-clamp-4 line-clamp-none">
+                                            {/* <p className="text-sm text-[#525252] lg:line-clamp-4 line-clamp-none">
+                                                {data?.shortContent}
+                                            </p> */}
+                                            <p className="text-sm text-[#525252] whitespace-pre-line md:line-clamp-3 lg:line-clamp-4">
                                                 {data?.shortContent}
                                             </p>
                                         </div>
