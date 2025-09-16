@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import addIconBlack from "../../assets/svg/addIconBlack.svg";
-import deletIconBlack from "../../assets/svg/deletIconBlack.svg";
 import DeleteModel from '../component/DeleteModel';
 import { getAddGalleryImg, getAllGalleryImg, getGalleryImgDelete, getUpdateGalleryImg } from '../../services/galleryServices';
 import toast from 'react-hot-toast';
+import CameraIcon from "../../assets/svg/CameraIcon.svg";
+import EditGallery from './EditGallery';
+import DotMenuIcon from "../../assets/svg/3DotMenuIcon.svg";
+import deleteIconGrey from "../../assets/svg/deleteIconGrey.svg";
 
 function Gallery() {
     const [images, setImages] = useState([]);
@@ -13,97 +16,110 @@ function Gallery() {
     const fileInputRef = useRef(null);
     const hasFetched = useRef(false);
     const [galleyImgDelete, setGalleyImgDelete] = useState(null);
-    const [uploadedFiles, setUploadedFiles] = useState([]);
-    const [updatedFile, setUpdatedFile] = useState(null);
-
+    const [uploadedFiles, setUploadedFiles] = useState([]); // for batch/new uploads
+    const [updatedFile, setUpdatedFile] = useState(null); // last selected file (used for edit/add modal)
+    const [showChangeModal, setShowChangeModal] = useState(null); // null | 'edit' | 'add'
     const [uploading, setUploading] = useState(false);
-    const [changingImageLoading, setchangingImageLoading] = useState(false);
+    const [changingImageLoading, setChangingImageLoading] = useState(false);
+    const [showMenuIndex, setShowMenuIndex] = useState(null);
 
     useEffect(() => {
-        async function fetchImages() {
-            try {
-                setLoading(true);
-                const response = await getAllGalleryImg();
-                toast.success(response?.message);
-                setImages(response?.data?.items || []);
-            } catch (error) {
-                console.error("Failed to fetch gallery images", error);
-            } finally {
-                setLoading(false);
-            }
-        }
-
         if (!hasFetched.current) {
             fetchImages();
             hasFetched.current = true;
         }
     }, []);
 
-    useEffect(() => {
-        const updateImage = async () => {
-            if (!updatedFile || selectedImageIndex === null) return;
-            setchangingImageLoading(true);
-            const selectedImage = images[selectedImageIndex];
-            const imageId = selectedImage._id;
-            if (!imageId) return;
+    const fetchImages = async () => {
+        try {
+            setLoading(true);
+            const response = await getAllGalleryImg();
+            if (response?.message) toast.success(response.message);
+            setImages(response?.data?.items || []);
+        } catch (error) {
+            console.error("Failed to fetch gallery images", error);
+        } finally {
+            setLoading(false);
+        }
+    }
 
-            const formData = new FormData();
-            formData.append("image", updatedFile);
-
-            try {
-                const response = await getUpdateGalleryImg(formData, imageId);
-                toast.success(response.message || "Image updated successfully!");
-
-                const refreshed = await getAllGalleryImg();
-                setImages(refreshed?.data?.items || []);
-            } catch (error) {
-                toast.error("Failed to update image.");
-                console.error(error);
-            } finally {
-                setUpdatedFile(null);
-                setchangingImageLoading(false);
-            }
-        };
-
-        updateImage();
-    }, [updatedFile]);
-
-    const handleImageUpload = (e) => {
-        const file = e.target.files[0];
+    const handleImageFile = (file) => {
         if (!file) return;
-
         const imageUrl = URL.createObjectURL(file);
 
+        setUpdatedFile(file);
+
         if (selectedImageIndex !== null && images[selectedImageIndex]?._id) {
-            // Replace the image at selected index
             const updatedImages = [...images];
             updatedImages[selectedImageIndex].imageUrl = imageUrl;
             setImages(updatedImages);
-            setUpdatedFile(file);
-        } else {
-            // Add as new temp image
-            const tempImage = { _id: null, imageUrl };
-            setImages(prev => [...prev, tempImage]);
-            setUploadedFiles(prev => [...prev, file]);
         }
     };
 
-    const handleUploadToWebsite = async () => {
-        if (uploadedFiles.length === 0) {
-            toast.error("No new images to upload.");
+    const handleImageUpload = (e) => {
+        const file = e.target.files?.[0];
+        handleImageFile(file);
+        e.target.value = '';
+    };
+
+    const handleChangeImage = async () => {
+        if (!updatedFile || selectedImageIndex === null) {
+            toast.error("Please select a new image.");
             return;
         }
+
+        setChangingImageLoading(true);
+        const selectedImage = images[selectedImageIndex];
+        const imageId = selectedImage?._id;
+        if (!imageId) {
+            toast.error("Cannot update a temporary image. Use Upload instead.");
+            setChangingImageLoading(false);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("image", updatedFile);
+
+        try {
+            const response = await getUpdateGalleryImg(formData, imageId);
+            toast.success(response?.message || "Image updated successfully!");
+            const refreshed = await getAllGalleryImg();
+            setImages(refreshed?.data?.items || []);
+            setShowChangeModal(null);
+        } catch (error) {
+            toast.error("Failed to update image.");
+            console.error(error);
+        } finally {
+            setUpdatedFile(null);
+            setChangingImageLoading(false);
+        }
+    };
+
+    const handleAddImage = async () => {
+        if (!updatedFile) {
+            toast.error("Please select an image to upload.");
+            return;
+        }
+
         setUploading(true);
         const formData = new FormData();
-        uploadedFiles.forEach(file => formData.append("images", file));
+        formData.append("images", updatedFile);
 
         try {
             const res = await getAddGalleryImg(formData);
-            toast.success(res?.message || "Images uploaded successfully!");
+            toast.success(res?.message || "Image uploaded successfully!");
 
-            const refreshed = await getAllGalleryImg();
-            setImages(refreshed?.data?.items || []);
+            if (res?.data?.items?.length) {
+                setImages(prev => [...prev, ...res.data.items]);
+            } else {
+                const refreshed = await getAllGalleryImg();
+                setImages(refreshed?.data?.items || []);
+            }
+
             setUploadedFiles([]);
+            setUpdatedFile(null);
+            setShowChangeModal(null);
+            fetchImages()
         } catch (error) {
             toast.error("Image upload failed.");
             console.error(error);
@@ -114,7 +130,6 @@ function Gallery() {
 
     const confirmDelete = async () => {
         if (!galleyImgDelete || !galleyImgDelete._id) return;
-
         try {
             const response = await getGalleryImgDelete(galleyImgDelete._id);
             setImages(prev => prev.filter(img => img._id !== galleyImgDelete._id));
@@ -127,26 +142,34 @@ function Gallery() {
 
     return (
         <div className="text-[#464646] flex flex-col gap-2">
+            {/* Hidden file input (shared) */}
+            <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                className="hidden"
+                onChange={handleImageUpload}
+            />
+
             {/* Header */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-3">
-                <div>
-                    <h1 className="text-[32px] font-Raleway">Gallery</h1>
-                    <p className="text-[#656565] pt-1">Manage Your Gallery</p>
-                </div>
-                <button
+            {/* <div > */}
+            <div className="p-3">
+                <h1 className="text-[32px] font-Raleway">Gallery</h1>
+                <p className="text-[#656565] pt-1">Manage Your Gallery</p>
+            </div>
+            {/* <button
                     className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full cursor-pointer"
                     onClick={handleUploadToWebsite}
-                    disabled={uploadedFiles.length === 0 || uploading }
+                    disabled={uploadedFiles.length === 0 || uploading}
                 >
-                    {uploading  ? "Uploading..." : "Upload in Website"}
-                </button>
-            </div>
+                    {uploading ? "Uploading..." : "Upload in Website"}
+                </button> */}
+            {/* </div> */}
 
             {/* Grid and Upload Box */}
             <div className="flex flex-col lg:flex-row gap-10 lg:gap-2">
-                <div className="w-full lg:w-1/2 grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 flex-1 lg:p-3 xl:p-5">
+                <div className="w-full lg:w-1/2 grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 flex-1 lg:p-3 xl:p-5">
                     {loading ? (
-                        // Simple Skeleton placeholders: 6 blocks with pulse animation
                         Array(6).fill(0).map((_, i) => (
                             <div
                                 key={i}
@@ -157,8 +180,7 @@ function Gallery() {
                         images.map((img, index) => (
                             <div
                                 key={img._id || index}
-                                className={`overflow-hidden rounded-3xl border-2 ${selectedImageIndex === index ? "border-[#EA7913] p-0.5" : "border-transparent"
-                                    } transition`}
+                                className="relative overflow-hidden rounded-3xl border border-transparent transition group"
                                 draggable
                                 onClick={() => setSelectedImageIndex(index)}
                                 onDragStart={(e) => {
@@ -184,74 +206,65 @@ function Gallery() {
                                 <img
                                     src={img.imageUrl}
                                     alt={`Gallery ${index + 1}`}
-                                    className={`w-full h-48 md:h-60 lg:h-72 ${selectedImageIndex === index ? "rounded-3xl" : ""
-                                        } object-cover cursor-pointer`}
+                                    className="w-full h-48 md:h-60 lg:h-72 object-cover rounded-3xl"
                                 />
+
+                                {/* 3-dot menu */}
+                                <div className="absolute top-4 right-4 z-10">
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setShowMenuIndex(showMenuIndex === index ? null : index);
+                                        }}
+                                        className="p-2 bg-white rounded-full border border-[#FCEAC9] cursor-pointer"
+                                    >
+                                        <img src={DotMenuIcon} alt="Options" />
+                                    </button>
+
+                                    {showMenuIndex === index && (
+                                        <div className="absolute space-y-3 right-0 mt-2 w-50 bg-white rounded-3xl p-4.5 cursor-pointer border border-[#BDBDBD] z-20">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedImageIndex(index);
+                                                    setUpdatedFile(null); // reset any previous selection
+                                                    setShowChangeModal('edit'); // open modal in edit mode
+                                                    setShowMenuIndex(null);
+                                                }}
+                                                className="flex items-center gap-2.5 w-full rounded-xl p-3 text-left cursor-pointer text-sm hover:bg-[#FEF8EC]"
+                                            >
+                                                <img src={CameraIcon} alt="CameraIcon Not Found" />
+                                                <p>Change Image</p>
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setGalleyImgDelete(img);
+                                                    setShowMenuIndex(null);
+                                                }}
+                                                className="flex items-center gap-2.5 w-full rounded-xl p-3 text-left text-sm hover:bg-[#FEF8EC]"
+                                            >
+                                                <img src={deleteIconGrey} alt="deleteIcon Not Found" />
+                                                <p>Delete Image</p>
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         ))
                     )}
 
-                    {/* Upload Box */}
+                    {/* Upload Box (opens modal in add mode) */}
                     <div
                         className="w-full h-48 md:h-60 lg:h-72 rounded-3xl bg-[#FEF8EC] flex items-center justify-center cursor-pointer transition"
-                        onClick={() => fileInputRef.current.click()}
+                        onClick={() => {
+                            setSelectedImageIndex(null);
+                            setUpdatedFile(null);
+                            setShowChangeModal('add');
+                        }}
                     >
                         <img src={addIconBlack} alt="Add" />
-                        <input
-                            type="file"
-                            accept="image/*"
-                            ref={fileInputRef}
-                            className="hidden"
-                            onChange={handleImageUpload}
-                        />
                     </div>
-                </div>
-
-                {/* Right side panel */}
-                <div className="w-full lg:w-1/3 xl:w-1/4 flex flex-col gap-6">
-                    <div>
-                        <h2 className="text-lg mb-2">Upload Image</h2>
-                        <div
-                            className={`bg-white border ${selectedImageIndex !== null ? "border-[#EA7913]" : "border-[#DCDCDC]"
-                                } rounded-xl h-48 flex items-center justify-center overflow-hidden`}
-                        >
-                            {selectedImageIndex !== null ? (
-                                <div className="flex flex-col items-center justify-center w-full h-full text-center px-2">
-                                    <p className="text-sm text-[#525252] truncate">
-                                        {updatedFile
-                                            ? updatedFile.name
-                                            : images[selectedImageIndex]?.imageUrl.split("/").pop()}
-                                    </p>
-                                </div>
-                            ) : (
-                                <div className="text-[#525252] text-center px-4">
-                                    <p>Select Image to Change</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {selectedImageIndex !== null && (
-                        <div className="flex justify-center gap-3">
-                            <button
-                                className="w-full bg-[#FCEAC9] text-[#656565] px-4 py-2 rounded-full flex justify-center gap-2 items-center cursor-pointer"
-                                onClick={() => setGalleyImgDelete(images[selectedImageIndex])}
-                            >
-                                <img src={deletIconBlack} alt="Delete" />
-                                Delete
-                            </button>
-                            <div className="w-full relative inline-block rounded-full px-[4px] py-[3px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:to-[#F39C2C]">
-                                <button
-                                    type="submit"
-                                    onClick={() => fileInputRef.current.click()}
-                                    disabled={changingImageLoading }
-                                    className="w-full py-2.5 bg-[#EA7913] text-white rounded-full font-medium hover:bg-[#F39C2C] disabled:opacity-60"
-                                >
-                                    {changingImageLoading  ? "Changing..." : "Change Image"}
-                                </button>
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
 
@@ -259,6 +272,23 @@ function Gallery() {
                 <DeleteModel
                     onCancelImg={() => setGalleyImgDelete(null)}
                     onfirmGalleryImgDelete={confirmDelete}
+                />
+            )}
+
+            {/* Reusable modal for both add & edit */}
+            {showChangeModal && (
+                <EditGallery
+                    mode={showChangeModal}
+                    updatedFile={updatedFile}
+                    changingImageLoading={changingImageLoading}
+                    uploading={uploading}
+                    images={images}
+                    selectedImageIndex={selectedImageIndex}
+                    fileInputRef={fileInputRef}
+                    onClose={() => setShowChangeModal(null)}
+                    handleChangeImage={handleChangeImage}
+                    handleAddImage={handleAddImage}
+                    onFileSelect={handleImageFile}
                 />
             )}
         </div>

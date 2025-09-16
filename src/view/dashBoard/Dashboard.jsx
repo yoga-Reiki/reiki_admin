@@ -120,7 +120,7 @@ function Dashboard() {
         {/* Card 2 */}
         <div className="flex justify-between items-center bg-white rounded-3xl border-l border-l-[#EA7913] shadow-[0_4px_6px_rgba(0,0,0,0.08)]">
           <div className='py-[17px] px-8 w-full flex flex-col gap-1.5'>
-            <h2 className="text-4xl text-[#525252] font-Raleway">{dashboardData?.order || "1,247"}</h2>
+            <h2 className="text-4xl text-[#525252] font-Raleway">{dashboardData?.order || "0"}</h2>
             <p className="text-[#757575] text-sm">Total Orders</p>
           </div>
           <div className="bg-gradient-to-br w-27 h-full flex justify-center items-center from-[#FFB979] to-[#EA7913] rounded-3xl p-3 shadow-[-4px_0_6px_rgba(234,121,19,0.3)]">
