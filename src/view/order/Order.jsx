@@ -18,6 +18,58 @@ function Order() {
         totalUsers: 0,
     });
 
+    const handleDownloadAllOrders = async () => {
+        try {
+            const response = await getAllOrder({
+                page: 1,
+                pageSize: 10000,
+            });
+
+            const orders = response?.data?.items || [];
+
+            if (orders.length === 0) {
+                alert("No orders to download.");
+                return;
+            }
+
+            const csvData = convertOrdersToCSV(orders);
+            downloadCSVFile(csvData, "orders.csv");
+        } catch (err) {
+            console.error("Download failed:", err);
+            alert("Failed to download orders.");
+        }
+    };
+
+    const convertOrdersToCSV = (orders) => {
+        const header = ["Name", "Email", "Order Details", "Mobile Number", "Address", "Status"];
+        const rows = orders.map(order => [
+            order.customer?.name || "",
+            order.customer?.email || "",
+            order.productSnapshot?.title || "",
+            order.customer?.mobile || "",
+            order.customer?.address || "",
+            order.status
+        ]);
+
+        const csvContent = [header, ...rows]
+            .map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(","))
+            .join("\n");
+
+        return csvContent;
+    };
+
+    const downloadCSVFile = (csvContent, filename) => {
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     useEffect(() => {
         if (!hasFetched.current || searchTerm.trim() === "") {
             hasFetched.current = true;
@@ -74,7 +126,7 @@ function Order() {
                         <h1 className="text-[32px] font-bold">Order Management</h1>
                         <p className="text-[#656565] pt-1">Manage all your Orders</p>
                     </div>
-                    <button className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full">
+                    <button onClick={handleDownloadAllOrders} className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full">
                         <img src={downloadIcon} alt="Download Icon" />
                         <span>Download all order details</span>
                     </button>
