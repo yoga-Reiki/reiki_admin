@@ -70,6 +70,7 @@ function EditAboutUs({ onCancel, aboutData, fetchAboutData }) {
     const [missionImage, setMissionImage] = useState(null);
     const [heroImage, setHeroImage] = useState(null);
     const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (aboutData) {
@@ -107,6 +108,7 @@ function EditAboutUs({ onCancel, aboutData, fetchAboutData }) {
         formData.append("missionImage", missionImage);
         formData.append("heroImage", heroImage);
 
+        setLoading(true);
         try {
             await getAboutUsUpdate(formData);
             toast.success("About Us content updated successfully!")
@@ -116,6 +118,8 @@ function EditAboutUs({ onCancel, aboutData, fetchAboutData }) {
         } catch (err) {
             console.error(err);
             alert("Failed to update About Us. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -144,7 +148,7 @@ function EditAboutUs({ onCancel, aboutData, fetchAboutData }) {
                                     type="submit"
                                     className="w-full h-full inline-flex justify-center items-center space-x-1.5 px-6 py-2.5 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
                                 >
-                                    Change in Website
+                                    {loading ? "Updating..." : "Change in Website"}
                                 </button>
                             </div>
                         </div>

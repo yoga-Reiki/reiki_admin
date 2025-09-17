@@ -93,64 +93,41 @@ function EditChooseCard({ onCancel, aboutData }) {
     const [sliders, setSliders] = useState([]);
     const [originalSliders, setOriginalSliders] = useState([]);
     const fileInputRefs = useRef([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (aboutData?.whyChoose?.length > 0) {
             const initialSliders = aboutData.whyChoose.map((item) => ({
                 title: item.title || '',
                 content: item.description || '',
-                images: [
-                    item.images?.[0] || null,
-                    item.images?.[1] || null,
-                ]
+                images: [item.images?.[0] || null, item.images?.[1] || null],
             }));
 
             setSliders(initialSliders);
-            setOriginalSliders(initialSliders);
+            setOriginalSliders(JSON.parse(JSON.stringify(initialSliders)));
+
+            // create refs
             fileInputRefs.current = initialSliders.map(() => [React.createRef(), React.createRef()]);
         }
     }, [aboutData]);
 
     const handleChange = (index, e) => {
         const { name, value } = e.target;
-        const updated = [...sliders];
-        updated[index][name] = value;
-        setSliders(updated);
-    };
-
-    const hasChanges = () => {
-        return sliders.some((slider, index) => {
-            const original = originalSliders[index];
-            if (!original) return true;
-
-            // Check text changes
-            if (slider.title !== original.title || slider.content !== original.content) {
-                return true;
-            }
-
-            // Check image changes
-            for (let i = 0; i < 2; i++) {
-                const newImg = slider.images[i];
-                const oldImg = original.images[i];
-
-                // if new image is a File (user selected a new one)
-                if (typeof newImg === 'object') return true;
-
-                // if image path string changed (in case image was updated remotely)
-                if (newImg !== oldImg) return true;
-            }
-
-            return false;
+        setSliders((prev) => {
+            const updated = [...prev];
+            updated[index][name] = value;
+            return updated;
         });
     };
-
 
     const handleFileChange = (sliderIndex, imageIndex, e) => {
         const file = e.target.files[0];
         if (file && file.type.startsWith("image/")) {
-            const updatedSliders = [...sliders];
-            updatedSliders[sliderIndex].images[imageIndex] = file;
-            setSliders(updatedSliders);
+            setSliders((prev) => {
+                const updated = [...prev];
+                updated[sliderIndex].images[imageIndex] = file;
+                return updated;
+            });
         }
     };
 
@@ -158,20 +135,20 @@ function EditChooseCard({ onCancel, aboutData }) {
         e.preventDefault();
         const file = e.dataTransfer.files[0];
         if (file && file.type.startsWith("image/")) {
-            const updatedSliders = [...sliders];
-            updatedSliders[sliderIndex].images[imageIndex] = file;
-            setSliders(updatedSliders);
+            setSliders((prev) => {
+                const updated = [...prev];
+                updated[sliderIndex].images[imageIndex] = file;
+                return updated;
+            });
         }
     };
 
     const handleSubmit = async () => {
-        if (!hasChanges()) {
-            toast.error("No changes to update.");
-            return;
-        }
-
         try {
+            setLoading(true);
             const promises = [];
+
+            let hasChanges = false;
 
             sliders.forEach((slider, i) => {
                 const original = originalSliders[i];
@@ -179,18 +156,19 @@ function EditChooseCard({ onCancel, aboutData }) {
                 const isChanged =
                     slider.title !== original.title ||
                     slider.content !== original.content ||
-                    slider.images.some((img, idx) =>
-                        typeof img === 'object' || img !== original.images[idx]
-                    );
+                    JSON.stringify(slider.images.map((img) => (typeof img === "string" ? img : img.name))) !==
+                    JSON.stringify(original.images.map((img) => (typeof img === "string" ? img : img.name)));
 
                 if (!isChanged) return;
+
+                hasChanges = true;
 
                 const formData = new FormData();
                 formData.append("title", slider.title);
                 formData.append("description", slider.content);
 
                 slider.images.forEach((image) => {
-                    if (typeof image === 'object') {
+                    if (image && typeof image === "object") {
                         formData.append("images", image);
                     }
                 });
@@ -201,22 +179,24 @@ function EditChooseCard({ onCancel, aboutData }) {
                 }
             });
 
-            if (promises.length === 0) {
+            if (!hasChanges) {
                 toast.error("No changes detected.");
+                setLoading(false);
                 return;
             }
+            setLoading(true);
+            await Promise.all(promises);
 
-            const response = await Promise.all(promises);
-
-            toast.success("Why Choose item updated");
-            setOriginalSliders([...sliders]); // sync originals to current
+            toast.success("Why Choose Us updated!");
+            setOriginalSliders(JSON.parse(JSON.stringify(sliders)));
         } catch (err) {
-            toast.error("Failed to update content. Please try again.");
             console.error(err);
+            toast.error("Failed to update. Try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
-    console.log("aboutData *******", aboutData);
 
     return (
         <div className="flex flex-col gap-4 pt-2">
@@ -238,9 +218,9 @@ function EditChooseCard({ onCancel, aboutData }) {
                         <button
                             type="button"
                             onClick={handleSubmit}
-                            className="inline-flex justify-center items-center px-6 py-2.5 bg-[#EA7913] text-white rounded-full font-medium hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
+                            className="inline-flex justify-center items-center px-6 py-2.5 bg-[#EA7913] cursor-pointer text-white rounded-full font-medium hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
                         >
-                            Change in Website
+                            {loading ? "Updating..." : "Change in Website"}
                         </button>
                     </div>
                 </div>
