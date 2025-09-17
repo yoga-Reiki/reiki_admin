@@ -16,7 +16,6 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
     const [imageName, setImageName] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
     const [originalImage, setOriginalImage] = useState("");
-    const fileInputRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
     const coverInputRef = useRef(null);
     const [errors, setErrors] = useState({});
@@ -45,10 +44,6 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleFileClick = () => {
-        if (fileInputRef.current) fileInputRef.current.click();
     };
 
     const handleImageChange = (file, type) => {
@@ -243,25 +238,6 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
 
                         <div className="flex-1">
                             <label className="block text-lg mb-1.5">Image for Blog Section</label>
-                            {/* <div
-                                className="w-full md:h-[150px] lg:h-[231px] flex flex-col items-center justify-center border border-[#BDBDBD] rounded-md text-center cursor-pointer hover:border-[#EA7913] transition"
-                                onClick={handleFileClick}
-                            >
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleFileChange}
-                                    className="hidden"
-                                />
-                                <div className="flex flex-col justify-center items-center gap-2.5 text-[#525252]">
-                                    <img src={imageIconOrange} alt="not Found" className="w-6 h-6" />
-                                    <div>
-                                        <p>{imageName}</p>
-                                        <p >Click Here to Change Image</p>
-                                    </div>
-                                </div>
-                            </div> */}
                             <div
                                 className={`flex flex-col items-center justify-center h-[133px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
                                     }`}

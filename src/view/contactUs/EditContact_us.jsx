@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import galleryIconOrange from "../../assets/svg/galleryIconOrange.svg"
+import imageIconOrange from "../../assets/svg/imageIconOrange.svg"
 import toast from 'react-hot-toast';
 import { getContactUsUpdate } from '../../services/contactUsServices';
 
@@ -13,30 +13,49 @@ function EditContact_us({ contactData, onCancel, fetchContactData }) {
         twitter: '',
         instagram: '',
         location: '',
-        heroImageUrl: ''
     });
     const [isDragging, setIsDragging] = useState(false);
-    const [images, setImages] = useState(null);
-    const fileInputRef = useRef(null);
+    const [imageName, setImageName] = useState("");
+    const [selectedFile, setSelectedFile] = useState(null);
+    const coverInputRef = useRef(null);
     const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
 
-    const handleFileChange = (e, type) => {
-        const file = e.target.files?.[0];
+    const handleImageChange = (file, type) => {
         if (file && file.type.startsWith("image/")) {
-            setImages((prev) => ({ ...prev, [type]: file }));
-            setErrors((p) => ({ ...p, image: "" }));
-        } else {
-            setErrors((p) => ({ ...p, image: "Please upload a valid image." }));
+            setImageName(file.name);
+            setSelectedFile(file);
         }
     };
 
-    const readFileAsDataURL = (file) =>
-        new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
+    const handleDrop = async (e, type) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+        const file = e.dataTransfer?.files?.[0];
+
+        if (file && file.type.startsWith("image/")) {
+            handleImageChange(file, type);
+            setErrors((prevErrors) => {
+                const newErrors = { ...prevErrors };
+                delete newErrors[type];
+                return newErrors;
+            });
+        } else {
+            setErrors((prev) => ({
+                ...prev,
+                [type]: "Please upload a valid image.",
+            }));
+        }
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImageName(file.name);
+            setSelectedFile(file);
+        }
+    };
 
     const isFormDataChanged = () => {
         const original = contactData || {};
@@ -58,32 +77,9 @@ function EditContact_us({ contactData, onCancel, fetchContactData }) {
             }
         }
 
-        if (images?.detail) return true;
+        if (imageName) return true;
 
         return false;
-    };
-
-    const validateImageAndSet = async (file, type = "cover") => {
-        if (!file) return;
-        if (!file.type?.startsWith("image/")) {
-            setErrors((p) => ({ ...p, image: "Please upload a valid image." }));
-            return;
-        }
-        try {
-            await readFileAsDataURL(file);
-            setImages((prev) => ({ ...prev, [type]: file }));
-            setErrors((p) => ({ ...p, image: "" }));
-        } catch {
-            setErrors((p) => ({ ...p, image: "Failed to load image preview." }));
-        }
-    };
-
-    const handleDrop = async (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDragging(false);
-        const file = e.dataTransfer?.files?.[0];
-        await validateImageAndSet(file);
     };
 
     useEffect(() => {
@@ -121,22 +117,30 @@ function EditContact_us({ contactData, onCancel, fetchContactData }) {
             return;
         }
 
-        const updatedData = { ...formData };
-
-        // If new image selected
-        if (images?.detail) {
-            const imageForm = new FormData();
-            imageForm.append("file", images.detail);
-        }
-
+        setLoading(true);
         try {
-            await getContactUsUpdate(updatedData);
+            const formDataToSend = new FormData();
+
+            Object.keys(formData).forEach((key) => {
+                if (key !== "heroImageUrl") {
+                    formDataToSend.append(key, formData[key] || "");
+                }
+            });
+
+            if (selectedFile) {
+                formDataToSend.append("heroImage", selectedFile);
+            }
+
+            await getContactUsUpdate(formDataToSend);
+
             toast.success("Contact Us content updated successfully!");
-            onCancel()
-            fetchContactData()
+            onCancel();
+            fetchContactData();
         } catch (error) {
             console.error(error);
             toast.error("Failed to update. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -164,7 +168,7 @@ function EditContact_us({ contactData, onCancel, fetchContactData }) {
                                     onClick={handleSubmit}
                                     className="w-full h-full inline-flex justify-center items-center space-x-1.5 px-6 py-2.5 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
                                 >
-                                    Change in Website
+                                    <span>{loading ? "Updating..." : "Change in Website"}</span>
                                 </button>
                             </div>
                         </div>
@@ -185,7 +189,7 @@ function EditContact_us({ contactData, onCancel, fetchContactData }) {
                             <div>
                                 <label className="text-lg font-medium mb-2">Hero Section Upload Image</label>
                                 <div
-                                    className={`flex flex-col items-center justify-center h-[136px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
+                                    className={`flex flex-col items-center justify-center h-[133px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
                                         }`}
                                     onDragOver={(e) => {
                                         e.preventDefault();
@@ -197,39 +201,29 @@ function EditContact_us({ contactData, onCancel, fetchContactData }) {
                                         e.stopPropagation();
                                         setIsDragging(false);
                                     }}
-                                    onDrop={handleDrop}
-                                    onClick={() => fileInputRef.current?.click()}
+                                    onDrop={(e) => handleDrop(e, "cover")}
+                                    onClick={() => coverInputRef.current?.click()}
                                 >
-                                    {images?.detail ? (
-                                        <div className="flex flex-col items-center gap-1">
-                                            <img src={galleryIconOrange} alt="Uploaded" />
-                                            <span className="text-[#464646] font-medium">
-                                                {images.detail.name}
+                                    {imageName ? (
+                                        <div className="flex flex-col justify-center items-center gap-1">
+                                            <span className="text-[#464646] text-sm font-medium w-full text-center break-words">
+                                                {imageName}
                                             </span>
-                                            <span className="text-xs text-[#9a9a9a]">Click Here to Change Image</span>
-                                        </div>
-                                    ) : formData.heroImageUrl ? (
-                                        <div className="flex flex-col items-center gap-1">
-                                            <img src={galleryIconOrange} alt="Uploaded" />
-                                            <span className="text-[#464646] font-medium">
-                                                {formData.heroImageUrl.split("/").pop()}
-                                            </span>
-                                            <span className="text-xs text-[#9a9a9a]">Click Here to Change Image</span>
+                                            <span className="text-xs text-center text-[#9a9a9a]">Click Here to Change Image</span>
                                         </div>
                                     ) : (
                                         <div className="flex flex-col items-center gap-2 px-12">
-                                            <img src={galleryIconOrange} alt="Upload" />
+                                            <img src={imageIconOrange} alt="Upload Icon" />
                                             <span className="text-[#989898]">Upload Image Here</span>
                                         </div>
                                     )}
 
                                     <input
-                                        ref={fileInputRef}
+                                        ref={coverInputRef}
                                         type="file"
                                         accept="image/*"
                                         className="hidden"
-                                        onChange={(e) => handleFileChange(e, "detail")}
-                                        onInput={(e) => handleFileChange(e, "detail")}
+                                        onChange={(e) => handleFileChange(e, "cover")}
                                     />
                                 </div>
                                 {errors.image && <p className="text-red-500 text-sm mt-1">{errors.image}</p>}

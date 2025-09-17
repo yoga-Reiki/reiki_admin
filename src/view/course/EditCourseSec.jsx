@@ -17,6 +17,7 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
         language: selectedCourse?.language || '',
         duration: selectedCourse?.audioDurationSec || '',
     });
+    const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
     const [isDragging, setIsDragging] = useState(false);
     const [images, setImages] = useState({
@@ -141,6 +142,7 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
             return;
         }
 
+        setLoading(true);
         try {
             const updatedForm = new FormData();
             Object.entries(formData).forEach(([key, val]) => updatedForm.append(key, val));
@@ -161,6 +163,8 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
         } catch (error) {
             console.error("Update failed", error);
             alert("Something went wrong. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -208,7 +212,7 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
                                         onClick={handleSubmit}
                                         className="w-full h-full inline-flex justify-center items-center space-x-1.5 px-6 py-2.5 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
                                     >
-                                        Change in Website
+                                        <span>{loading ? "Updating..." : "Change in Website"}</span>
                                     </button>
                                 </div>
                             </div>

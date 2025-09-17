@@ -17,7 +17,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
         shippingDetails: selectedProduct?.detail?.shippingDetails || '',
         detailContent: selectedProduct?.detail?.content || 'Amplifies energy during healing...',
     });
-
+    const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
     const [isDragging, setIsDragging] = useState(false);
     const [images, setImages] = useState({
@@ -99,18 +99,25 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
             setErrors(newErrors);
             return;
         }
-
+        setLoading(true);
         try {
             const updatedForm = new FormData();
             updatedForm.append("title", formData.title);
             updatedForm.append("summary", formData.summary);
-            updatedForm.append("chip1 title", formData.chip1);
-            updatedForm.append("chip2 title", formData.chip2);
+            // updatedForm.append("chip1 title", formData.chip1);
+            // updatedForm.append("chip2 title", formData.chip2);
             updatedForm.append("specifications", formData.specifications);
-            updatedForm.append("discountedPrice", formData.newPricing);
-            updatedForm.append("price", formData.oldPricing);
+            updatedForm.append("priceNew", formData.newPricing);
+            updatedForm.append("priceOld", formData.oldPricing);
             updatedForm.append("shippingDetails", formData.shippingDetails || "");
             updatedForm.append("content", formData.detailContent || "Amplifies energy during healing...");
+
+            const chips = [formData.chip1, formData.chip2];
+            chips.forEach((chip, index) => {
+                if (chip) {
+                    updatedForm.append(`chips[${index}]`, chip);
+                }
+            });
 
             const points = formData.summary.split('\n').filter(Boolean);
             points.forEach((point, index) => {
@@ -140,6 +147,8 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
         } catch (error) {
             console.error("Update failed", error);
             toast.error("Something went wrong. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -187,7 +196,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                         onClick={handleSubmit}
                                         className="w-full h-full inline-flex justify-center items-center space-x-1.5 px-6 py-2.5 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
                                     >
-                                        Change in Website
+                                        <span>{loading ? "Updating..." : "Change in Website"}</span>
                                     </button>
                                 </div>
                             </div>
