@@ -88,7 +88,6 @@ function Header() {
             <span>Notifications</span>
           </button>
 
-
           {showNotifications && (
             <div className="absolute top-full mt-2 -right-44 lg:right-0 md:w-80 lg:w-103.5 bg-white rounded-2xl text-[#656565] shadow-xl border border-[#989898] z-50 shadow-[0_0_14px_rgba(0,0,0,0.25)]">
               {notifications.map((notif, index) => (
@@ -100,7 +99,6 @@ function Header() {
                     <p className="">{notif.title}</p>
                     <p className="text-xs mt-1">{notif.message}</p>
                   </div>
-                  <span className="text-[#EA7913] text-xl">›</span>
                 </div>
               ))}
             </div>

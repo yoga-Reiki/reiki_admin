@@ -11,6 +11,7 @@ function TestimonialsEdit({ selectedUser, setSelectedUser, fetchTestimonials }) 
   const [imageName, setImageName] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (selectedUser) {
@@ -62,6 +63,7 @@ function TestimonialsEdit({ selectedUser, setSelectedUser, fetchTestimonials }) 
       return;
     }
 
+    setIsSubmitting(true);
     try {
       const data = new FormData();
       data.append("name", formData.name);
@@ -78,6 +80,8 @@ function TestimonialsEdit({ selectedUser, setSelectedUser, fetchTestimonials }) 
       toast.success(result?.message)
     } catch (error) {
       console.error("Error updating testimonial:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -106,7 +110,7 @@ function TestimonialsEdit({ selectedUser, setSelectedUser, fetchTestimonials }) 
                 onClick={handleSubmit}
                 className="w-full h-full inline-flex justify-center items-center space-x-1.5 px-6 py-2.5 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
               >
-                Upload in Website
+                {isSubmitting ? "Updating..." : "Update in website"}
               </button>
             </div>
           </div>

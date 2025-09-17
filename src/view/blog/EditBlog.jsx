@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { getTestimonialsUpdate } from "../../services/testimonialsServices";
 import leftBackIcon from "../../assets/svg/leftIcon.svg"
 import imageIconOrange from "../../assets/svg/imageIconOrange.svg"
 import { getBlogUpdate } from "../../services/blogServices";
@@ -19,6 +18,7 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
     const [isDragging, setIsDragging] = useState(false);
     const coverInputRef = useRef(null);
     const [errors, setErrors] = useState({});
+    const [loding, setLoading] = useState(false);
 
     useEffect(() => {
         if (selectedUser) {
@@ -104,6 +104,7 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
             return;
         }
 
+        setLoading(true);
         try {
             const data = new FormData();
             data.append("title", formData.title);
@@ -123,6 +124,8 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
         } catch (error) {
             console.error("Update failed:", error);
             toast.error("Failed to update blog.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -159,7 +162,7 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
                                 onClick={handleSubmit}
                                 className="w-full h-full inline-flex justify-center items-center space-x-1.5 px-6 py-2.5 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
                             >
-                                Save
+                                {loding ? "Updating..." : "Update in website"}
                             </button>
                         </div>
                     </div>
