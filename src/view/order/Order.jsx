@@ -12,6 +12,7 @@ function Order() {
     const hasFetched = useRef(false);
     const [activeTab, setActiveTab] = useState("Pending");
     const [searchTerm, setSearchTerm] = useState("");
+    const [updatingOrder, setUpdatingOrder] = useState({ id: null, action: null });
     const [pagination, setPagination] = useState({
         page: 1,
         pageSize: 10,
@@ -109,11 +110,14 @@ function Order() {
 
     const handleStatusChange = async (orderId, status) => {
         try {
+            setUpdatingOrder({ id: orderId, action: status });
             await getOrderUpdate(orderId, { status });
-            fetchOrder();
+            await fetchOrder();
         } catch (err) {
             console.error(err);
             setError("Failed to update order status");
+        } finally {
+            setUpdatingOrder({ id: null, action: null });
         }
     };
 
@@ -210,16 +214,26 @@ function Order() {
                                                     <>
                                                         <button
                                                             onClick={() => handleStatusChange(data._id, "completed")}
-                                                            className="p-3 flex items-center gap-2 cursor-pointer rounded-full bg-[#F0FDF4] text-[#22C55E] border border-[#BBF7D0]"
+                                                            disabled={updatingOrder.id === data._id && updatingOrder.action === "completed"}
+                                                            className={`p-3 flex items-center gap-2 cursor-pointer rounded-full border bg-[#F0FDF4] text-[#22C55E] border-[#BBF7D0]`}
                                                         >
-                                                            <img src={successTickIcon} alt="" className="w-4 h-4" />
+                                                            {updatingOrder.id === data._id && updatingOrder.action === "completed" ? (
+                                                                <span className="loader w-4 h-4 border-2 border-t-transparent border-green-500 rounded-full animate-spin"></span>
+                                                            ) : (
+                                                                <img src={successTickIcon} alt="" className="w-4 h-4" />
+                                                            )}
                                                             Completed
                                                         </button>
                                                         <button
                                                             onClick={() => handleStatusChange(data._id, "canceled")}
-                                                            className="p-3 flex items-center gap-2 cursor-pointer rounded-full bg-[#FEF2F2] text-[#EF4444] border border-[#FECACA]"
+                                                            disabled={updatingOrder.id === data._id && updatingOrder.action === "canceled"}
+                                                            className={`p-3 flex items-center gap-2 cursor-pointer bg-[#FEF2F2] text-[#EF4444] border-[#FECACA] rounded-full border`}
                                                         >
-                                                            <img src={CancelIconRed} alt="" className="w-4 h-4" />
+                                                            {updatingOrder.id === data._id && updatingOrder.action === "canceled" ? (
+                                                                <span className="loader w-4 h-4 border-2 border-t-transparent border-red-500 rounded-full animate-spin"></span>
+                                                            ) : (
+                                                                <img src={CancelIconRed} alt="" className="w-4 h-4" />
+                                                            )}
                                                             Cancel
                                                         </button>
                                                     </>

@@ -15,7 +15,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
         newPricing: selectedProduct?.detail?.priceNew || '',
         oldPricing: selectedProduct?.detail?.priceOld || '',
         shippingDetails: selectedProduct?.detail?.shippingDetails || '',
-        detailContent: selectedProduct?.detail?.content || 'Amplifies energy during healing...',
+        detailContent: selectedProduct?.detail?.content || '',
     });
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
@@ -76,7 +76,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
             formData.newPricing !== (selectedProduct?.detail?.priceNew || "") ||
             formData.oldPricing !== (selectedProduct?.detail?.priceOld || "") ||
             formData.shippingDetails !== (selectedProduct?.detail?.shippingDetails || "") ||
-            formData.detailContent !== (selectedProduct?.detail?.content || "Amplifies energy during healing...") ||
+            formData.detailContent !== (selectedProduct?.detail?.content || "") ||
             (images.cover && images.cover instanceof File) ||
             (images.detail && images.detail instanceof File);
 
@@ -110,7 +110,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
             updatedForm.append("priceNew", formData.newPricing);
             updatedForm.append("priceOld", formData.oldPricing);
             updatedForm.append("shippingDetails", formData.shippingDetails || "");
-            updatedForm.append("content", formData.detailContent || "Amplifies energy during healing...");
+            updatedForm.append("detailContent", formData.detailContent || "");
 
             const chips = [formData.chip1, formData.chip2];
             chips.forEach((chip, index) => {
@@ -355,7 +355,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                     <label className="block text-lg mb-1">Product Detail Content</label>
                                     <Editor
                                         apiKey="w0h75l9p91ijk4a35sioyvhphj294qox82aq9wntohg9iees"
-                                        value={formData.detailContent || "Amplifies energy during healing..."}
+                                        value={formData.detailContent || ""}
                                         onChange={handleChange}
                                         onEditorChange={(detailContent) => {
                                             setFormData((prev) => ({ ...prev, detailContent }));
