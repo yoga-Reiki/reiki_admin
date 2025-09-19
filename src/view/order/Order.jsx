@@ -4,6 +4,7 @@ import downloadIcon from "../../assets/svg/downloadIcon.svg";
 import successTickIcon from "../../assets/svg/successTickIcon.svg";
 import CancelIconRed from "../../assets/svg/CancelIconRed.svg";
 import { getAllOrder, getOrderUpdate } from "../../services/orderServices";
+import * as XLSX from 'xlsx';
 
 function Order() {
     const [orders, setOrders] = useState([]);
@@ -16,7 +17,6 @@ function Order() {
     const [pagination, setPagination] = useState({
         page: 1,
         pageSize: 10,
-        totalUsers: 0,
     });
 
     const handleDownloadAllOrders = async () => {
@@ -33,42 +33,44 @@ function Order() {
                 return;
             }
 
-            const csvData = convertOrdersToCSV(orders);
-            downloadCSVFile(csvData, "orders.csv");
+            const headers = [
+                "Name",
+                "Email",
+                "Order Details",
+                "Mobile Number",
+                "Address",
+                "Status"
+            ];
+
+            const rows = orders.map(order => [
+                order.customer?.name || "",
+                order.customer?.email || "",
+                order.productSnapshot?.title || "",
+                order.customer?.mobile || "",
+                order.customer?.address || "",
+                order.status || ""
+            ]);
+
+            const worksheetData = [headers, ...rows];
+
+            const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+            const colWidths = headers.map((h, i) => ({
+                wch: Math.max(
+                    h.length,
+                    ...rows.map(r => (r[i] ? r[i].toString().length : 0))
+                ) + 2
+            }));
+            worksheet['!cols'] = colWidths;
+
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+
+            XLSX.writeFile(workbook, "orders.xlsx");
         } catch (err) {
             console.error("Download failed:", err);
             alert("Failed to download orders.");
         }
-    };
-
-    const convertOrdersToCSV = (orders) => {
-        const header = ["Name", "Email", "Order Details", "Mobile Number", "Address", "Status"];
-        const rows = orders.map(order => [
-            order.customer?.name || "",
-            order.customer?.email || "",
-            order.productSnapshot?.title || "",
-            order.customer?.mobile || "",
-            order.customer?.address || "",
-            order.status
-        ]);
-
-        const csvContent = [header, ...rows]
-            .map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(","))
-            .join("\n");
-
-        return csvContent;
-    };
-
-    const downloadCSVFile = (csvContent, filename) => {
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", filename);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
     };
 
     useEffect(() => {

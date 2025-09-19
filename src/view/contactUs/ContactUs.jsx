@@ -62,7 +62,7 @@ function ContactUs() {
                                         <h3 className="text-lg font-medium mb-2">Hero Section Content</h3>
                                         <div className="flex-1 border border-[#DCDCDC] rounded-xl p-4">
                                             <textarea
-                                                className="w-full h-full border-none outline-none text-[#989898]"
+                                                className="w-full h-full border-none outline-none text-[#656565]"
                                                 value={contactUsData.heroContent}
                                                 readOnly
                                             />
@@ -71,9 +71,9 @@ function ContactUs() {
                                     <div>
                                         <h3 className="text-lg font-medium mb-2">Hero Section Upload Image</h3>
                                         <div className="flex flex-col gap-1 h-[168px] items-center justify-center border border-[#DCDCDC] rounded-xl px-20 py-4">
-                                            {/* <img src={contactUsData?.heroImageUrl} alt="Not Found" /> */}
-                                            <span className="text-[#989898] text-center">{getFilename(contactUsData?.heroImageUrl)}</span>
-                                            <span className="text-[#989898] text-center text-xs">Click Here to Upload Image or Drag & drop here</span>
+                                            <img src={galleryIconOrange} alt="Not Found" />
+                                            <span className="text-[#656565] text-center">{getFilename(contactUsData?.heroImageUrl)}</span>
+                                            <span className="text-[#656565] text-center text-xs">Click Here to Upload Image or Drag & drop here</span>
                                         </div>
                                     </div>
                                 </div>

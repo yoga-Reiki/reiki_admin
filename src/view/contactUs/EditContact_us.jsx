@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import imageIconOrange from "../../assets/svg/imageIconOrange.svg"
+import { FiUploadCloud } from "react-icons/fi"
 import toast from 'react-hot-toast';
 import { getContactUsUpdate } from '../../services/contactUsServices';
 
@@ -144,6 +145,11 @@ function EditContact_us({ contactData, onCancel, fetchContactData }) {
         }
     };
 
+    const getFilename = (url) => {
+        if (!url) return '';
+        return url.split('/').pop();
+    };
+
     return (
         <div className="text-[#464646] space-y-2">
             <div className='p-3'>
@@ -176,11 +182,11 @@ function EditContact_us({ contactData, onCancel, fetchContactData }) {
 
                     <div className="space-y-2.5">
                         <div className="grid lg:grid-cols-2 gap-6">
-                            <div className="flex flex-col h-full">
+                            <div className="">
                                 <label className="text-lg font-medium mb-2">Hero Section Content</label>
                                 <textarea
                                     name="heroContent"
-                                    className="w-full h-full px-4 py-2 border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl outline-none text-[#989898]"
+                                    className="w-full h-[170px] px-4 py-2 border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl outline-none text-[#656565]"
                                     value={formData.heroContent}
                                     onChange={handleChange}
                                 />
@@ -189,7 +195,7 @@ function EditContact_us({ contactData, onCancel, fetchContactData }) {
                             <div>
                                 <label className="text-lg font-medium mb-2">Hero Section Upload Image</label>
                                 <div
-                                    className={`flex flex-col items-center justify-center h-[133px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
+                                    className={`flex flex-col items-center justify-center h-[170px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
                                         }`}
                                     onDragOver={(e) => {
                                         e.preventDefault();
@@ -213,8 +219,9 @@ function EditContact_us({ contactData, onCancel, fetchContactData }) {
                                         </div>
                                     ) : (
                                         <div className="flex flex-col items-center gap-2 px-12">
-                                            <img src={imageIconOrange} alt="Upload Icon" />
-                                            <span className="text-[#989898]">Upload Image Here</span>
+                                            <FiUploadCloud size={20} className="text-[#EA7913]" />
+                                            <span className="text-[#656565] text-center">{getFilename(formData?.heroImageUrl)}</span>
+                                            <span className="text-[#656565]">Upload Image Here</span>
                                         </div>
                                     )}
 

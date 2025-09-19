@@ -89,7 +89,7 @@ const ChooseUsSliderCard = ({ index, data, handleChange, fileInputRef, handleDro
     );
 };
 
-function EditChooseCard({ onCancel, aboutData }) {
+function EditChooseCard({ onCancel, aboutData, fetchAboutData }) {
     const [sliders, setSliders] = useState([]);
     const [originalSliders, setOriginalSliders] = useState([]);
     const fileInputRefs = useRef([]);
@@ -188,6 +188,8 @@ function EditChooseCard({ onCancel, aboutData }) {
             await Promise.all(promises);
 
             toast.success("Why Choose Us updated!");
+            fetchAboutData()
+            onCancel()
             setOriginalSliders(JSON.parse(JSON.stringify(sliders)));
         } catch (err) {
             console.error(err);

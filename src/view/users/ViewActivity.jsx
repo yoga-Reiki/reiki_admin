@@ -3,6 +3,7 @@ import leftBackIcon from "../../assets/svg/leftIcon.svg"
 import UserIcon from "../../assets/svg/userIcon.svg"
 import { getCourseActivity } from '../../services/userServices';
 import toast from 'react-hot-toast';
+import dropdownArrow from "../../assets/svg/dropdownArrow.svg";
 import { getCoursesData } from '../../services/courseServices';
 import { useLocation } from 'react-router-dom';
 
@@ -12,9 +13,10 @@ function ViewActivity({ viewUser, setViewUser }) {
     const [activity, setActivity] = useState([]);
     const hasFetchedCourses = useRef(false);
     const [selectedCourseId, setSelectedCourseId] = useState('');
-    const [coursesData, setCoursesData] = useState([])
-    const location = useLocation()
-    const userId = useMemo(() => location.search.split("?selectedUserId=")?.[1], [location])
+    const [coursesData, setCoursesData] = useState([]);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const location = useLocation();
+    const userId = useMemo(() => location.search.split("?selectedUserId=")?.[1], [location]);
 
     useEffect(() => {
         if (!hasFetchedCourses.current) {
@@ -60,13 +62,18 @@ function ViewActivity({ viewUser, setViewUser }) {
         }
     };
 
-    console.log("viewUser", viewUser);
-    console.log("activity", activity);
+    const handleItemClick = (course) => {
+        setSelectedCourseId(course._id);
+        fetchActivity(course._id);
+        setIsDropdownOpen(false);
+    };
+
+    const selectedCourse = coursesData.find(c => c._id === selectedCourseId);
 
     return (
         <div className="text-[#464646] pt-2">
-            <div className="flex items-center space-x-6 text-sm text-gray-600 mb-6 px-3 py-4">
-                <div className='p-2'>
+            <div className="flex items-center space-x-6 text-sm text-gray-600 mb-6 px-3 py-4 cursor-pointer">
+                <div className='p-2' onClick={() => setViewUser(null)}>
                     <img src={leftBackIcon} alt='Not Found' className='w-5 h-5' />
                 </div>
 
@@ -102,29 +109,41 @@ function ViewActivity({ viewUser, setViewUser }) {
                         <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
                             <p className='text-[#525252] text-lg'>Activities</p>
 
-                            <div className='abcd w-full md:w-[300px]'>
+                            {/* Custom Dropdown */}
+                            <div className="relative">
                                 <label className="block mb-1">Select Course</label>
-                                <select
-                                    value={selectedCourseId}
-                                    onChange={(e) => {
-                                        const selectedId = e.target.value;
-                                        setSelectedCourseId(selectedId);
-                                        fetchActivity(selectedId);
-                                    }}
-                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl outline-none text-[#464646]"
+                                <button
+                                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                    className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full cursor-pointer"
                                 >
-                                    {coursesData.map((course) => (
-                                        <option key={course._id} value={course._id}>
-                                            {course.title}
-                                        </option>
-                                    ))}
-                                </select>
+                                    {selectedCourse ? selectedCourse.title : "Select Course"}
+                                    <img src={dropdownArrow} alt="Dropdown Icon" className="p-1.5" />
+                                </button>
+
+                                {isDropdownOpen && (
+                                    <div className="absolute right-0 mt-2 w-55 bg-white rounded-xl border border-[#BDBDBD] z-10 shadow-[0_2px_6px_rgba(234,121,19,0.3)]">
+                                        <ul className="py-2 px-4.5 text-sm text-[#555]">
+                                            {coursesData.map((course, index) => (
+                                                <li
+                                                    key={course._id}
+                                                    onClick={() => handleItemClick(course)}
+                                                    className={`py-3 cursor-pointer text-center transition-colors duration-200 ${index !== 0 ? "border-t border-[#DCDCDC]" : ""
+                                                        } ${selectedCourseId === course._id
+                                                            ? "text-[#EA7913] font-medium"
+                                                            : "hover:text-[#EA7913]"
+                                                        }`}
+                                                >
+                                                    {course.title}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
-
+                        {/* Table */}
                         <div className="overflow-x-auto w-full">
-                            {/* table  */}
                             <table className="w-full table-auto">
                                 <thead>
                                     <tr className="grid grid-cols-4 bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">

@@ -12,12 +12,13 @@ import AddTestimonials from '../testimonails/AddTestimonials';
 
 function Dashboard() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState("Courses");
+  const [activeItem, setActiveItem] = useState("");
   const [activePopup, setActivePopup] = useState(null);
   const [dashboardData, setDashboardData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const hasFetched = useRef(false);
+  const dropdownRef = useRef(null);
   const [pagination, setPagination] = useState({
     page: 1,
     pageSize: 10,
@@ -28,16 +29,23 @@ function Dashboard() {
     setDropdownOpen(!dropdownOpen);
   };
 
-  // const handleItemClick = (item) => {
-  //   setActiveItem(item);
-  //   // setDropdownOpen(false);
-  // };
-
   const handleItemClick = (item) => {
     setActiveItem(item);
     setDropdownOpen(false);
     setActivePopup(item);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     if (!hasFetched.current) {
@@ -62,6 +70,11 @@ function Dashboard() {
     }
   };
 
+  const handleClosePopup = () => {
+    setActivePopup(null);
+    setActiveItem("");
+  };
+
   return (
     <div className='flex flex-col gap-2 relative'>
       {/* Header Section */}
@@ -72,7 +85,7 @@ function Dashboard() {
         </div>
 
         {/* Add Button with Dropdown */}
-        <div className="relative">
+        <div className="relative" ref={dropdownRef}>
           <button
             onClick={toggleDropdown}
             className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full cursor-pointer"
@@ -131,10 +144,10 @@ function Dashboard() {
 
       <DashboardTable dashboardData={dashboardData} loading={loading} error={error} pagination={pagination} setPagination={setPagination} />
 
-      {activePopup === "Courses" && <AddCourse onClose={() => setActivePopup(null)} />}
-      {activePopup === "Products" && <AddProduct onClose={() => setActivePopup(null)} />}
-      {activePopup === "Blog" && <AddBlog onClose={() => setActivePopup(null)} />}
-      {activePopup === "Testimonials" && <AddTestimonials onClose={() => setActivePopup(null)} />}
+      {activePopup === "Courses" && <AddCourse onClose={handleClosePopup} />}
+      {activePopup === "Products" && <AddProduct onClose={handleClosePopup} />}
+      {activePopup === "Blog" && <AddBlog onClose={handleClosePopup} />}
+      {activePopup === "Testimonials" && <AddTestimonials onClose={handleClosePopup} />}
     </div>
   );
 }

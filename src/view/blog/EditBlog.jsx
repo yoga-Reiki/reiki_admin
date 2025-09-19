@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import leftBackIcon from "../../assets/svg/leftIcon.svg"
 import imageIconOrange from "../../assets/svg/imageIconOrange.svg"
+import { FiUploadCloud } from "react-icons/fi"
 import { getBlogUpdate } from "../../services/blogServices";
 import toast from "react-hot-toast";
 import { Editor } from "@tinymce/tinymce-react";
@@ -259,6 +260,7 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
                             >
                                 {imageName ? (
                                     <div className="flex flex-col justify-center items-center gap-1">
+                                        <FiUploadCloud size={20} className="text-[#EA7913]" />
                                         <span className="text-[#464646] text-sm font-medium w-full text-center break-words">
                                             {imageName}
                                         </span>

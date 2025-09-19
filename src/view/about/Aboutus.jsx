@@ -43,7 +43,7 @@ function Aboutus() {
             {isEditing ? (
                 <EditAboutUs fetchAboutData={fetchAboutData} aboutData={aboutData} onCancel={() => setIsEditing(false)} />
             ) : isEditingChooseCard ? (
-                <EditChooseCard aboutData={aboutData} onCancel={() => setIsEditingChooseCard(false)} />
+                <EditChooseCard aboutData={aboutData} onCancel={() => setIsEditingChooseCard(false)} fetchAboutData={fetchAboutData} />
             ) : (
                 <div className="text-[#464646] space-y-2">
                     <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 p-3">

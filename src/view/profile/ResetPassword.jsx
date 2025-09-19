@@ -82,9 +82,9 @@ function ResetPassword({ setCurrentScreenMain, ProfileData, otp }) {
                 <>
                     <div className='flex flex-col gap-14'>
                         <div className="flex items-center gap-6 py-4 cursor-pointer" >
-                            <img src={leftBackIcon} alt='Not Found' className='w-5 h-5' />
+                            <img onClick={setCurrentScreenMain} src={leftBackIcon} alt='Not Found' className='w-5 h-5' />
                             <h2 className="text-2xl md:text-[32px] font-Raleway Raleway-medium">
-                                <span onClick={setCurrentScreenMain} className="cursor-pointer">Change Password</span> &gt;{" "}
+                                <span onClick={setCurrentScreenMain} className="cursor-pointer hover:text-[#EA7913]">Change Password</span> &gt;{" "}
                                 <span className="text-2xl font-Raleway">Successfully Changed Password</span>
                             </h2>
                         </div>

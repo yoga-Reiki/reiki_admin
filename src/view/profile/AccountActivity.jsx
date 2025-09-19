@@ -13,7 +13,7 @@ function AccountActivity({ setCurrentScreenMain }) {
         <div className="flex flex-col gap-2">
             <div onClick={setCurrentScreenMain} className="flex items-center gap-6 py-4 cursor-pointer" >
                 <img src={leftBackIcon} alt='Not Found' className='w-5 h-5' />
-                <h1 className="text-[32px] font-Raleway Raleway-medium">Account Activity</h1>
+                <h1 className="text-[32px] font-Raleway Raleway-medium hover:text-[#EA7913]">Account Activity</h1>
             </div>
 
             {/* Device List */}

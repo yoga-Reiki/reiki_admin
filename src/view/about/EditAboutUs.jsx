@@ -98,6 +98,23 @@ function EditAboutUs({ onCancel, aboutData, fetchAboutData }) {
     };
 
     const handleSubmit = async () => {
+        // Check if any value changed
+        const isUnchanged =
+            visionContent === (aboutData?.visionContent || "") &&
+            missionContent === (aboutData?.missionContent || "") &&
+            heroContent === (aboutData?.heroContent || "") &&
+            (visionImage === (aboutData?.visionImageUrl || null) ||
+                (visionImage && typeof visionImage !== "string" && aboutData?.visionImageUrl)) &&
+            (missionImage === (aboutData?.missionImageUrl || null) ||
+                (missionImage && typeof missionImage !== "string" && aboutData?.missionImageUrl)) &&
+            (heroImage === (aboutData?.heroImageUrl || null) ||
+                (heroImage && typeof heroImage !== "string" && aboutData?.heroImageUrl));
+
+        if (isUnchanged) {
+            toast.error("No changes detected.");
+            return;
+        }
+
         if (!validateForm()) return;
 
         const formData = new FormData();
@@ -111,10 +128,9 @@ function EditAboutUs({ onCancel, aboutData, fetchAboutData }) {
         setLoading(true);
         try {
             await getAboutUsUpdate(formData);
-            toast.success("About Us content updated successfully!")
-
-            // window.scrollTo({ top: 0, behavior: "smooth" });
-            fetchAboutData()
+            toast.success("About Us content updated successfully!");
+            fetchAboutData();
+            onCancel()
         } catch (err) {
             console.error(err);
             alert("Failed to update About Us. Please try again.");
@@ -122,6 +138,7 @@ function EditAboutUs({ onCancel, aboutData, fetchAboutData }) {
             setLoading(false);
         }
     };
+
 
     return (
         <div className="text-[#464646] space-y-2">

@@ -71,14 +71,13 @@ function EditAccess({ selectedUser, setSelectedUser }) {
 
     return (
         <div className="text-[#464646] pt-2">
-            <div className="flex items-center space-x-6 text-sm text-gray-600 mb-6 px-3 py-4">
-                <div className='p-2'>
+            <div className="flex items-center space-x-6 text-sm text-gray-600 mb-6 px-3 py-4 cursor-pointer">
+                <div className='p-2' onClick={() => setSelectedUser(null)}>
                     <img src={leftBackIcon} alt='Not Found' className='w-5 h-5' />
                 </div>
 
                 <div className='flex items-center'>
-                    <button
-                        onClick={() => setSelectedUser(null)}
+                    <button onClick={() => setSelectedUser(null)}
                         className="flex items-center text-3xl gap-1 transition"
                     >
                         <span className='hover:text-[#EA7913] cursor-pointer'>User Management</span> <span className="mx-2">{">"}</span>
