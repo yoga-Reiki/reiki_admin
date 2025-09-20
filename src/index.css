@@ -42,11 +42,11 @@ code {
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: #d3d3d3;
-  border-radius: 10px;
+  border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+  background: #f1f1f1;
 }
 
 

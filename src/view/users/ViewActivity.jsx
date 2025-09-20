@@ -80,16 +80,16 @@ function ViewActivity({ viewUser, setViewUser }) {
                 <div className='flex items-center'>
                     <button
                         onClick={() => setViewUser(null)}
-                        className="flex items-center text-3xl gap-1 transition"
+                        className="flex items-center text-3xl gap-1 transition font-Raleway Raleway-medium"
                     >
-                        <span className='hover:text-[#EA7913] cursor-pointer'>User Management</span> <span className="mx-2">{">"}</span>
+                        <span className='hover:text-[#EA7913] cursor-pointer text-[32px]'>User Management</span> <span className="mx-2">{">"}</span>
                     </button>
-                    <button className="text-gray-500 text-xl hover:text-[#EA7913] mt-1">View Activity</button>
+                    <button className="text-[#656565] text-2xl mt-1 font-Raleway Raleway-medium">View Activity</button>
                 </div>
             </div>
 
             <div className="bg-white border-t border-t-[#EA7913] rounded-3xl px-8 pt-8 pb-12.5 max-w-[863px] mt-8 mx-auto">
-                <h2 className="text-[32px] text-[#3D3D3D] mb-5.5">View Activity</h2>
+                <h2 className="text-[32px] text-[#3D3D3D] mb-5.5 font-Raleway Raleway-medium">View Activity</h2>
 
                 <div className='flex flex-col gap-8'>
                     {/* User Name */}
@@ -111,7 +111,7 @@ function ViewActivity({ viewUser, setViewUser }) {
 
                             {/* Custom Dropdown */}
                             <div className="relative">
-                                <label className="block mb-1">Select Course</label>
+                                <label className="block mb-2 text-lg">Select Course</label>
                                 <button
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                     className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full cursor-pointer"
@@ -146,7 +146,7 @@ function ViewActivity({ viewUser, setViewUser }) {
                         <div className="overflow-x-auto w-full">
                             <table className="w-full table-auto">
                                 <thead>
-                                    <tr className="grid grid-cols-4 bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
+                                    <tr className="grid grid-cols-4 bg-[#FCEAC9] text-left text-base text-[#111111] rounded-t-2xl">
                                         <th className='px-4 py-3'>Day</th>
                                         <th className='px-4 py-3'>Date</th>
                                         <th className='px-4 py-3'>Start Time</th>
@@ -154,7 +154,7 @@ function ViewActivity({ viewUser, setViewUser }) {
                                     </tr>
                                 </thead >
 
-                                <tbody className="flex flex-col bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
+                                <tbody className="flex flex-col gap-y-[1px] bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
                                     {loading ? (
                                         <tr>
                                             <td colSpan="6" className="flex justify-center py-6">
@@ -174,7 +174,7 @@ function ViewActivity({ viewUser, setViewUser }) {
                                             return (
                                                 <tr
                                                     key={index}
-                                                    className={`grid grid-cols-4 items-center text-[#656565] bg-white border-b border-[#DCDCDC] mt-[1px] text-sm ${isFirst ? 'rounded-t-xl border-y border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
+                                                    className={`grid grid-cols-4 items-center text-[#656565] bg-white border-b border-[#DCDCDC] text-sm ${isFirst ? 'rounded-t-xl border-y border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
                                                 >
                                                     <td className="whitespace-pre-wrap px-4 py-7">{data?.day}</td>
                                                     <td className="whitespace-pre-wrap px-4 py-7">{new Date(data.date).toLocaleDateString()}</td>

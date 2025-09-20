@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import notificationsIcon from "../assets/svg/notification.svg";
+import notificationWhite from "../assets/svg/notificationWhite.svg";
 import userIcon from "../assets/svg/userIcon.svg";
 import UserIcon1 from "../assets/svg/UserIcon1.svg"
 import logoutIcon from "../assets/svg/logoutIcon.svg";
@@ -51,7 +52,7 @@ function Header() {
 
   const fetchNotification = async () => {
     try {
-      const response = await getNotification({ limit: 5, skip: 0 });
+      const response = await getNotification({ limit: 20, skip: 0 });
 
       setNotifications(response?.data?.items || []);
     } catch (err) {
@@ -60,11 +61,11 @@ function Header() {
   };
 
   const getButtonClasses = (name) =>
-    `flex items-center gap-2 border border-[#FCEAC9] px-4 py-2 rounded-full transition cursor-pointer
+    `flex items-center gap-2 border border-[#FCEAC9] px-4.5 py-3 rounded-full transition cursor-pointer
    ${activeButton === name ? "bg-[#EA7913] text-white" : "hover:bg-orange-50"}`;
 
   return (
-    <header className="bg-white border border-[#F1F1F1] shadow-md rounded-3xl px-4 sm:px-6 h-[80px] flex justify-end items-center text-[#656565] relative">
+    <header className="bg-white border border-[#F1F1F1] shadow-md rounded-3xl px-4 sm:px-5 h-[80px] flex justify-end items-center text-[#656565] relative">
       <div className="hidden sm:flex space-x-4 relative">
 
         {/* Notifications Button with hover & click */}
@@ -82,25 +83,29 @@ function Header() {
             }}
           >
             <div className="relative">
-              <img src={notificationsIcon} alt="notificationsIcon" className="w-5 h-5" />
+              <img src={activeButton ? notificationWhite : notificationsIcon} alt="notificationsIcon" className="w-5 h-5" />
               <span className="absolute top-0 right-0.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
             </div>
             <span>Notifications</span>
           </button>
 
           {showNotifications && (
-            <div className="absolute top-full mt-2 -right-44 lg:right-0 md:w-80 lg:w-103.5 bg-white rounded-2xl text-[#656565] shadow-xl border border-[#989898] z-50 shadow-[0_0_14px_rgba(0,0,0,0.25)]">
-              {notifications.map((notif, index) => (
-                <div
-                  key={notif.id}
-                  className={`${index === 0 ? "rounded-t-2xl" : index === notifications.length - 1 && "rounded-b-2xl"} px-4.5 py-3 border-b border-[#989898] last:border-b-0 hover:bg-orange-50 transition cursor-pointer flex justify-between items-center`}
-                >
-                  <div>
-                    <p className="">{notif.title}</p>
-                    <p className="text-xs mt-1">{notif.message}</p>
-                  </div>
+            <div className="absolute top-full mt-2 -right-44 lg:right-0 md:w-80 lg:w-103.5 z-50">
+              <div className="bg-white rounded-2xl text-[#656565] shadow-xl border border-[#989898] shadow-[0_0_14px_rgba(0,0,0,0.25)] overflow-hidden">
+                <div className="max-h-[272px] overflow-y-auto custom-scrollbar">
+                  {notifications.map((notif, index) => (
+                    <div
+                      key={notif.id}
+                      className="px-4.5 py-3 border-b border-[#989898] last:border-b-0 hover:bg-orange-50 transition cursor-pointer flex justify-between items-center"
+                    >
+                      <div>
+                        <p className="">{notif.title}</p>
+                        <p className="text-xs mt-1">{notif.message}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           )}
         </div>

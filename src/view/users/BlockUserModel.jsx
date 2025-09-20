@@ -28,7 +28,7 @@ function BlockUserModal({ onClose, blockUser, onConfirm, fetchUsers }) {
             <div className="bg-white rounded-3xl w-full max-w-[625px] h-[692px] p-6 md:p-8 flex flex-col justify-between">
                 <div>
                     <div className='flex justify-between items-center p-3 mb-5.5'>
-                        <h2 className="text-2xl font-semibold text-[#3D3D3D]">Block User</h2>
+                        <h2 className="text-[32px] font-Raleway Raleway-medium text-[#3D3D3D]">Block User</h2>
 
                         <button onClick={onClose} className="text-[#EA7913] border border-[#989898] cursor-pointer p-4 rounded-full">
                             <MdOutlineClose size={16} />
@@ -51,7 +51,7 @@ function BlockUserModal({ onClose, blockUser, onConfirm, fetchUsers }) {
 
                         {/* Access Tags */}
                         <div className="mb-8">
-                            <p className="text-[#3D3D3D] text-xl pb-2.5">Access to :</p>
+                            <p className="text-[#656565] text-xl pb-2.5">Access to :</p>
                             <div className="flex flex-wrap gap-2">
                                 {["Reiki Grandmaster ", "Reiki Full course"].map((item, idx) => (
                                     <span key={idx} className="px-2.5 py-1.5 text-sm text-[#656565] rounded-full border border-[#F9D38E]">

@@ -211,11 +211,11 @@ function Login() {
               <img
                 src={reikiLogo}
                 alt="Logo"
-                className="w-30 md:w-32 object-contain mb-1 hover:cursor-pointer transition-transform transform"
+                className="w-30 md:w-32.5 object-contain mb-1 hover:cursor-pointer transition-transform transform"
               />
             </Link>
-            <div className="flex flex-col gap-2">
-              <h1 className="text-2xl md:text-[32px] md:leading-[40px] font-semibold font-Raleway Raleway-medium text-center text-[#3D3D3D]">
+            <div className="flex flex-col gap-2 text-[#3D3D3D]">
+              <h1 className="text-2xl md:text-[32px] md:leading-[40px] font-semibold font-Raleway Raleway-medium text-center">
                 {step === 0 ? "Welcome to Shree Sai Yog & Reiki Healing Centre" : step === 1 ? "Forgot Password"
                   : step === 2 ? "OTP Verification" : step === 3 ? "Change Password" : "Success"}
               </h1>
@@ -303,11 +303,11 @@ function Login() {
               </div>
 
               {/* Sign in button */}
-              <div className="w-full mt-10 md:mt-14 relative inline-block rounded-full px-[5px] py-[3px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
+              <div className="w-full mt-10 md:mt-14 relative inline-block rounded-full px-[4px] py-[3.5px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-full inline-flex justify-center items-center space-x-1.5 py-2 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
+                  className="w-full h-full inline-flex justify-center items-center space-x-1.5 py-[9.5px] bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
                 >
                   {loading ? (
                     <span>Signing in...</span>

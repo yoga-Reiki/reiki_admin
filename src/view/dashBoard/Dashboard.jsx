@@ -9,12 +9,14 @@ import AddCourse from '../course/AddCourse';
 import AddProduct from '../product/AddProduct';
 import AddBlog from '../blog/AddBlog';
 import AddTestimonials from '../testimonails/AddTestimonials';
+import { getAllOrder } from '../../services/orderServices';
 
 function Dashboard() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("");
   const [activePopup, setActivePopup] = useState(null);
   const [dashboardData, setDashboardData] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const hasFetched = useRef(false);
@@ -50,6 +52,7 @@ function Dashboard() {
   useEffect(() => {
     if (!hasFetched.current) {
       fetchUsers();
+      fetchOrder()
       hasFetched.current = true;
     }
   }, [pagination.page]);
@@ -70,6 +73,22 @@ function Dashboard() {
     }
   };
 
+  const fetchOrder = async () => {
+    setLoading(true);
+    try {
+      const response = await getAllOrder({
+        page: pagination.page,
+        pageSize: pagination.pageSize,
+      });
+
+      setOrders(response?.data);
+    } catch (err) {
+      setError("Failed to fetch orders");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleClosePopup = () => {
     setActivePopup(null);
     setActiveItem("");
@@ -80,7 +99,7 @@ function Dashboard() {
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-3 text-[#464646] relative">
         <div>
-          <h1 className="text-[32px] font-Raleway">Dashboard</h1>
+          <h1 className="text-[32px] font-Raleway Raleway-medium">Dashboard</h1>
           <p className="text-[#656565] pt-1">Overview of your Website</p>
         </div>
 
@@ -118,14 +137,14 @@ function Dashboard() {
       </div>
 
       {/* Stats Cards Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 px-3 py-2.5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 px-3 py-2.5">
         {/* Card 1 */}
         <div className="flex justify-between items-center bg-white rounded-3xl border-l border-l-[#EA7913] shadow-[0_4px_6px_rgba(0,0,0,0.08)]">
           <div className='py-[17px] px-8 w-full flex flex-col gap-1.5'>
-            <h2 className="text-4xl text-[#525252] font-Raleway">{dashboardData?.length}</h2>
-            <p className="text-[#757575] text-sm">Total Users</p>
+            <h2 className="text-[40px] text-[#525252] font-Raleway Raleway-medium">{dashboardData?.length}</h2>
+            <p className="text-sm text-[#464646]">Total Users</p>
           </div>
-          <div className="bg-gradient-to-br w-27 h-full flex justify-center items-center from-[#FFB979] to-[#EA7913] rounded-3xl p-3 shadow-[-4px_0_6px_rgba(234,121,19,0.3)]">
+          <div className="bg-gradient-to-br w-37.5 h-full flex justify-center items-center from-[#FFB979] to-[#EA7913] rounded-3xl p-3 shadow-[-4px_0_6px_rgba(234,121,19,0.3)]">
             <img src={UserIcon1} alt="User Icon" className="w-8 h-10" />
           </div>
         </div>
@@ -133,10 +152,10 @@ function Dashboard() {
         {/* Card 2 */}
         <div className="flex justify-between items-center bg-white rounded-3xl border-l border-l-[#EA7913] shadow-[0_4px_6px_rgba(0,0,0,0.08)]">
           <div className='py-[17px] px-8 w-full flex flex-col gap-1.5'>
-            <h2 className="text-4xl text-[#525252] font-Raleway">{dashboardData?.order || "0"}</h2>
-            <p className="text-[#757575] text-sm">Total Orders</p>
+            <h2 className="text-[40px] text-[#525252] font-Raleway Raleway-medium">{orders?.items?.length}</h2>
+            <p className="text-sm text-[#464646]">Total Orders</p>
           </div>
-          <div className="bg-gradient-to-br w-27 h-full flex justify-center items-center from-[#FFB979] to-[#EA7913] rounded-3xl p-3 shadow-[-4px_0_6px_rgba(234,121,19,0.3)]">
+          <div className="bg-gradient-to-br w-37.5 h-full flex justify-center items-center from-[#FFB979] to-[#EA7913] rounded-3xl p-3 shadow-[-4px_0_6px_rgba(234,121,19,0.3)]">
             <img src={fileIcon} alt="User Icon" className="w-8 h-10" />
           </div>
         </div>

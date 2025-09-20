@@ -7,7 +7,7 @@ function DashboardTable({ dashboardData, loading, error, pagination, setPaginati
     return (
         <div>
             <div className="flex flex-col md:flex-row justify-between items-center my-4 gap-4 px-3">
-                <p className="text-2xl text-[#656565]">Today’s Contact Details</p>
+                <p className="text-2xl text-[#656565] font-Raleway Raleway-medium">Today’s Contact Details</p>
                 <div className="flex bg-[#F5F0E6] rounded-full text-[#656565] w-fit">
                     <button
                         onClick={() => setActiveTab("Pending")}
@@ -30,7 +30,7 @@ function DashboardTable({ dashboardData, loading, error, pagination, setPaginati
             <div className="overflow-x-auto px-3">
                 <table className="w-full table-auto">
                     <thead>
-                        <tr className="grid grid-cols-5 md:w-[160%] lg:w-[130%] xl:w-full bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
+                        <tr className="grid grid-cols-5 md:w-[160%] lg:w-[130%] xl:w-full bg-[#FCEAC9] text-left text-base text-[#111111] rounded-t-2xl">
                             <th className='px-4 py-3'>Name</th>
                             <th className='px-4 py-3'>Email</th>
                             <th className='px-4 py-3'>Mobile Number</th>
@@ -39,7 +39,7 @@ function DashboardTable({ dashboardData, loading, error, pagination, setPaginati
                         </tr>
                     </thead >
 
-                    <tbody className="flex flex-col justify-center md:w-[160%] lg:w-[130%] xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
+                    <tbody className="flex flex-col gap-y-[1px] justify-center md:w-[160%] lg:w-[130%] xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
                         {loading ? (
                             <tr>
                                 <td colSpan="6" className="flex justify-center py-6">
@@ -59,7 +59,7 @@ function DashboardTable({ dashboardData, loading, error, pagination, setPaginati
                                 return (
                                     <tr
                                         key={index}
-                                        className={`grid grid-cols-5 items-center bg-white mt-[1px] text-sm ${isFirst ? 'rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
+                                        className={`grid grid-cols-5 items-center bg-white text-[#656565] text-sm ${isFirst ? 'rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
                                     >
                                         <td className="whitespace-pre-wrap px-4 py-7.5">{Data.name}</td>
                                         <td className="px-4 py-7.5">
@@ -90,21 +90,21 @@ function DashboardTable({ dashboardData, loading, error, pagination, setPaginati
                     </tbody>
                 </table>
 
-                <div className="flex justify-end items-center gap-4 py-6">
+                <div className="flex justify-end items-center gap-4 py-6 text-[#464646]">
                     <button
                         onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
                         disabled={pagination.page === 1}
-                        className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
+                        className="px-4 py-2 bg-[#fceac9] rounded disabled:opacity-50"
                     >
                         Previous
                     </button>
-                    <span className="text-[#656565] font-medium">
+                    <span className="font-medium">
                         Page {pagination.page} of {Math.ceil(pagination.totalUsers / pagination.pageSize)}
                     </span>
                     <button
                         onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
                         disabled={pagination.page >= Math.ceil(pagination.totalUsers / pagination.pageSize)}
-                        className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
+                        className="px-4 py-2 bg-[#fceac9] rounded disabled:opacity-50"
                     >
                         Next
                     </button>

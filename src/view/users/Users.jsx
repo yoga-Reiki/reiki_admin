@@ -110,7 +110,7 @@ function Users() {
           {/* Header */}
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 p-3">
             <div>
-              <h1 className="text-[32px] font-bold">User Management</h1>
+              <h1 className="text-[32px] font-Raleway Raleway-medium">User Management</h1>
               <p className="text-[#656565] pt-1">Manage all your users</p>
             </div>
             <button onClick={handleDownload} className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 cursor-pointer rounded-full">
@@ -120,18 +120,18 @@ function Users() {
           </div>
 
           {/* Search Bar */}
-          <div className="flex flex-col md:flex-row justify-between items-center mt-6 mb-6 gap-4 px-3">
-            <p className="text-xl font-semibold text-[#656565]">All Users</p>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 py-6 px-3">
+            <p className="text-2xl font-Raleway Raleway-medium text-[#656565]">All Users</p>
             <div className="relative w-full md:w-72 lg:w-90 xl:w-[451px]">
               <span className="absolute inset-y-0 left-3 px-1 flex items-center text-[#EA7913]">
-                <img src={SearchIcon} alt="search" className="w-5 h-5" />
+                <img src={SearchIcon} alt="search" className="w-6 h-6" />
               </span>
               <input
                 type="text"
                 placeholder="Search User by Name/ Mobile no./ Email"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 md:py-3 rounded-full bg-[#FCEAC9] text-[#656565] placeholder-[#656565] border-2 border-[#FEF8EC] focus:outline-none focus:ring-0 focus:border-[#F3E9D6]"
+                className="w-full pl-12 pr-4 py-2 md:py-3 rounded-full bg-[#FCEAC9] text-[#656565] placeholder-[#656565] border-2 border-[#FEF8EC] focus:outline-none focus:ring-0 focus:border-[#F3E9D6]"
               />
             </div>
           </div>
@@ -140,7 +140,7 @@ function Users() {
           <div className="overflow-x-auto px-3">
             <table className="w-full table-auto">
               <thead>
-                <tr className="grid grid-cols-6 md:w-[300%] lg:w-[200%] xl:w-[120%] 2xl:w-full bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
+                <tr className="grid grid-cols-6 md:w-[300%] lg:w-[200%] xl:w-[120%] 2xl:w-full bg-[#FCEAC9] text-left text-base text-[#111111] rounded-t-2xl">
                   <th className='px-4 py-3'>Name</th>
                   <th className='px-4 py-3'>Email</th>
                   <th className='px-4 py-3'>Mobile Number</th>
@@ -150,7 +150,7 @@ function Users() {
                 </tr>
               </thead >
 
-              <tbody className="flex flex-col justify-center md:w-[300%] lg:w-[200%] xl:w-[120%] 2xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
+              <tbody className="flex flex-col gap-y-[1px] justify-center md:w-[300%] lg:w-[200%] xl:w-[120%] 2xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
                 {loading ? (
                   <tr>
                     <td colSpan="6" className="flex justify-center py-6">
@@ -170,7 +170,7 @@ function Users() {
                     return (
                       <tr
                         key={index}
-                        className={`grid grid-cols-6 items-center bg-white mt-[1px] text-sm ${isFirst ? 'rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
+                        className={`grid grid-cols-6 items-center bg-white text-[#656565] text-sm ${isFirst ? 'rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
                       >
                         <td className="whitespace-pre-wrap px-4 py-7">{user.name}</td>
                         <td className="whitespace-pre-wrap px-4 py-7">{user.email}</td>
@@ -185,14 +185,14 @@ function Users() {
                           <button onClick={() => {
                             setSelectedUser(user)
                             navigate(`?selectedUserId=${user._id}`);
-                          }} className="flex items-center gap-1 p-3 bg-[#FEF8EC] text-[#EA7913] border border-[#F9D38E] rounded-full text-sm hover:bg-[#FCEAC9] cursor-pointer">
-                            <img src={EditIcon} alt='Download Icon' className='w-5 h-5' /><span>Edit Access</span>
+                          }} className="flex items-center gap-1 p-3 bg-[#FEF8EC] text-[#EA7913] border border-[#F9D38E] rounded-full text-xs hover:bg-[#FCEAC9] cursor-pointer">
+                            <img src={EditIcon} alt='Download Icon' className='w-4 h-4' /><span>Edit Access</span>
                           </button>
                           <button onClick={() => setViewUser(user)} className="p-3 rounded-full bg-[#E8F1FF] border border-[#B3CCFF] hover:bg-[#cdddff] cursor-pointer">
-                            <img src={EyeopenIcon} alt='Download Icon' className='w-5 h-5' />
+                            <img src={EyeopenIcon} alt='Download Icon' className='w-4 h-4' />
                           </button>
                           <button onClick={() => setBlockUser(user)} className="p-3 rounded-full bg-[#FEF2F2] border border-[#FECACA] hover:bg-[#fee3e3] cursor-pointer">
-                            <img src={blockIcon} alt='Download Icon' className='w-5 h-5' />
+                            <img src={blockIcon} alt='Download Icon' className='w-4 h-4' />
                           </button>
                         </td>
                       </tr>
@@ -208,21 +208,21 @@ function Users() {
               </tbody>
             </table>
           </div>
-          <div className="flex justify-end items-center gap-4 py-6 px-3">
+          <div className="flex justify-end items-center text-[#464646] gap-4 py-6 px-3">
             <button
               onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
               disabled={pagination.page === 1}
-              className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
+              className="px-4 py-2 bg-[#fceac9] rounded disabled:opacity-50"
             >
               Previous
             </button>
-            <span className="text-[#656565] font-medium">
+            <span className="font-medium">
               Page {pagination.page} of {Math.ceil(pagination.totalUsers / pagination.pageSize)}
             </span>
             <button
               onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
               disabled={pagination.page >= Math.ceil(pagination.totalUsers / pagination.pageSize)}
-              className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
+              className="px-4 py-2 bg-[#fceac9] rounded disabled:opacity-50"
             >
               Next
             </button>

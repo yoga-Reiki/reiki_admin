@@ -30,8 +30,8 @@ function ForgotModel({ onForgotPassword, onChange, form, errors, loading }) {
                         )}
                     </div>
 
-                    <div className="relative inline-block rounded-full px-[5px] py-[4px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] mt-2 hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
-                        <button type='button' onClick={onForgotPassword} className="inline-flex justify-center items-center space-x-1.5 px-5 sm:px-6 py-2 sm:py-2 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base w-full h-full">
+                    <div className="relative inline-block rounded-full px-[4px] py-[3.5px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] mt-2 hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
+                        <button type='button' onClick={onForgotPassword} className="inline-flex justify-center items-center space-x-1.5 px-5 sm:px-6 py-2 sm:py-[9.5px] bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base w-full h-full">
                             {loading ? (
                                 <span>Sending...</span>
                             ) : (

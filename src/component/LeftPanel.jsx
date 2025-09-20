@@ -52,18 +52,18 @@ function LeftPanel({ isCollapsed, setIsCollapsed }) {
                 <img
                     src={isCollapsed ? SmalLogo : reikiLogo}
                     alt="Logo"
-                    className={`object-contain transition-all duration-300 ${!isCollapsed && "w-30"}`}
+                    className={`object-contain transition-all duration-300 ${!isCollapsed && "w-35"}`}
                 />
             </div>
 
             {/* Menu Items */}
-            <div className='bg-white border border-[#F1F1F1] shadow-md rounded-3xl flex-1 p-3 space-y-2'>
+            <div className='bg-white border border-[#F1F1F1] shadow-md rounded-3xl flex-1 p-5 space-y-3.5'>
                 {menuItems.map((item, index) => (
                     <NavLink
                         key={index}
                         to={item.path}
                         className={({ isActive }) =>
-                            `flex ${isCollapsed ? "justify-center" : ""} px-3 py-3.5 items-center gap-3 rounded-full transition-all duration-300 ${isActive
+                            `flex ${isCollapsed ? "justify-center" : ""} p-3 items-center gap-2.5 rounded-full transition-all duration-300 ${isActive
                                 ? 'bg-gradient-to-r from-[#EA7913] to-[#EA7913]/50 text-white shadow-sm'
                                 : 'text-[#656565] hover:bg-orange-50'}`
                         }
@@ -84,7 +84,7 @@ function LeftPanel({ isCollapsed, setIsCollapsed }) {
 
             {/* Toggle Button */}
             <button
-                className="absolute bottom-4 right-4 bg-gradient-to-r from-[#EA7913] to-[#EA7913]/50 text-white p-4 rounded-full hover:bg-[#EA7913] transition cursor-pointer"
+                className="absolute bottom-4 right-4 bg-gradient-to-r from-[#EA7913] to-[#EA7913]/50 text-white p-4.5 rounded-full hover:bg-[#EA7913] transition cursor-pointer"
                 onClick={toggleSidebar}
             >
                 <img
