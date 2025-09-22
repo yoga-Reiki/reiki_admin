@@ -72,7 +72,7 @@ function Testimonials() {
                     {/* Header */}
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-3">
                         <div>
-                            <h1 className="text-[32px] font-bold">Testimonials</h1>
+                            <h1 className="text-[32px] font-Raleway Raleway-medium">Testimonials</h1>
                             <p className="text-[#656565] pt-1">Add and manage testimonials</p>
                         </div>
                         <button
@@ -86,17 +86,17 @@ function Testimonials() {
 
                     {/* Search Bar */}
                     <div className="flex flex-col md:flex-row justify-between items-center mt-6 mb-6 gap-4 px-3">
-                        <p className="text-2xl text-[#656565]">Testimonial Data List</p>
+                        <p className="text-2xl text-[#656565] font-Raleway Raleway-medium">Testimonial Data List</p>
                         <div className="relative w-full md:w-72 lg:w-74.5">
                             <span className="absolute inset-y-0 left-3 px-1 flex items-center text-[#EA7913]">
-                                <img src={SearchIcon} alt="search" className="w-5 h-5" />
+                                <img src={SearchIcon} alt="search" className="w-6 h-6" />
                             </span>
                             <input
                                 type="text"
                                 placeholder="Search Testimonials"
                                 value={searchQuery} 
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 md:py-3 rounded-full bg-[#FCEAC9] text-[#656565] placeholder-[#656565] border-2 border-[#FEF8EC] focus:outline-none focus:ring-0 focus:border-[#F3E9D6]"
+                                className="w-full pl-12 pr-4 py-2 md:py-3 rounded-full bg-[#FCEAC9] text-[#656565] placeholder-[#656565] border-2 border-[#FEF8EC] focus:outline-none focus:ring-0 focus:border-[#F3E9D6]"
                             />
                         </div>
                     </div>
@@ -105,7 +105,7 @@ function Testimonials() {
                     <div className="overflow-x-auto px-3">
                         <table className="w-full table-auto">
                             <thead>
-                                <tr className="grid grid-cols-5 md:w-[190%] lg:w-[130%] xl:w-full bg-[#FCEAC9] text-left text-base font-medium text-[#111111] rounded-t-2xl">
+                                <tr className="dm-sans-medium grid grid-cols-5 md:w-[190%] lg:w-[130%] xl:w-full bg-[#FCEAC9] text-left text-base text-[#111111] rounded-t-2xl">
                                     <th className="px-4 py-3">Name</th>
                                     <th className="px-4 py-3">Post / Address</th>
                                     <th className="px-4 py-3">Image</th>
@@ -114,7 +114,7 @@ function Testimonials() {
                                 </tr>
                             </thead>
 
-                            <tbody className="flex flex-col justify-center md:w-[190%] lg:w-[130%] xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
+                            <tbody className="dm-sans-regular flex flex-col gap-y-[1px] justify-center md:w-[190%] lg:w-[130%] xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
                                 {loading ? (
                                     <tr>
                                         <td colSpan="6" className="flex justify-center py-6">
@@ -134,7 +134,7 @@ function Testimonials() {
                                         return (
                                             <tr
                                                 key={index}
-                                                className={`grid grid-cols-5 items-center bg-white mt-[1px] text-sm ${
+                                                className={`grid grid-cols-5 items-center bg-white text-[#656565] text-sm ${
                                                     isFirst
                                                         ? "rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]"
                                                         : ""

@@ -112,7 +112,7 @@ function AddBlog({ onClose, selectedUser, fetchBlog }) {
                     <div className="bg-white w-full mx-4 sm:mx-6 md:mx-8 lg:mx-0 p-5 max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-[971px] flex flex-col justify-between gap-5.5 border-t-2 border-t-[#EA7913] rounded-3xl">
                         <div className="max-h-[86vh] overflow-y-auto custom-scrollbar pr-6">
                             <div className="flex justify-between items-center p-3">
-                                <h2 className="text-[32px] font-Raleway">Add Blog</h2>
+                                <h2 className="text-[32px] font-Raleway Raleway-medium">Add Blog</h2>
                                 <button
                                     onClick={onClose}
                                     className="text-[#EA7913] border border-[#989898] cursor-pointer p-4 rounded-full"
@@ -131,7 +131,7 @@ function AddBlog({ onClose, selectedUser, fetchBlog }) {
                                         value={formData.title}
                                         onChange={handleChange}
                                         placeholder="Enter blog title"
-                                        className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                                        className="w-full border border-[#BDBDBD] text-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
                                     />
                                     {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
                                 </div>
@@ -145,7 +145,7 @@ function AddBlog({ onClose, selectedUser, fetchBlog }) {
                                         value={formData.description}
                                         onChange={handleChange}
                                         placeholder="Enter a short description"
-                                        className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                                        className="w-full border border-[#BDBDBD] text-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
                                     />
                                     {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
                                 </div>
@@ -218,16 +218,16 @@ function AddBlog({ onClose, selectedUser, fetchBlog }) {
                                         onClick={() => fileInputRef.current?.click()}
                                     >
                                         {image ? (
-                                            <div className="flex flex-col items-center gap-1">
+                                            <div className="flex flex-col items-center gap-1 text-[#525252]">
                                                 <FiUploadCloud size={20} className="text-[#EA7913]" />
-                                                <span className="text-[#464646] font-medium">{image.name}</span>
-                                                <span className="text-xs text-[#9a9a9a]">Click Here to Change Image</span>
+                                                <span className="font-medium">{image.name}</span>
+                                                <span>Click Here to Change Image</span>
                                             </div>
                                         ) : (
-                                            <div className="flex flex-col items-center gap-2 px-12">
+                                            <div className="flex flex-col items-center gap-2 px-12 text-[#525252]">
                                                 <FiUploadCloud size={20} className="text-[#EA7913]" />
-                                                <span className="text-[#989898]">Upload Image Here</span>
-                                                <span className="text-xs text-[#9a9a9a]">(Drag & drop or click)</span>
+                                                <span>Upload Image Here</span>
+                                                <span>(Drag & drop or click)</span>
                                             </div>
                                         )}
 
@@ -245,11 +245,11 @@ function AddBlog({ onClose, selectedUser, fetchBlog }) {
 
                                 {/* Submit */}
                                 <div className="pt-5.5">
-                                    <div className="w-full relative inline-block rounded-full px-[4px] py-[3px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:to-[#F39C2C]">
+                                    <div className="w-full relative inline-block rounded-full px-[4px] py-[3.5px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:to-[#F39C2C]">
                                         <button
                                             type="submit"
                                             disabled={isSubmitting}
-                                            className="w-full py-2.5 bg-[#EA7913] text-lg text-white cursor-pointer rounded-full font-medium hover:bg-[#F39C2C]"
+                                            className="w-full py-[9.5px] bg-[#EA7913] text-lg text-white cursor-pointer rounded-full font-medium hover:bg-[#F39C2C]"
                                         >
                                             {isSubmitting ? "Adding..." : "Add Blog"}
                                         </button>

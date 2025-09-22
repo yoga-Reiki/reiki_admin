@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import UploadIcon from "../../assets/svg/UploadIcon.svg";
 import { getCoursesUpdate } from '../../services/courseServices';
 import toast from 'react-hot-toast';
-import { Editor } from '@tinymce/tinymce-react';
+import { FiUploadCloud } from "react-icons/fi";
 
 function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
     const [formData, setFormData] = useState({
@@ -170,23 +170,23 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
 
     return (
         <div className='text-[#464646] flex flex-col gap-2'>
-            <div onClick={onCancel} className="flex items-center gap-6 py-4 px-3 cursor-pointer" >
+            <div className="flex items-center gap-6 py-4 px-3 cursor-pointer" >
                 {/* <img src={leftBackIcon} alt='Not Found' className='w-5 h-5' /> */}
-                <div className='flex items-center'>
+                <div className='flex items-center font-Raleway Raleway-medium'>
                     <button
                         onClick={onCancel}
-                        className="flex items-center font-Raleway Raleway-medium text-[32px] gap-1 transition"
+                        className="flex items-center text-[32px] gap-1 transition"
                     >
                         <span className='hover:text-[#EA7913] cursor-pointer'>Courses</span> <span className="mx-2">{">"}</span>
                     </button>
-                    <button className="text-2xl hover:text-[#EA7913] mt-1">Courses Section</button>
+                    <button className="text-2xl mt-1">Courses Section</button>
                 </div>
             </div>
 
             <div className='py-2.5 px-3'>
                 <div className="bg-white border-t-2 border-t-[#EA7913] rounded-3xl p-5 space-y-5.5">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <h2 className="text-2xl text-[#656565] font-Raleway">Courses Section</h2>
+                        <h2 className="text-2xl text-[#656565] font-Raleway Raleway-medium">Courses Section</h2>
                         <div className="flex md:flex-col lg:flex-row gap-3">
                             <div>
                                 <button
@@ -240,20 +240,20 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
                                 <div className="w-full">
                                     <div className="flex flex-col justify-between bg-white rounded-3xl p-6 sm:px-8 sm:py-6 h-full">
                                         <div>
-                                            <h3 className="text-2xl sm:text-3xl font-Raleway font-medium text-[#292929] pb-3">
+                                            <h3 className="text-2xl sm:text-[32px] font-Raleway Raleway-medium text-[#292929] pb-2">
                                                 {formData?.title || selectedCourse.title}
                                             </h3>
-                                            <p className="text-sm text-[#525252] whitespace-pre-line">
+                                            <p className="text-[#525252] whitespace-pre-line">
                                                 {(formData?.content || selectedCourse?.shortContent)}
                                             </p>
                                         </div>
 
                                         <div className="flex flex-col items-start mt-4">
                                             <div className="flex items-center gap-2 mb-3">
-                                                <span className="text-lg sm:text-xl md:text-2xl font-Raleway text-[#292929]">
+                                                <span className="text-lg sm:text-xl md:text-[32px] font-Raleway text-[#292929]">
                                                     ${formData?.newPricing || selectedCourse.priceNew}
                                                 </span>
-                                                <span className="text-sm sm:text-base text-red-400 line-through">
+                                                <span className="text-sm sm:text-lg text-[#EF4444] line-through">
                                                     ${formData?.oldPricing || selectedCourse.priceOld}
                                                 </span>
                                             </div>
@@ -286,7 +286,7 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
                                         value={field?.value}
                                         onChange={handleChange}
                                         placeholder={`Enter ${field.label}`}
-                                        className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                        className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 text-[#525252] placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                     />
                                     {errors[field.name] && (
                                         <p className="text-sm text-red-500 mt-1">{errors[field.name]}</p>
@@ -331,7 +331,7 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
                                     value={formData.content}
                                     onChange={handleChange}
                                     placeholder="Enter Your Content Here"
-                                    className="w-full h-[133px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                    className="w-full h-[133px] border border-[#BDBDBD] rounded-xl px-4 py-3 text-[#525252] placeholder-[#525252] resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                 />
                                 {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
                             </div>
@@ -356,17 +356,17 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
                                     onClick={() => coverInputRef.current?.click()}
                                 >
                                     {images.cover ? (
-                                        <div className="flex flex-col justify-center items-center gap-1">
-
-                                            <span className="text-[#464646] text-sm font-medium w-full text-center break-words">
+                                        <div className="flex flex-col justify-center items-center gap-1 text-[#525252]">
+                                            <FiUploadCloud size={20} className="text-[#EA7913]" />
+                                            <span className="font-medium w-full text-center break-words">
                                                 {images.cover?.name || selectedCourse?.listImageUrl?.split("/").pop()}
                                             </span>
-                                            <span className="text-xs text-center text-[#9a9a9a]">Click Here to Change Image</span>
+                                            <span className="text-center">Click Here to Change Image</span>
                                         </div>
                                     ) : (
-                                        <div className="flex flex-col items-center gap-2 px-12">
+                                        <div className="flex flex-col items-center gap-2 px-12 text-[#525252]">
                                             <img src={UploadIcon} alt="Upload Icon" />
-                                            <span className="text-[#989898]">Upload Image Here</span>
+                                            <span>Upload Image Here</span>
                                         </div>
                                     )}
 
@@ -391,7 +391,7 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
                                     value={formData.detailContent}
                                     onChange={handleChange}
                                     placeholder="Enter Your Content Here"
-                                    className="w-full h-[133px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                    className="w-full h-[133px] border border-[#BDBDBD] rounded-xl px-4 py-3 text-[#525252] placeholder-[#525252] resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                 />
                                 {errors?.detailContent && (
                                     <p className="text-red-500 text-sm">{errors?.detailContent}</p>
@@ -418,17 +418,17 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
                                     onClick={() => detailInputRef.current?.click()}
                                 >
                                     {images.detail ? (
-                                        <div className="flex flex-col justify-center items-center gap-1">
-
-                                            <span className="text-[#464646] text-sm font-medium w-full text-center break-words">
+                                        <div className="flex flex-col justify-center items-center gap-1 text-[#525252]">
+                                            <FiUploadCloud size={20} className="text-[#EA7913]" />
+                                            <span className="font-medium w-full text-center break-words">
                                                 {images.detail.name || selectedCourse?.detailImageUrl?.split("/").pop()}
                                             </span>
-                                            <span className="text-xs text-center text-[#9a9a9a]">Click Here to Change Image</span>
+                                            <span className="text-center">Click Here to Change Image</span>
                                         </div>
                                     ) : (
                                         <div className="flex flex-col items-center gap-2 px-12">
                                             <img src={UploadIcon} alt="Upload Icon" />
-                                            <span className="text-[#989898]">Upload Image Here</span>
+                                            <span>Upload Image Here</span>
                                         </div>
                                     )}
 
@@ -460,7 +460,7 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
                                             name={field.name}
                                             value={field.value}
                                             onChange={handleChange}
-                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-3 text-[#464646] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-3 text-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                         >
                                             <option value="">Select {field.label}</option>
                                             {field.name === "mode" &&
@@ -483,7 +483,7 @@ function EditCourseSec({ selectedCourse, onCancel, fetchCourse }) {
                                             value={field.value}
                                             onChange={handleChange}
                                             placeholder={`Enter ${field.label}`}
-                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 text-[#525252] placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                         />
                                     )}
                                     {errors[field.name] && (

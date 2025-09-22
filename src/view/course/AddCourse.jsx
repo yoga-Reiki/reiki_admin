@@ -36,9 +36,11 @@ function AddCourse({ onClose, fetchCourse }) {
         if (name === "newPricing" || name === "oldPricing") {
             if (value === "" || /^\d*\.?\d*$/.test(value)) {
                 setFormData(prev => ({ ...prev, [name]: value }));
+                setErrors(prev => ({ ...prev, [name]: "" }));
             }
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
+            setErrors(prev => ({ ...prev, [name]: "" }));
         }
     };
 
@@ -93,7 +95,7 @@ function AddCourse({ onClose, fetchCourse }) {
             if (!formData.content.trim()) newErrors.content = "Content is required.";
             if (!images.cover) newErrors.image = "Cover Image is required.";
         } else if (step === 2) {
-            if (!formData.detailContent.trim()) newErrors.detailContent = "detailContent is required.";
+            if (!formData.detailContent?.trim()) newErrors.detailContent = "detailContent is required.";
             if (!images.detail) newErrors.image = "Detail Image is required.";
             if (!formData.language.trim()) newErrors.language = "Language is required.";
             if (!formData.shippingDetails.trim()) newErrors.shippingDetails = "Shipping details are required.";
@@ -181,7 +183,7 @@ function AddCourse({ onClose, fetchCourse }) {
                                                     value={formData[field.name]}
                                                     onChange={handleChange}
                                                     placeholder={`Enter ${field.label}`}
-                                                    className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                                    className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 text-[#525252] placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                                     // Optionally prevent non-numeric input by pattern
                                                     {...(field.type === "number" ? { min: 0, step: "any" } : {})}
                                                 />
@@ -201,7 +203,7 @@ function AddCourse({ onClose, fetchCourse }) {
                                                 value={formData.content}
                                                 onChange={handleChange}
                                                 placeholder="Enter Your Content Here"
-                                                className="w-full h-[280px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                                className="w-full h-[280px] border border-[#BDBDBD] rounded-xl px-4 py-3 text-[#525252] placeholder-[#525252] resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                             />
                                             {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
                                         </div>
@@ -256,15 +258,15 @@ function AddCourse({ onClose, fetchCourse }) {
                                                 onClick={() => fileInputRef.current?.click()}
                                             >
                                                 {images?.cover ? (
-                                                    <div className="flex flex-col items-center gap-1">
+                                                    <div className="flex flex-col items-center gap-1 text-[#525252]">
                                                         <img src={UploadIcon} alt="Not Found" />
-                                                        <span className="text-[#464646] font-medium">{images?.cover.name}</span>
-                                                        <span className="text-xs text-[#9a9a9a]">Click Here to Change Image</span>
+                                                        <span className="font-medium">{images?.cover.name}</span>
+                                                        <span className="text-xs">Click Here to Change Image</span>
                                                     </div>
                                                 ) : (
-                                                    <div className="flex flex-col items-center gap-2 px-12">
+                                                    <div className="flex flex-col items-center gap-2 px-12 text-[#525252]">
                                                         <img src={UploadIcon} alt="Not Found" />
-                                                        <span className="text-[#989898]">Upload Image Here</span>
+                                                        <span>Upload Image Here</span>
                                                     </div>
                                                 )}
                                                 <input
@@ -280,11 +282,22 @@ function AddCourse({ onClose, fetchCourse }) {
                                         </div>
                                     </div>
 
-                                    <div className="w-full relative inline-block rounded-full bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900]">
+                                    {/* <div className="w-full relative inline-block rounded-full bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900]">
                                         <button
                                             type="button"
                                             onClick={handleNext}
                                             className="w-full flex justify-center items-center gap-2 cursor-pointer py-2.5 bg-[#EA7913] text-lg text-white rounded-full"
+                                        >
+                                            <span>Next</span>
+                                            <IoIosArrowRoundForward size={28} />
+                                        </button>
+                                    </div> */}
+
+                                    <div className="w-full relative inline-block rounded-full px-[4px] py-[3.5px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900]">
+                                        <button
+                                            type="button"
+                                            onClick={handleNext}
+                                            className="w-full flex justify-center items-center gap-2 cursor-pointer py-2 sm:py-[9.5px] bg-[#EA7913] text-white rounded-full font-medium shadow hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-sm sm:text-base"
                                         >
                                             <span>Next</span>
                                             <IoIosArrowRoundForward size={28} />
@@ -428,11 +441,26 @@ function AddCourse({ onClose, fetchCourse }) {
 
                                     {/* Confirm Submit button */}
                                     <div className="col-span-2 pt-8.5">
-                                        <div className="w-full relative inline-block rounded-full bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900]">
+                                        {/* <div className="w-full relative inline-block rounded-full bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900]">
                                             <button
                                                 type="button"
                                                 onClick={handleConfirmSubmit}
                                                 className="w-full flex justify-center items-center gap-2 cursor-pointer py-2.5 bg-[#EA7913] text-lg text-white rounded-full"
+                                            >
+                                                {loading ? (<span>Submitting...</span>) : (
+                                                    <>
+                                                        <span>Submit</span>
+                                                        <IoIosArrowRoundForward size={28} />
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div> */}
+
+                                        <div className="w-full relative inline-block rounded-full px-[4px] py-[3.5px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900]">
+                                            <button
+                                                type="button"
+                                                onClick={handleConfirmSubmit}
+                                                className="w-full flex justify-center items-center gap-2 cursor-pointer py-2 sm:py-[9.5px] bg-[#EA7913] text-white rounded-full font-medium shadow hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-sm sm:text-base"
                                             >
                                                 {loading ? (<span>Submitting...</span>) : (
                                                     <>

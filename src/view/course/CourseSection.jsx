@@ -44,7 +44,7 @@ function CourseSection({ coursesData, loading }) {
       <div className="bg-white p-5 rounded-xl border-t-2 border-t-[#EA7913] relative overflow-hidden flex flex-col gap-5.5">
         {/* Header and Navigation */}
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl text-[#656565] font-Raleway">Courses Section</h2>
+          <h2 className="text-2xl text-[#656565] font-Raleway Raleway-medium">Courses Section</h2>
           <div className="flex space-x-2.5">
             <button
               onClick={prevSlide}
@@ -108,7 +108,7 @@ function CourseSection({ coursesData, loading }) {
                         {/* <p className="text-xs text-[#525252] md:line-clamp-3 line-clamp-none">
                           {item.shortContent}
                         </p> */}
-                        <p className="text-sm text-[#525252] whitespace-pre-line line-clamp-3">
+                        <p className="text-xs text-[#525252] whitespace-pre-line line-clamp-4">
                           {item?.shortContent}
                         </p>
                       </div>

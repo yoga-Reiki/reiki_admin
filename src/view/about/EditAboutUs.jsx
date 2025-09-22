@@ -28,7 +28,7 @@ const DropImage = ({ onDropFile, inputId, file, error, setErrors }) => {
                     const droppedFile = e.dataTransfer.files[0];
                     if (droppedFile) handleFile(droppedFile);
                 }}
-                className="flex items-center justify-center h-[153px] border border-[#DCDCDC] rounded-xl text-center cursor-pointer focus:outline-none focus:ring-0 focus:border-[#EA7913] transition-all bg-[#FCFCFC]"
+                className="flex items-center justify-center h-[153px] border border-[#DCDCDC] text-[#525252] rounded-xl text-center cursor-pointer focus:outline-none focus:ring-0 focus:border-[#EA7913] transition-all bg-[#FCFCFC]"
             >
                 <label
                     className="w-full h-full flex flex-col items-center justify-center gap-2 px-12"
@@ -37,14 +37,14 @@ const DropImage = ({ onDropFile, inputId, file, error, setErrors }) => {
                     <FiUploadCloud size={20} className="text-[#EA7913]" />
                     {file ? (
                         typeof file === "string" ? (
-                            <p className="text-sm text-[#989898]">
+                            <p className="text-[#525252]">
                                 {file.split("/").pop()}
                             </p>
                         ) : (
-                            <p className="text-sm text-[#989898]">{file.name}</p>
+                            <p className="text-[#525252]">{file.name}</p>
                         )
                     ) : (
-                        <span className="text-[#989898] text-sm">
+                        <span className="text-[#525252]">
                             Click Here to Upload Image or Drag & drop here
                         </span>
                     )}
@@ -152,7 +152,7 @@ function EditAboutUs({ onCancel, aboutData, fetchAboutData }) {
             <div className="p-3">
                 <div className="bg-white border-t border-t-[#EA7913] rounded-3xl w-full p-2.5 space-y-5.5">
                     <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-                        <h2 className="text-2xl text-[#656565]">About Us Hero Section</h2>
+                        <h2 className="text-2xl text-[#656565] font-Raleway Raleway-medium">About Us Hero Section</h2>
                         <div className="flex gap-2 md:w-full lg:w-auto">
                             <button
                                 className="w-full lg:w-auto bg-[#FCEAC9] text-[#656565] px-6 py-2.5 rounded-full hover:bg-[#FCEAC2] cursor-pointer"
@@ -176,7 +176,7 @@ function EditAboutUs({ onCancel, aboutData, fetchAboutData }) {
                         <div>
                             <label className="text-lg font-medium block mb-2">Vision Content</label>
                             <textarea
-                                className="w-full rounded-xl px-4.5 py-3 resize-none border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                className="w-full rounded-xl px-4.5 py-3 resize-none border-[1px] border-[#DCDCDC] text-[#525252] text-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                 rows={2}
                                 value={visionContent}
                                 onChange={(e) => {
@@ -190,7 +190,7 @@ function EditAboutUs({ onCancel, aboutData, fetchAboutData }) {
                         <div>
                             <label className="text-lg font-medium block mb-2">Mission Content</label>
                             <textarea
-                                className="w-full rounded-xl px-4.5 py-3 resize-none border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                className="w-full rounded-xl px-4.5 py-3 resize-none border-[1px] border-[#DCDCDC] text-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                 rows={2}
                                 value={missionContent}
                                 onChange={(e) => {
@@ -234,7 +234,7 @@ function EditAboutUs({ onCancel, aboutData, fetchAboutData }) {
                         <div>
                             <label className="text-lg font-medium block mb-2">Hero Section Content</label>
                             <textarea
-                                className="w-full h-[153px] rounded-xl px-4.5 py-3 resize-none border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                className="w-full h-[153px] rounded-xl px-4.5 py-3 resize-none border-[1px] border-[#DCDCDC] text-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                 rows={3}
                                 value={heroContent}
                                 onChange={(e) => {

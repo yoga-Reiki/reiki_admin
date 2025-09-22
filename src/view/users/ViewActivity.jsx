@@ -146,7 +146,7 @@ function ViewActivity({ viewUser, setViewUser }) {
                         <div className="overflow-x-auto w-full">
                             <table className="w-full table-auto">
                                 <thead>
-                                    <tr className="grid grid-cols-4 bg-[#FCEAC9] text-left text-base text-[#111111] rounded-t-2xl">
+                                    <tr className="dm-sans-medium grid grid-cols-4 bg-[#FCEAC9] text-left text-base text-[#111111] rounded-t-2xl">
                                         <th className='px-4 py-3'>Day</th>
                                         <th className='px-4 py-3'>Date</th>
                                         <th className='px-4 py-3'>Start Time</th>
@@ -154,7 +154,7 @@ function ViewActivity({ viewUser, setViewUser }) {
                                     </tr>
                                 </thead >
 
-                                <tbody className="flex flex-col gap-y-[1px] bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
+                                <tbody className="dm-sans-regular flex flex-col gap-y-[1px] bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
                                     {loading ? (
                                         <tr>
                                             <td colSpan="6" className="flex justify-center py-6">

@@ -156,21 +156,21 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
         <div className='text-[#464646] flex flex-col gap-2'>
             <div onClick={onCancel} className="flex items-center gap-6 py-4 px-3 cursor-pointer" >
                 {/* <img src={leftBackIcon} alt='Not Found' className='w-5 h-5' /> */}
-                <div className='flex items-center'>
+                <div className='flex items-center font-Raleway Raleway-medium'>
                     <button
                         onClick={onCancel}
-                        className="flex items-center font-Raleway Raleway-medium text-[32px] gap-1 transition"
+                        className="flex items-center text-[32px] gap-1 transition"
                     >
                         <span className='hover:text-[#EA7913] cursor-pointer'>Product</span> <span className="mx-2">{">"}</span>
                     </button>
-                    <button className="text-2xl hover:text-[#EA7913] mt-1">Product Section</button>
+                    <button className="text-2xl mt-1">Product Section</button>
                 </div>
             </div>
 
             <div className='py-2.5 px-3'>
                 <div className="bg-white border-t-2 border-t-[#EA7913] rounded-3xl p-5 space-y-5.5">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <h2 className="text-2xl text-[#656565] font-Raleway">Product Section</h2>
+                        <h2 className="text-2xl text-[#656565] font-Raleway Raleway-medium">Product Section</h2>
                         <div className="flex md:flex-col lg:flex-row gap-3">
                             <div>
                                 <button
@@ -227,12 +227,12 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                             <h3 className="text-xl md:text-2xl font-Raleway Raleway-bold">
                                                 {formData.title || selectedProduct.title}
                                             </h3>
-                                            <p className="text-[#525252] text-sm pt-2 pb-3.5">
+                                            <p className="text-sm pt-2 pb-3.5">
                                                 {formData.summary || selectedProduct.summary}
                                             </p>
                                             <div className='space-x-1.5 space-y-2 md:space-y-0 pb-7 md:pb-5'>
-                                                <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{formData?.chip1 || selectedProduct?.chips[0]}</button>
-                                                <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{formData?.chip2 || selectedProduct?.chips[1]}</button>
+                                                <button className='py-1 px-4 border border-[#BDBDBD] rounded-full text-xs'>{formData?.chip1 || selectedProduct?.chips[0]}</button>
+                                                <button className='py-1 px-4 border border-[#BDBDBD] rounded-full text-xs'>{formData?.chip2 || selectedProduct?.chips[1]}</button>
                                             </div>
                                             <div className="flex items-end gap-2 text-[#464646]">
                                                 <span className="text-lg md:text-[32px] md:leading-[40px] font-Raleway Raleway-bold">${formData.newPricing || selectedProduct?.detail?.priceNew}</span>
@@ -253,7 +253,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                     value={formData?.title}
                                     onChange={handleChange}
                                     placeholder="Enter your Title"
-                                    className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                    className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 text-[#525252] placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                 />
                                 {errors?.title && (
                                     <p className="text-sm text-red-500 mt-1">{errors?.title}</p>
@@ -269,7 +269,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                         value={formData.summary}
                                         onChange={handleChange}
                                         placeholder="Enter Your Content Here"
-                                        className="w-full h-[133px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                        className="w-full h-[133px] border border-[#BDBDBD] rounded-xl px-4 py-3 text-[#525252] placeholder-[#525252] resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                     />
                                     {errors?.summary && (
                                         <p className="text-red-500 text-sm mt-1">{errors?.summary}</p>
@@ -296,16 +296,16 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                         onClick={() => coverInputRef.current?.click()}
                                     >
                                         {images.cover ? (
-                                            <div className="flex flex-col justify-center items-center gap-1">
-                                                <span className="text-[#464646] text-sm font-medium w-full text-center break-words">
+                                            <div className="flex flex-col justify-center items-center gap-1 text-[#525252]">
+                                                <span className="font-medium w-full text-center break-words">
                                                     {images.cover?.name || selectedProduct?.coverImageUrl?.split("/").pop()}
                                                 </span>
-                                                <span className="text-xs text-center text-[#9a9a9a]">Click Here to Change Image</span>
+                                                <span className="text-center">Click Here to Change Image</span>
                                             </div>
                                         ) : (
-                                            <div className="flex flex-col items-center gap-2 px-12">
+                                            <div className="flex flex-col items-center gap-2 px-12 text-[#525252]">
                                                 <img src={UploadIcon} alt="Upload Icon" />
-                                                <span className="text-[#989898]">Upload Image Here</span>
+                                                <span>Upload Image Here</span>
                                             </div>
                                         )}
 
@@ -328,7 +328,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                     value={formData?.chip1}
                                     onChange={handleChange}
                                     placeholder="Enter your Title"
-                                    className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                    className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 text-[#525252] placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                 />
                                 {errors?.chip1 && (
                                     <p className="text-red-500 text-sm mt-1">{errors?.chip1}</p>
@@ -342,7 +342,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                     value={formData?.chip2}
                                     onChange={handleChange}
                                     placeholder="Enter your Title"
-                                    className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                    className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 text-[#525252] placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                 />
                                 {errors?.chip2 && (
                                     <p className="text-red-500 text-sm mt-1">{errors?.chip2}</p>
@@ -361,6 +361,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                             setFormData((prev) => ({ ...prev, detailContent }));
                                             setErrors((prev) => ({ ...prev, detailContent: "" }));
                                         }}
+                                        className="text-[#525252]"
                                         init={{
                                             plugins: [
                                                 'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
@@ -405,16 +406,16 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                         onClick={() => detailInputRef.current?.click()}
                                     >
                                         {images.detail ? (
-                                            <div className="flex flex-col justify-center items-center gap-1">
-                                                <span className="text-[#464646] text-sm font-medium w-full text-center break-words">
+                                            <div className="flex flex-col justify-center items-center gap-1 text-[#525252]">
+                                                <span className="font-medium w-full text-center break-words">
                                                     {images.detail?.name || selectedProduct?.detail?.detailImageUrl?.split("/").pop()}
                                                 </span>
-                                                <span className="text-xs text-center text-[#9a9a9a]">Click Here to Change Image</span>
+                                                <span className="text-center">Click Here to Change Image</span>
                                             </div>
                                         ) : (
-                                            <div className="flex flex-col items-center gap-2 px-12">
+                                            <div className="flex flex-col items-center gap-2 px-12 text-[#525252]">
                                                 <img src={UploadIcon} alt="Upload Icon" />
-                                                <span className="text-[#989898]">Upload Image Here</span>
+                                                <span>Upload Image Here</span>
                                             </div>
                                         )}
 
@@ -436,7 +437,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                     value={formData.specifications}
                                     onChange={handleChange}
                                     placeholder="Enter Your specifications"
-                                    className="w-full h-[133px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                    className="w-full h-[133px] border border-[#BDBDBD] rounded-xl px-4 py-3 text-[#525252] placeholder-[#525252] resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                 />
                                 {errors.specifications && <p className="text-red-500 text-sm mt-1">{errors.specifications}</p>}
                             </div>
@@ -449,7 +450,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                     value={formData.newPricing}
                                     onChange={handleChange}
                                     placeholder="Enter Your New Pricing"
-                                    className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                                    className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl text-[#525252] placeholder-[#525252] px-4.5 py-2.5"
                                 />
                                 {errors.newPricing && <p className="text-red-500 text-sm mt-1">{errors.newPricing}</p>}
                             </div>
@@ -462,7 +463,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                     value={formData.oldPricing}
                                     onChange={handleChange}
                                     placeholder="Enter Your Old Pricing"
-                                    className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                                    className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl text-[#525252] placeholder-[#525252] px-4.5 py-2.5"
                                 />
                                 {errors.oldPricing && <p className="text-red-500 text-sm mt-1">{errors.oldPricing}</p>}
                             </div>
@@ -475,7 +476,7 @@ function EditProduct({ selectedProduct, onCancel, fetchProduct }) {
                                     value={formData.shippingDetails}
                                     onChange={handleChange}
                                     placeholder="Enter Shipping Details"
-                                    className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                                    className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl text-[#525252] placeholder-[#525252] px-4.5 py-2.5"
                                 />
                                 {errors.shippingDetails && <p className="text-red-500 text-sm mt-1">{errors.shippingDetails}</p>}
                             </div>

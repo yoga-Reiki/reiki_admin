@@ -65,7 +65,7 @@ function Courses() {
                 <div className="text-[#464646] flex flex-col gap-2">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-3">
                         <div>
-                            <h1 className="text-[32px] font-bold">Courses</h1>
+                            <h1 className="text-[32px] font-Raleway Raleway-medium">Courses</h1>
                             <p className="text-[#656565] pt-1">Manage Courses Section and Page</p>
                         </div>
                         <button onClick={() => setAddCourse({})} className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full cursor-pointer">

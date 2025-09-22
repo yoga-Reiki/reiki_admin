@@ -30,7 +30,7 @@ function DashboardTable({ dashboardData, loading, error, pagination, setPaginati
             <div className="overflow-x-auto px-3">
                 <table className="w-full table-auto">
                     <thead>
-                        <tr className="grid grid-cols-5 md:w-[160%] lg:w-[130%] xl:w-full bg-[#FCEAC9] text-left text-base text-[#111111] rounded-t-2xl">
+                        <tr className="dm-sans-medium grid grid-cols-5 md:w-[160%] lg:w-[130%] xl:w-full bg-[#FCEAC9] text-left text-base text-[#111111] rounded-t-2xl">
                             <th className='px-4 py-3'>Name</th>
                             <th className='px-4 py-3'>Email</th>
                             <th className='px-4 py-3'>Mobile Number</th>
@@ -39,7 +39,7 @@ function DashboardTable({ dashboardData, loading, error, pagination, setPaginati
                         </tr>
                     </thead >
 
-                    <tbody className="flex flex-col gap-y-[1px] justify-center md:w-[160%] lg:w-[130%] xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
+                    <tbody className="dm-sans-regular flex flex-col gap-y-[1px] justify-center md:w-[160%] lg:w-[130%] xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
                         {loading ? (
                             <tr>
                                 <td colSpan="6" className="flex justify-center py-6">

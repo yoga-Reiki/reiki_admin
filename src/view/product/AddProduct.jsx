@@ -6,6 +6,7 @@ import SuccsessModel from "../component/SuccsessModel";
 import { getAddProduct } from "../../services/productServices";
 import toast from "react-hot-toast";
 import { Editor } from "@tinymce/tinymce-react";
+import { FiUploadCloud } from "react-icons/fi";
 
 function AddProduct({ onClose, fetchProduct }) {
     const fileInputRef = useRef(null);
@@ -157,7 +158,7 @@ function AddProduct({ onClose, fetchProduct }) {
                                             value={formData?.title}
                                             onChange={handleChange}
                                             placeholder="Enter your Title"
-                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 text-[#525252] placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                         />
                                         {errors?.title && (
                                             <p className="text-red-500 text-sm mt-1">{errors?.title}</p>
@@ -173,7 +174,7 @@ function AddProduct({ onClose, fetchProduct }) {
                                                 value={formData.summary}
                                                 onChange={handleChange}
                                                 placeholder="Enter Your Content"
-                                                className="w-full h-[120px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                                className="w-full h-[120px] border border-[#BDBDBD] rounded-xl px-4 py-3 text-[#525252] placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                             />
                                             {errors.summary && <p className="text-red-500 text-sm mt-1">{errors.summary}</p>}
                                         </div>
@@ -198,15 +199,15 @@ function AddProduct({ onClose, fetchProduct }) {
                                                 onClick={() => fileInputRef.current?.click()}
                                             >
                                                 {images.cover ? (
-                                                    <div className="flex flex-col items-center gap-1">
-                                                        <img src={UploadIcon} alt="Not Found" />
-                                                        <span className="text-[#464646] font-medium">{images.cover.name}</span>
-                                                        <span className="text-xs text-[#9a9a9a]">Click Here to Change Image</span>
+                                                    <div className="flex flex-col items-center gap-1 text-[#525252]">
+                                                        <FiUploadCloud size={20} className="text-[#EA7913]" />
+                                                        <span className="font-medium">{images.cover.name}</span>
+                                                        <span>Click Here to Change Image</span>
                                                     </div>
                                                 ) : (
-                                                    <div className="flex flex-col items-center gap-2 px-12">
-                                                        <img src={UploadIcon} alt="Not Found" />
-                                                        <span className="text-[#525252]">Upload Image or Drag & drop here</span>
+                                                    <div className="flex flex-col items-center gap-2 px-12 text-[#525252]">
+                                                        <FiUploadCloud size={20} className="text-[#EA7913]" />
+                                                        <span>Upload Image or Drag & drop here</span>
                                                     </div>
                                                 )}
                                                 <input
@@ -230,7 +231,7 @@ function AddProduct({ onClose, fetchProduct }) {
                                             value={formData?.chip1}
                                             onChange={handleChange}
                                             placeholder="Enter your Title"
-                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 text-[#525252] placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                         />
                                         {errors?.chip1 && (
                                             <p className="text-red-500 text-sm mt-1">{errors?.chip1}</p>
@@ -244,19 +245,18 @@ function AddProduct({ onClose, fetchProduct }) {
                                             value={formData?.chip2}
                                             onChange={handleChange}
                                             placeholder="Enter your Title"
-                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 text-[#525252] placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                         />
                                         {errors?.chip2 && (
                                             <p className="text-red-500 text-sm mt-1">{errors?.chip2}</p>
                                         )}
                                     </div>
 
-                                    {/* Next button */}
-                                    <div className="w-full relative inline-block rounded-full bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900]">
+                                    <div className="w-full relative inline-block rounded-full px-[4px] py-[3.5px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900]">
                                         <button
                                             type="button"
                                             onClick={handleNext}
-                                            className="w-full flex justify-center items-center gap-2 py-2.5 bg-[#EA7913] cursor-pointer text-lg text-white rounded-full"
+                                            className="w-full flex justify-center items-center gap-2 cursor-pointer py-2 sm:py-[9.5px] bg-[#EA7913] text-white rounded-full font-medium shadow hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-sm sm:text-base"
                                         >
                                             <span>Next</span>
                                             <IoIosArrowRoundForward size={28} />
@@ -316,7 +316,7 @@ function AddProduct({ onClose, fetchProduct }) {
                                                 value={formData.specifications}
                                                 onChange={handleChange}
                                                 placeholder="Enter Your Specifications"
-                                                className="w-full h-[217px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                                className="w-full h-[217px] border border-[#BDBDBD] rounded-xl px-4 py-3 text-[#525252] placeholder-[#525252] resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                             />
                                             {errors.specifications && <p className="text-red-500 text-sm mt-1">{errors.specifications}</p>}
                                         </div>
@@ -337,7 +337,7 @@ function AddProduct({ onClose, fetchProduct }) {
                                                     }
                                                 }}
                                                 placeholder="Enter Your New Pricing"
-                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl text-[#525252] placeholder-[#525252] px-4.5 py-2.5"
                                             />
                                             {errors.priceNew && <p className="text-red-500 text-sm mt-1">{errors.priceNew}</p>}
                                         </div>
@@ -355,7 +355,7 @@ function AddProduct({ onClose, fetchProduct }) {
                                                     }
                                                 }}
                                                 placeholder="Enter Your Old Pricing"
-                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl text-[#525252] placeholder-[#525252] px-4.5 py-2.5"
                                             />
                                             {errors.priceOld && <p className="text-red-500 text-sm mt-1">{errors.priceOld}</p>}
                                         </div>
@@ -368,7 +368,7 @@ function AddProduct({ onClose, fetchProduct }) {
                                                 value={formData.shippingDetails}
                                                 onChange={handleChange}
                                                 placeholder="Enter Shipping Details"
-                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl text-[#525252] placeholder-[#525252] px-4.5 py-2.5"
                                             />
                                             {errors.shippingDetails && <p className="text-red-500 text-sm mt-1">{errors.shippingDetails}</p>}
                                         </div>
@@ -392,15 +392,15 @@ function AddProduct({ onClose, fetchProduct }) {
                                                 onClick={() => fileInputRef.current?.click()}
                                             >
                                                 {images.detail ? (
-                                                    <div className="flex flex-col items-center gap-1">
-                                                        <img src={UploadIcon} alt="Not Found" />
-                                                        <span className="text-[#464646] font-medium">{images.detail.name}</span>
-                                                        <span className="text-xs text-[#9a9a9a]">Click Here to Change Image</span>
+                                                    <div className="flex flex-col items-center gap-1 text-[#525252]">
+                                                        <FiUploadCloud size={20} className="text-[#EA7913]" />
+                                                        <span className="font-medium">{images.detail.name}</span>
+                                                        <span>Click Here to Change Image</span>
                                                     </div>
                                                 ) : (
-                                                    <div className="flex flex-col items-center gap-2 px-12">
-                                                        <img src={UploadIcon} alt="Not Found" />
-                                                        <span className="text-[#989898]">Upload Image Here</span>
+                                                    <div className="flex flex-col items-center gap-2 px-12 text-[#525252]">
+                                                        <FiUploadCloud size={20} className="text-[#EA7913]" />
+                                                        <span>Upload Image Here</span>
                                                     </div>
                                                 )}
 

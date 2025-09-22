@@ -90,14 +90,7 @@ function Order() {
                 query: searchTerm.trim() !== "" ? searchTerm.trim() : undefined,
             });
 
-            const filteredItems = response?.data?.items?.filter(
-                item => item.status === activeTab.toLowerCase()
-            ) || [];
-
-            setOrders({
-                ...response.data,
-                items: filteredItems,
-            });
+            setOrders(response?.data || { items: [] });
 
             setPagination((prev) => ({
                 ...prev,
@@ -177,7 +170,7 @@ function Order() {
                 <div className="overflow-x-auto px-3">
                     <table className="w-full table-auto">
                         <thead>
-                            <tr className="grid grid-cols-6 md:w-[300%] lg:w-[200%] xl:w-[125%] 2xl:w-full bg-[#FCEAC9] text-left text-base text-[#111111] rounded-t-2xl">
+                            <tr className="grid grid-cols-6 md:w-[300%] lg:w-[200%] xl:w-[125%] 2xl:w-full bg-[#FCEAC9] text-left text-base text-[#111111] dm-sans-medium rounded-t-2xl">
                                 <th className='px-4 py-3'>Name</th>
                                 <th className='px-4 py-3'>Email</th>
                                 <th className='px-4 py-3'>Order Details</th>
@@ -187,7 +180,7 @@ function Order() {
                             </tr>
                         </thead>
 
-                        <tbody className="flex flex-col gap-y-[1px] justify-center md:w-[300%] lg:w-[200%] xl:w-[125%] 2xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
+                        <tbody className="flex flex-col gap-y-[1px] justify-center md:w-[300%] lg:w-[200%] xl:w-[125%] 2xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden dm-sans-regular">
                             {loading ? (
                                 <tr>
                                     <td colSpan="6" className="flex justify-center py-6">Loading...</td>

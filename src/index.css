@@ -49,4 +49,14 @@ code {
   background: #f1f1f1;
 }
 
+.dm-sans-regular {
+  font-family: "DM Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
 
+.dm-sans-medium {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 500;
+}

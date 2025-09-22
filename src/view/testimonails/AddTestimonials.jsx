@@ -103,7 +103,7 @@ function AddTestimonials({ onClose, selectedUser, fetchTestimonials }) {
           <div className="bg-white w-full mx-4 sm:mx-6 md:mx-8 lg:mx-0 p-5 max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-[971px] flex flex-col justify-between gap-5.5 border-t-2 border-t-[#EA7913] rounded-3xl">
             {/* Header */}
             <div className="flex justify-between items-center p-3">
-              <h2 className="text-[32px] font-Raleway">Add Testimonials</h2>
+              <h2 className="text-[32px] font-Raleway Raleway-medium">Add Testimonials</h2>
               <button
                 onClick={onClose}
                 className="text-[#EA7913] border border-[#989898] cursor-pointer p-4 rounded-full"
@@ -122,7 +122,7 @@ function AddTestimonials({ onClose, selectedUser, fetchTestimonials }) {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Enter Client’s Name"
-                  className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                  className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl text-[#292929] placeholder-[#525252] px-4.5 py-2.5"
                 />
                 {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
               </div>
@@ -135,7 +135,7 @@ function AddTestimonials({ onClose, selectedUser, fetchTestimonials }) {
                   value={formData.roleOrAddress}
                   onChange={handleChange}
                   placeholder="Enter Client’s Post or Address"
-                  className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                  className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl text-[#292929] placeholder-[#525252] px-4.5 py-2.5"
                 />
                 {errors.roleOrAddress && <p className="text-red-500 text-sm mt-1">{errors.roleOrAddress}</p>}
               </div>
@@ -149,7 +149,7 @@ function AddTestimonials({ onClose, selectedUser, fetchTestimonials }) {
                   onChange={handleChange}
                   placeholder="Enter Client’s Feedback Here"
                   rows={6}
-                  className="w-full h-[196px] border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl placeholder-[#525252] px-4.5 py-2.5"
+                  className="w-full h-[196px] border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl text-[#292929] placeholder-[#525252] px-4.5 py-2.5"
                 />
                 {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
               </div>
@@ -184,9 +184,9 @@ function AddTestimonials({ onClose, selectedUser, fetchTestimonials }) {
                   />
                   <FiUploadCloud size={24} className="text-[#EA7913] mb-2" />
                   {image ? (
-                    <p className="text-[#464646]">{image.name}</p>
+                    <p className="text-[#525252]">{image.name}</p>
                   ) : (
-                    <span className="text-[#989898]">Upload Image Here</span>
+                    <span className="text-[#525252]">Upload Image Here</span>
                   )}
                 </div>
                 {errors.image && <p className="text-red-500 text-sm mt-1">{errors.image}</p>}

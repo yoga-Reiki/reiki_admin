@@ -153,14 +153,14 @@ function EditContact_us({ contactData, onCancel, fetchContactData }) {
     return (
         <div className="text-[#464646] space-y-2">
             <div className='p-3'>
-                <h1 className="text-[32px] font-Raleway">Contact Us</h1>
+                <h1 className="text-[32px] font-Raleway Raleway-medium">Contact Us</h1>
                 <p className="text-[#656565] pt-1">Change Content and Image of Contact Us Page</p>
             </div>
 
             <div className="p-2">
                 <div className="bg-white border-t border-t-[#EA7913] rounded-3xl w-full space-y-6 p-5">
                     <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-                        <h2 className="text-[#656565] text-2xl">Contact Us Section</h2>
+                        <h2 className="text-[#656565] text-2xl font-Raleway Raleway-medium">Contact Us Section</h2>
                         <div className="flex gap-2 w-full lg:w-auto">
                             <button
                                 className="w-full lg:w-auto bg-[#FCEAC9] text-[#656565] px-6 py-2.5 rounded-full hover:bg-[#FCEAC2] cursor-pointer"
@@ -186,7 +186,7 @@ function EditContact_us({ contactData, onCancel, fetchContactData }) {
                                 <label className="text-lg font-medium mb-2">Hero Section Content</label>
                                 <textarea
                                     name="heroContent"
-                                    className="w-full h-[170px] px-4 py-2 border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl outline-none text-[#656565]"
+                                    className="w-full h-[170px] px-4 py-2 border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl outline-none text-[#525252]"
                                     value={formData.heroContent}
                                     onChange={handleChange}
                                 />
@@ -211,17 +211,17 @@ function EditContact_us({ contactData, onCancel, fetchContactData }) {
                                     onClick={() => coverInputRef.current?.click()}
                                 >
                                     {imageName ? (
-                                        <div className="flex flex-col justify-center items-center gap-1">
-                                            <span className="text-[#464646] text-sm font-medium w-full text-center break-words">
+                                        <div className="flex flex-col justify-center items-center gap-1 text-[#525252]">
+                                            <span className="font-medium w-full text-center break-words">
                                                 {imageName}
                                             </span>
-                                            <span className="text-xs text-center text-[#9a9a9a]">Click Here to Change Image</span>
+                                            <span className="text-center">Click Here to Change Image</span>
                                         </div>
                                     ) : (
-                                        <div className="flex flex-col items-center gap-2 px-12">
+                                        <div className="flex flex-col items-center gap-2 px-12 text-[#525252]">
                                             <FiUploadCloud size={20} className="text-[#EA7913]" />
-                                            <span className="text-[#656565] text-center">{getFilename(formData?.heroImageUrl)}</span>
-                                            <span className="text-[#656565]">Upload Image Here</span>
+                                            <span className="text-center">{getFilename(formData?.heroImageUrl)}</span>
+                                            <span>Upload Image Here</span>
                                         </div>
                                     )}
 
@@ -239,81 +239,81 @@ function EditContact_us({ contactData, onCancel, fetchContactData }) {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-2">
                             <div>
-                                <label className="block text-sm font-medium mb-1">Mobile Number</label>
+                                <label className="block text-lg font-medium mb-1">Mobile Number</label>
                                 <input
                                     type="text"
                                     name="mobileNumber"
                                     value={formData.mobileNumber}
                                     onChange={handleChange}
-                                    className="w-full border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl px-4 py-2 text-[#656565]"
+                                    className="w-full border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl px-4 py-2 text-[#525252]"
                                 />
                                 {errors.mobileNumber && <p className="text-red-500 text-sm">{errors.mobileNumber}</p>}
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium mb-1">E-mail</label>
+                                <label className="block text-lg font-medium mb-1">E-mail</label>
                                 <input
                                     type="email"
                                     name="email"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className="w-full border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl px-4 py-2 text-[#656565]"
+                                    className="w-full border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl px-4 py-2 text-[#525252]"
                                 />
                                 {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium mb-1">YouTube</label>
+                                <label className="block text-lg font-medium mb-1">YouTube</label>
                                 <input
                                     type="text"
                                     name="youtube"
                                     value={formData.youtube}
                                     onChange={handleChange}
-                                    className="w-full border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl px-4 py-2 text-[#656565]"
+                                    className="w-full border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl px-4 py-2 text-[#525252]"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium mb-1">LinkedIn</label>
+                                <label className="block text-lg font-medium mb-1">LinkedIn</label>
                                 <input
                                     type="text"
                                     name="linkedin"
                                     value={formData.linkedin}
                                     onChange={handleChange}
-                                    className="w-full border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl px-4 py-2 text-[#656565]"
+                                    className="w-full border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl px-4 py-2 text-[#525252]"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium mb-1">Twitter</label>
+                                <label className="block text-lg font-medium mb-1">Twitter</label>
                                 <input
                                     type="text"
                                     name="twitter"
                                     value={formData.twitter}
                                     onChange={handleChange}
-                                    className="w-full border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl px-4 py-2 text-[#656565]"
+                                    className="w-full border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl px-4 py-2 text-[#525252]"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium mb-1">Instagram</label>
+                                <label className="block text-lg font-medium mb-1">Instagram</label>
                                 <input
                                     type="text"
                                     name="instagram"
                                     value={formData.instagram}
                                     onChange={handleChange}
-                                    className="w-full border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl px-4 py-2 text-[#656565]"
+                                    className="w-full border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl px-4 py-2 text-[#525252]"
                                 />
                             </div>
 
                             <div className="md:col-span-2">
-                                <label className="block text-sm font-medium mb-1">Location</label>
+                                <label className="block text-lg font-medium mb-1">Location</label>
                                 <input
                                     type="text"
                                     name="location"
                                     value={formData.location}
                                     onChange={handleChange}
-                                    className="w-full border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl px-4 py-2 text-[#656565]"
+                                    className="w-full border-[1px] border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl px-4 py-2 text-[#525252]"
                                 />
                             </div>
                         </div>

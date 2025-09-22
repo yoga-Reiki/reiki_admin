@@ -140,7 +140,7 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
                 <div className="space-y-1">
                     <h2 className="text-2xl md:text-[32px] font-Raleway font-medium">
                         <span onClick={handleCancel} className="cursor-pointer">Blog</span> &gt;{" "}
-                        <span className="text-2xl font-Raleway">Edit Blog</span>
+                        <span className="text-2xl">Edit Blog</span>
                     </h2>
                     <p className="text-[#656565]">Change Content and Image of Blog Page</p>
                 </div>
@@ -149,7 +149,7 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
             {/* Form Container */}
             <div className="bg-white border-t-2 border-t-[#EA7913] rounded-3xl p-5 space-y-5.5">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <h2 className="text-2xl text-[#656565] font-Raleway">Blog Content</h2>
+                    <h2 className="text-2xl text-[#656565] font-Raleway font-medium">Blog Content</h2>
                     <div className="flex gap-3">
                         <button
                             className="bg-[#FCEAC9] text-[#656565] px-6 py-2.5 rounded-full hover:bg-[#FCEAC2] cursor-pointer"
@@ -178,7 +178,7 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
                             name="title"
                             value={formData.title}
                             onChange={handleChange}
-                            className="w-full border border-[#BDBDBD] rounded-xl py-2.5 px-4.5 focus:outline-none focus:border-[#EA7913]"
+                            className="w-full border border-[#BDBDBD] text-[#525252] rounded-xl py-2.5 px-4.5 focus:outline-none focus:border-[#EA7913]"
                             placeholder="Enter blog title"
                         />
                     </div>
@@ -191,7 +191,7 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
                             value={formData.description}
                             onChange={handleChange}
                             rows={2}
-                            className="w-full border border-[#BDBDBD] rounded-xl py-2.5 px-4.5 focus:outline-none focus:border-[#EA7913]"
+                            className="w-full border border-[#BDBDBD] text-[#525252] rounded-xl py-2.5 px-4.5 focus:outline-none focus:border-[#EA7913]"
                             placeholder="Enter short description"
                         />
                     </div>
@@ -259,15 +259,15 @@ function EditBlog({ selectedUser, setSelectedUser, fetchBlog }) {
                                 onClick={() => coverInputRef.current?.click()}
                             >
                                 {imageName ? (
-                                    <div className="flex flex-col justify-center items-center gap-1">
+                                    <div className="flex flex-col justify-center items-center gap-1 text-[#525252]">
                                         <FiUploadCloud size={20} className="text-[#EA7913]" />
-                                        <span className="text-[#464646] text-sm font-medium w-full text-center break-words">
+                                        <span className="font-medium w-full text-center break-words">
                                             {imageName}
                                         </span>
-                                        <span className="text-xs text-center text-[#9a9a9a]">Click Here to Change Image</span>
+                                        <span className="text-center">Click Here to Change Image</span>
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col items-center gap-2 px-12">
+                                    <div className="flex flex-col items-center gap-2 px-12 text-[#525252]">
                                         <img src={imageIconOrange} alt="Upload Icon" />
                                         <span className="text-[#989898]">Upload Image Here</span>
                                     </div>

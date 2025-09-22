@@ -40,7 +40,7 @@ const CourseCard = ({ setIsEditingCard, setSelectedCourse, coursesData, setCours
             <div className="p-5 rounded-2xl bg-white border-t-2 border-t-[#EA7913] flex flex-col gap-5.5">
                 {/* Header with Pagination */}
                 <div className="flex justify-between items-center">
-                    <h2 className="text-2xl text-[#656565] font-Raleway">Courses Card</h2>
+                    <h2 className="text-2xl text-[#656565] font-Raleway Raleway-medium">Courses Card</h2>
                     <div className="flex space-x-2.5">
                         <button
                             onClick={prevSlide}
@@ -107,7 +107,7 @@ const CourseCard = ({ setIsEditingCard, setSelectedCourse, coursesData, setCours
                                         }}
                                         className="absolute flex items-center gap-2 top-3 left-3 bg-[#FFFFFF] p-3 text-[#656565] rounded-full border border-[#989898] cursor-pointer hover:bg-gray-100"
                                     >
-                                        <img src={editIconGrey} alt="Edit" className="p-0.5" /> <span>Edit</span>
+                                        <img src={editIconGrey} alt="Edit" className="p-[3px]" /> <span>Edit</span>
                                     </button>
                                     <button
                                         onClick={() => setCoursesDelete(data)}

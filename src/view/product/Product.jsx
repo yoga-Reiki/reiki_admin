@@ -85,9 +85,9 @@ function Product() {
                 <EditProduct fetchProduct={fetchProduct} selectedProduct={selectedProduct} onCancel={() => setIsEditingProduct(false)} />
             ) : (
                 <div className="text-[#464646] flex flex-col gap-2">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-3">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-3 font-Raleway Raleway-medium">
                         <div>
-                            <h1 className="text-[32px] font-bold">Product</h1>
+                            <h1 className="text-[32px]">Product</h1>
                             <p className="text-[#656565] pt-1">Manage Product Section and Page</p>
                         </div>
                         <button onClick={() => setProducts({})} className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full cursor-pointer">
@@ -99,7 +99,7 @@ function Product() {
                     <div className='py-2.5 px-3'>
                         <div className='p-5 rounded-2xl bg-white border-t-2 border-t-[#EA7913] flex flex-col gap-5.5'>
                             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                                <p className="text-2xl text-[#656565]">Product Section</p>
+                                <p className="text-2xl font-Raleway Raleway-medium text-[#656565]">Product Section</p>
                                 <div className="relative w-full md:w-72 lg:w-74.5">
                                     <span className="absolute inset-y-0 left-3 px-1 flex items-center text-[#EA7913]">
                                         <img src={SearchIcon} alt="search" className="w-5 h-5" />
@@ -152,12 +152,12 @@ function Product() {
                                                         <h3 className="text-xl md:text-2xl font-Raleway Raleway-bold">
                                                             {item.title}
                                                         </h3>
-                                                        <p className="text-[#525252] text-sm pt-2 pb-3.5">
+                                                        <p className="text-sm pt-2 pb-3.5">
                                                             {item.summary}
                                                         </p>
                                                         <div className='space-x-1.5 space-y-2 md:space-y-0 pb-7 md:pb-5'>
-                                                            <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{item?.chips[0]}</button>
-                                                            <button className='py-1 px-6 border border-[#BDBDBD] rounded-full text-xs'>{item?.chips[1]}</button>
+                                                            <button className='py-1 px-4 border border-[#BDBDBD] rounded-full text-xs'>{item?.chips[0]}</button>
+                                                            <button className='py-1 px-4 border border-[#BDBDBD] rounded-full text-xs'>{item?.chips[1]}</button>
                                                         </div>
                                                         <div className="flex items-end gap-2 text-[#464646]">
                                                             <span className="text-lg md:text-[32px] md:leading-[40px] font-Raleway Raleway-bold">${item?.detail?.priceNew}</span>

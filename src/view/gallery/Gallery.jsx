@@ -152,7 +152,7 @@ function Gallery() {
             {/* Header */}
             {/* <div > */}
             <div className="p-3">
-                <h1 className="text-[32px] font-Raleway">Gallery</h1>
+                <h1 className="text-[32px] font-Raleway Raleway-medium">Gallery</h1>
                 <p className="text-[#656565] pt-1">Manage Your Gallery</p>
             </div>
             {/* <button

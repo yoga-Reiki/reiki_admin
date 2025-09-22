@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getTestimonialsUpdate } from "../../services/testimonialsServices";
 import toast from "react-hot-toast";
+import galleryIconOrange from "../../assets/svg/galleryIconOrange.svg"
 
 function TestimonialsEdit({ selectedUser, setSelectedUser, fetchTestimonials }) {
   const [formData, setFormData] = useState({
@@ -88,15 +89,15 @@ function TestimonialsEdit({ selectedUser, setSelectedUser, fetchTestimonials }) 
   return (
     <div className="bg-[#FAFAFA] text-[#464646] flex flex-col gap-2 px-3">
       {/* Header */}
-      <h2 className="pt-6 pb-4 text-2xl md:text-[32px] font-Raleway font-medium">
+      <h2 className="pt-6 pb-4 text-2xl md:text-[32px] font-Raleway Raleway-medium">
         <span onClick={handleCancel} className="cursor-pointer">Testimonials</span> &gt;{" "}
-        <span className="text-2xl font-Raleway">Edit Testimonials</span>
+        <span className="text-2xl">Edit Testimonials</span>
       </h2>
 
       {/* Form Container */}
       <div className="bg-white border-t-2 border-t-[#EA7913] rounded-3xl p-5 space-y-5.5">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-          <h2 className="text-2xl text-[#656565] font-Raleway">Edit Testimonial</h2>
+          <h2 className="text-2xl text-[#656565] font-Raleway Raleway-medium">Edit Testimonial</h2>
           <div className="flex gap-3 w-full lg:w-auto">
             <button
               className="w-full lg:w-auto bg-[#FCEAC9] text-[#656565] px-6 py-2.5 rounded-full hover:bg-[#FCEAC2] cursor-pointer"
@@ -125,7 +126,7 @@ function TestimonialsEdit({ selectedUser, setSelectedUser, fetchTestimonials }) 
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full border border-[#BDBDBD] rounded-xl py-2 px-3 focus:outline-none focus:border-[#EA7913]"
+              className="w-full border border-[#BDBDBD] text-[#525252] rounded-xl py-2 px-3 focus:outline-none focus:border-[#EA7913]"
             />
           </div>
 
@@ -137,7 +138,7 @@ function TestimonialsEdit({ selectedUser, setSelectedUser, fetchTestimonials }) 
               name="roleOrAddress"
               value={formData.roleOrAddress}
               onChange={handleChange}
-              className="w-full border border-[#BDBDBD] rounded-xl py-2 px-3 focus:outline-none focus:border-[#EA7913]"
+              className="w-full border border-[#BDBDBD] text-[#525252] rounded-xl py-2 px-3 focus:outline-none focus:border-[#EA7913]"
             />
           </div>
 
@@ -148,7 +149,7 @@ function TestimonialsEdit({ selectedUser, setSelectedUser, fetchTestimonials }) 
               value={formData.message}
               onChange={handleChange}
               rows={6}
-              className="w-full h-[196px] border border-[#BDBDBD] rounded-xl py-2 px-3 resize-none focus:outline-none focus:border-[#EA7913] flex-grow"
+              className="w-full h-[196px] border border-[#BDBDBD] text-[#525252] rounded-xl py-2 px-3 resize-none focus:outline-none focus:border-[#EA7913] flex-grow"
             />
           </div>
 
@@ -159,14 +160,10 @@ function TestimonialsEdit({ selectedUser, setSelectedUser, fetchTestimonials }) 
               onClick={handleFileClick}
               className="border border-[#BDBDBD] rounded-xl h-[196px] flex items-center justify-center text-center text-sm text-[#888] cursor-pointer hover:border-[#EA7913] transition-all"
             >
-              <div>
-                <img
-                  src="https://img.icons8.com/ios/50/image.png"
-                  alt="upload-icon"
-                  className="mx-auto w-6 h-6 mb-1.5"
-                />
-                <p className="font-medium text-[#464646]">{imageName}</p>
-                <p className="text-xs text-[#888]">Click Here to Change</p>
+              <div className="flex flex-col justify-center items-center text-[#525252]">
+                <img src={galleryIconOrange} alt="Not Found" className="w-6 h-6" />
+                <p className="font-medium pt-2.5">{imageName}</p>
+                <p>Click Here to Change</p>
               </div>
             </div>
             <input

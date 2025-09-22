@@ -60,7 +60,7 @@ function Aboutus() {
                     <div className="p-2">
                         <div className="bg-white border-t border-t-[#EA7913] rounded-3xl w-full space-y-6 p-5">
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                                <h2 className="text-[#656565] text-2xl">About Us Hero Section</h2>
+                                <h2 className="text-[#656565] text-2xl font-Raleway Raleway-medium">About Us Hero Section</h2>
                                 <button onClick={() => setIsEditing(true)} className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full cursor-pointer">
                                     <img src={editIconWhite} alt="Download Icon" />
                                     <span>Edit</span>

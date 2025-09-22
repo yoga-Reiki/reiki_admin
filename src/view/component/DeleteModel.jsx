@@ -5,7 +5,7 @@ function DeleteModel({ onCancel, onConfirm, onCancelImg, onfirmGalleryImgDelete,
         <div className="fixed inset-0 bg-black/40 z-50 text-[#464646] flex justify-center items-center">
             <div className="bg-white p-14 w-full max-w-[670px] border-t-2 border-t-[#EA7913] rounded-3xl flex flex-col gap-14">
                 <div>
-                    <h2 className="text-[32px] font-Raleway text-[#656565] pb-3.5">Delete {onConfirm ? "Testimonials" : onConfirmBlog ? "Blog" : onConfirmProduct ? "Product" : onConfirmCourse ? "Courses" : "Image"}</h2>
+                    <h2 className="text-[32px] font-Raleway Raleway-medium pb-3.5">Delete {onConfirm ? "Testimonials" : onConfirmBlog ? "Blog" : onConfirmProduct ? "Product" : onConfirmCourse ? "Courses" : "Image"}</h2>
                     <p className="text-[#656565] text-xl">
                         {onConfirm ? "This will lead to delete testimonials in website" : onConfirmBlog ? "This will lead to delete Blog in website"
                             : onConfirmProduct ? "This will lead to delete Product in website" : onConfirmCourse ? "This will lead to delete Courses in website" : "This will lead to delete Image in website"}
