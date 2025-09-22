@@ -7,12 +7,13 @@ import Password from "../../assets/svg/Password.svg";
 import { userResetPassword } from '../../services/LoginServices';
 import toast from 'react-hot-toast';
 
-function ResetPassword({ setCurrentScreenMain, ProfileData, otp }) {
+function ResetPassword({ setCurrentScreenMain, ProfileData, otp, resetToken }) {
     const [formData, setFormData] = useState({ newPassword: '', confirmPassword: '' });
     const [errors, setErrors] = useState({});
     const [showSuccess, setShowSuccess] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const onChange = (e) => {
         const { name, value } = e.target;
@@ -55,14 +56,16 @@ function ResetPassword({ setCurrentScreenMain, ProfileData, otp }) {
         }
 
         try {
+            setLoading(true)
             setErrors({});
             const userOtp = Array.isArray(otp) ? otp.join("").trim() : (otp?.trim() || "");
             console.log("userOtp", userOtp);
-            
+
             const body = {
                 email: ProfileData?.data?.email?.trim(),
                 otp: userOtp,
                 newPassword: formData.newPassword,
+                resetToken: resetToken,
             };
 
             const res = await userResetPassword({ body });
@@ -73,6 +76,8 @@ function ResetPassword({ setCurrentScreenMain, ProfileData, otp }) {
             setErrors({
                 api: err.response?.data?.message || "Failed to reset password. Try again."
             });
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -189,7 +194,7 @@ function ResetPassword({ setCurrentScreenMain, ProfileData, otp }) {
                                         // onClick={handleChangePassword}
                                         className="w-full py-2 bg-[#EA7913] text-lg text-white rounded-full font-medium hover:bg-[#F39C2C] disabled:opacity-60 cursor-pointer"
                                     >
-                                        Send Reset Link
+                                        {loading ? "Reseting..." : "Change Password"}
                                     </button>
                                 </div>
                             </form>

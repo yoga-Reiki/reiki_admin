@@ -8,6 +8,7 @@ function ChangePassword({ setCurrentScreenMain, ProfileData }) {
     const [formData, setFormData] = useState({ email: '' });
     const [errors, setErrors] = useState({});
     const [otpVerification, setOtpVerification] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         if (ProfileData?.data?.email) {
@@ -27,6 +28,7 @@ function ChangePassword({ setCurrentScreenMain, ProfileData }) {
         }
 
         try {
+            setLoading(true)
             setErrors({});
             const body = { email: formData.email.trim() };
 
@@ -39,13 +41,15 @@ function ChangePassword({ setCurrentScreenMain, ProfileData }) {
             setErrors({
                 api: err.response?.data?.message || "Failed to send reset email. Try again."
             });
+        } finally {
+            setLoading(false)
         }
     };
 
     return (
         <div>
             {otpVerification ? (
-                <OtpVerification setCurrentScreenMain={setCurrentScreenMain} ProfileData={ProfileData} />
+                <OtpVerification email={formData.email} setCurrentScreenMain={setCurrentScreenMain} ProfileData={ProfileData} />
             ) : (
                 <div className='flex flex-col gap-14'>
                     <div className="flex items-center gap-6 py-4 cursor-pointer" >
@@ -87,7 +91,7 @@ function ChangePassword({ setCurrentScreenMain, ProfileData }) {
                                         type="submit"
                                         className="w-full py-2 bg-[#EA7913] text-lg text-white rounded-full font-medium hover:bg-[#F39C2C] disabled:opacity-60"
                                     >
-                                        Send Reset Link
+                                        {loading ? "Sending..." : "Send Reset Link"}
                                     </button>
                                 </div>
                             </form>
