@@ -9,7 +9,7 @@ function DefaultLayout() {
   return (
     <div className="flex h-screen overflow-hidden bg-[#FBFBFB] p-3 space-x-2">
       {/* Sidebar */}
-      <div className={`${isSidebarCollapsed ? 'w-20' : 'md:w-48 lg:w-64'} transition-all duration-300 z-20`}>
+      <div className={`${isSidebarCollapsed ? 'w-22' : 'md:w-48 lg:w-64'} transition-all duration-300 z-20`}>
         <LeftPanel isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
       </div>
 

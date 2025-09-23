@@ -43,7 +43,7 @@ function LeftPanel({ isCollapsed, setIsCollapsed }) {
     }
 
     return (
-        <div className={`flex flex-col gap-2 relative h-full transition-all duration-300 ${isCollapsed ? 'w-20' : 'md:w-48 lg:w-64'}`}>
+        <div className={`flex flex-col gap-2 relative h-full transition-all duration-300 ${isCollapsed ? 'w-22' : 'md:w-48 lg:w-64'}`}>
             {/* Logo Section */}
             <div
                 className='bg-white h-[80px] shadow-md flex justify-center border border-[#F1F1F1] rounded-3xl hover:cursor-pointer'
