@@ -5,33 +5,30 @@ import { RiLockPasswordLine } from "react-icons/ri";
 import Password from "../../assets/svg/Password.svg";
 import { IoIosArrowRoundForward } from "react-icons/io";
 
-function ResetPasswordModel({ form, setForm, errors, handleChangePassword, loading }) {
+function ResetPasswordModel({ form, setForm, errors, handleChangePassword, loading, onChange }) {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const onChange = (e) => {
-        const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
-    };
+    // const onChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setForm((prev) => ({ ...prev, [name]: value }));
+    // };
 
     return (
-        <form className="flex flex-col gap-20 w-full" onSubmit={handleChangePassword}>
+        <form className="flex flex-col gap-12 w-full" onSubmit={handleChangePassword}>
             <div className="space-y-6">
                 {/* New Password */}
                 <div>
-                    <label htmlFor="newPassword" className="block text-sm md:text-lg mb-2">
+                    <label htmlFor="newPassword" className="block text-sm md:text-base mb-1 text-[#292929]">
                         Password
                     </label>
                     <div className="relative">
-                        <span className="absolute inset-y-0 left-3 flex items-center text-[#EA7913]">
-                            <img src={Password} alt="password" className="w-5 h-5" />
-                        </span>
                         <input
                             id="newPassword"
                             name="newPassword"
                             value={form.newPassword}
                             onChange={onChange}
-                            className="w-full pl-10 pr-3 py-2.5 rounded-xl text-[#525252] placeholder-[#525252] border-[1px] border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                            className="w-full h-11 px-4 py-3 rounded-full text-[#525252] placeholder-[#525252] border-[1px] border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                             placeholder="Enter New Password"
                             type={showNewPassword ? "text" : "password"}
                             onCopy={(e) => e.preventDefault()}
@@ -59,20 +56,17 @@ function ResetPasswordModel({ form, setForm, errors, handleChangePassword, loadi
                 <div>
                     <label
                         htmlFor="confirmPassword"
-                        className="block text-sm md:text-lg mb-2"
+                        className="block text-sm md:text-base mb-1 text-[#292929]"
                     >
                         Confirm Password
                     </label>
                     <div className="relative">
-                        <span className="absolute inset-y-0 left-3 flex items-center text-[#EA7913]">
-                            <RiLockPasswordLine className="w-5 h-5" />
-                        </span>
                         <input
                             id="confirmPassword"
                             name="confirmPassword"
                             value={form.confirmPassword}
                             onChange={onChange}
-                            className="w-full pl-10 pr-10 py-2.5 rounded-xl text-[#525252] placeholder-[#525252] border-[1px] border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                            className="w-full h-11 px-4 py-3 rounded-full text-[#525252] placeholder-[#525252] border-[1px] border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                             placeholder="Confirm Your Password"
                             type={showConfirmPassword ? "text" : "password"}
                             onCopy={(e) => e.preventDefault()}
@@ -100,10 +94,10 @@ function ResetPasswordModel({ form, setForm, errors, handleChangePassword, loadi
             </div>
 
             {/* Reset Button */}
-            <div className="w-full mt-6 relative inline-block rounded-full px-[4px] py-[3.5px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
+            <div className="w-full relative inline-block rounded-full p-[0.5px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
                 <button
                     type="submit"
-                    className="w-full h-full inline-flex justify-center items-center space-x-1.5 py-[9.5px] bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
+                    className="w-full h-12 inline-flex justify-center items-center space-x-1.5 py-3 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
                 >
                     {loading ? (
                         <span>Reseating...</span>

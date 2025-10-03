@@ -52,7 +52,7 @@ function DashboardTable({ dashboardData, loading, error, pagination, setPaginati
                                     {error}
                                 </td>
                             </tr>
-                        ) : dashboardData.length > 0 ? (
+                        ) : dashboardData?.length > 0 ? (
                             dashboardData.map((Data, index) => {
                                 const isFirst = index === 0;
                                 const isLast = index === dashboardData.length - 1;

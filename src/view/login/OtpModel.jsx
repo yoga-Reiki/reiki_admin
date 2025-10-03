@@ -51,8 +51,11 @@ function OtpModel({ form, setForm, errors, verifyOtp, loading }) {
     };
 
     return (
-        <div className="flex flex-col items-center gap-53 text-[#464646]">
+        <div className="flex flex-col items-center gap-24 text-[#464646]">
             <div>
+                <label htmlFor="otp" className="block text-sm md:text-base mb-1 text-[#292929]">
+                    OTP
+                </label>
                 <div className="flex space-x-1">
                     {Array(6)
                         .fill("")
@@ -61,7 +64,7 @@ function OtpModel({ form, setForm, errors, verifyOtp, loading }) {
                                 key={index}
                                 type="text"
                                 maxLength="1"
-                                className={`w-15.5 h-11 text-center border rounded-lg text-lg focus:outline-none ${errors.otp
+                                className={`w-17 h-14 text-center border rounded-lg text-lg focus:outline-none ${errors.otp
                                     ? "border-red-500"
                                     : "border border-[#BDBDBD] focus:ring-0 focus:border-[#EA7913]"
                                     }`}
@@ -78,22 +81,24 @@ function OtpModel({ form, setForm, errors, verifyOtp, loading }) {
                         {isResendActive ? (
                             <button
                                 onClick={handleResend}
-                                className="text-blue-500 underline hover:text-blue-700"
+                                className="text-blue-500 underline hover:text-blue-700 cursor-pointer"
                             >
                                 Resend OTP
                             </button>
                         ) : (
-                            <>Resend in {formatTime(timer)}</>
+                            <>
+                                <span className="underline pr-1">Resend </span> in {formatTime(timer)}
+                            </>
                         )}
                     </p>
                 </div>
             </div>
 
-            <div className="w-full h-full relative inline-block rounded-full px-[4px] py-[3.5px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
+            <div className="w-full h-full relative inline-block rounded-full p-[1px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
                 <button
                     type="button"
                     onClick={verifyOtp}
-                    className="w-full h-full inline-flex justify-center items-center space-x-1.5 px-5 sm:px-6 py-2 sm:py-[9.5px] bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
+                    className="w-full h-12 inline-flex justify-center items-center space-x-1.5 py-3 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-lg"
                 >
                     {loading ? (
                         <span>Verify...</span>

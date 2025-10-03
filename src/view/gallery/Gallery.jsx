@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import addIconBlack from "../../assets/svg/addIconBlack.svg";
+import plusIcon from "../../assets/svg/plusIcon.svg";
 import DeleteModel from '../component/DeleteModel';
 import { getAddGalleryImg, getAllGalleryImg, getGalleryImgDelete, getUpdateGalleryImg } from '../../services/galleryServices';
 import toast from 'react-hot-toast';
-import editPencilGreyIcon from "../../assets/svg/editPencilGreyIcon.svg";
 import EditGallery from './EditGallery';
-import eyeIconGrey from "../../assets/svg/eyeIconGrey.svg";
+// import eyeIconGrey from "../../assets/svg/eyeIconGrey.svg";
+import CameraIcon from "../../assets/svg/CameraIcon.svg";
+import DotMenuIcon from "../../assets/svg/DotMenuIcon.svg";
 import deleteIconGrey from "../../assets/svg/deleteIconGrey.svg";
+import addImgBG from "../../assets/img/addImgBG.png"
 
 function Gallery() {
     const [images, setImages] = useState([]);
@@ -16,11 +18,12 @@ function Gallery() {
     const fileInputRef = useRef(null);
     const hasFetched = useRef(false);
     const [galleyImgDelete, setGalleyImgDelete] = useState(null);
-    const [updatedFile, setUpdatedFile] = useState(null); // last selected file (used for edit/add modal)
-    const [showChangeModal, setShowChangeModal] = useState(null); // null | 'edit' | 'add'
+    const [updatedFile, setUpdatedFile] = useState(null);
+    const [showChangeModal, setShowChangeModal] = useState(null)
     const [uploading, setUploading] = useState(false);
     const [changingImageLoading, setChangingImageLoading] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
+    const [showMenuIndex, setShowMenuIndex] = useState(null);
 
     useEffect(() => {
         if (!hasFetched.current) {
@@ -140,7 +143,6 @@ function Gallery() {
 
     return (
         <div className="text-[#464646] flex flex-col gap-2">
-            {/* Hidden file input (shared) */}
             <input
                 type="file"
                 accept="image/*"
@@ -149,38 +151,120 @@ function Gallery() {
                 onChange={handleImageUpload}
             />
 
-            {/* Header */}
-            {/* <div > */}
-            <div className="p-3">
+            <div className="px-4 py-3">
                 <h1 className="text-[32px] font-Raleway Raleway-medium">Gallery</h1>
                 <p className="text-[#656565] pt-1">Manage Your Gallery</p>
             </div>
-            {/* <button
-                    className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full cursor-pointer"
-                    onClick={handleUploadToWebsite}
-                    disabled={uploadedFiles.length === 0 || uploading}
-                >
-                    {uploading ? "Uploading..." : "Upload in Website"}
-                </button> */}
-            {/* </div> */}
-
-            {/* Grid and Upload Box */}
             <div className="flex flex-col lg:flex-row gap-10 lg:gap-2">
-                <div className="w-full lg:w-1/2 grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 flex-1 lg:p-3 xl:p-5">
+                <div className="w-full lg:w-1/2 grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-2 flex-1 px-4">
+                    <div
+                        className="w-full h-48 rounded-3xl border border-[#F9D38E] flex flex-col items-center justify-center text-[#333] space-y-2 cursor-pointer transition"
+                        style={{
+                            backgroundImage: `url(${addImgBG})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                        }}
+                        onClick={() => {
+                            setSelectedImageIndex(null);
+                            setUpdatedFile(null);
+                            setShowChangeModal('add');
+                        }}
+                    >
+                        <div>
+                            <img src={plusIcon} alt="Add" />
+                        </div>
+                        <p className="text-sm font-medium">Add Images here</p>
+                    </div>
+
                     {loading ? (
                         Array(6).fill(0).map((_, i) => (
                             <div
                                 key={i}
-                                className="w-full h-48 md:h-60 lg:h-72 rounded-3xl bg-gray-300 animate-pulse"
+                                className="w-full h-48 rounded-3xl bg-gray-300 animate-pulse"
                             />
                         ))
                     ) : (
+                        // images.map((img, index) => (
+                        //     <div
+                        //         key={img._id || index}
+                        //         className="relative overflow-hidden rounded-3xl border border-transparent transition group"
+                        //         draggable
+                        //         onClick={() => setSelectedImageIndex(index)}
+                        //         onDragStart={(e) => {
+                        //             setDraggedItem(index);
+                        //             e.dataTransfer.effectAllowed = "move";
+                        //         }}
+                        //         onDragOver={(e) => {
+                        //             e.preventDefault();
+                        //             e.dataTransfer.dropEffect = "move";
+                        //         }}
+                        //         onDrop={(e) => {
+                        //             e.preventDefault();
+                        //             if (draggedItem !== null && draggedItem !== index) {
+                        //                 const newImages = [...images];
+                        //                 const draggedImage = newImages[draggedItem];
+                        //                 newImages.splice(draggedItem, 1);
+                        //                 newImages.splice(index, 0, draggedImage);
+                        //                 setImages(newImages);
+                        //                 setDraggedItem(null);
+                        //             }
+                        //         }}
+                        //     >
+                        //         <img
+                        //             src={img.imageUrl}
+                        //             alt={`Gallery ${index + 1}`}
+                        //             className="w-full h-48 md:h-60 lg:h-48 object-cover rounded-3xl transition duration-300 group-hover:blur-xs"
+                        //         />
+
+                        //         {/* Hover Overlay with Icons */}
+                        //         <div className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition duration-300">
+                        //             <button
+                        //                 onClick={(e) => {
+                        //                     e.stopPropagation();
+                        //                     setPreviewImage(img.imageUrl);
+                        //                 }}
+                        //                 className="bg-white p-2 rounded-full shadow-md hover:bg-[#] cursor-pointer"
+                        //             >
+                        //                 <img src={eyeIconGrey} alt="Preview" className="w-7 h-7" />
+                        //             </button>
+
+
+                        //             <button
+                        //                 onClick={(e) => {
+                        //                     e.stopPropagation();
+                        //                     setSelectedImageIndex(index);
+                        //                     setUpdatedFile(null);
+                        //                     setShowChangeModal('edit');
+                        //                 }}
+                        //                 className="bg-white p-3 rounded-full shadow-md hover:bg-[#] cursor-pointer"
+                        //             >
+                        //                 <img src={editPencilGreyIcon} alt="Edit" className="w-5 h-5" />
+                        //             </button>
+
+                        //             {/* Delete Icon */}
+                        //             <button
+                        //                 onClick={(e) => {
+                        //                     e.stopPropagation();
+                        //                     setGalleyImgDelete(img);
+                        //                 }}
+                        //                 className="bg-white p-3 rounded-full shadow-md hover:bg-[#] cursor-pointer"
+                        //             >
+                        //                 <img src={deleteIconGrey} alt="Delete" className="w-5 h-5" />
+                        //             </button>
+                        //         </div>
+                        //     </div>
+                        // ))
                         images.map((img, index) => (
                             <div
                                 key={img._id || index}
                                 className="relative overflow-hidden rounded-3xl border border-transparent transition group"
                                 draggable
                                 onClick={() => setSelectedImageIndex(index)}
+                                onMouseEnter={() => {
+                                    if (showMenuIndex !== index) {
+                                        setShowMenuIndex(null);
+                                    }
+                                }}
                                 onDragStart={(e) => {
                                     setDraggedItem(index);
                                     e.dataTransfer.effectAllowed = "move";
@@ -204,69 +288,58 @@ function Gallery() {
                                 <img
                                     src={img.imageUrl}
                                     alt={`Gallery ${index + 1}`}
-                                    className="w-full h-48 md:h-60 lg:h-72 object-cover rounded-3xl transition duration-300 group-hover:blur-xs"
+                                    className="w-full h-48 object-cover rounded-3xl"
                                 />
-
-                                {/* Hover Overlay with Icons */}
-                                <div className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition duration-300">
-                                    {/* Eye Icon */}
+                                <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            setPreviewImage(img.imageUrl);
+                                            setShowMenuIndex(showMenuIndex === index ? null : index);
                                         }}
-                                        className="bg-white p-2 rounded-full shadow-md hover:bg-[#] cursor-pointer"
+                                        className="p-1.5 w-9 h-9 bg-white rounded-full border border-[#FCEAC9] cursor-pointer shadow-sm"
                                     >
-                                        <img src={eyeIconGrey} alt="Preview" className="w-7 h-7" />
+                                        <img src={DotMenuIcon} alt="Options" />
                                     </button>
 
-
-                                    {/* Edit Icon */}
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setSelectedImageIndex(index);
-                                            setUpdatedFile(null);
-                                            setShowChangeModal('edit');
-                                        }}
-                                        className="bg-white p-3 rounded-full shadow-md hover:bg-[#] cursor-pointer"
-                                    >
-                                        <img src={editPencilGreyIcon} alt="Edit" className="w-5 h-5" />
-                                    </button>
-
-                                    {/* Delete Icon */}
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setGalleyImgDelete(img);
-                                        }}
-                                        className="bg-white p-3 rounded-full shadow-md hover:bg-[#] cursor-pointer"
-                                    >
-                                        <img src={deleteIconGrey} alt="Delete" className="w-5 h-5" />
-                                    </button>
+                                    {/* dropdown menu */}
+                                    {showMenuIndex === index && (
+                                        <div className="absolute space-y-2 right-0 mt-2 w-48 lg:w-55 bg-white rounded-2xl p-2 cursor-pointer border border-[#FCEAC9] z-20">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedImageIndex(index);
+                                                    setUpdatedFile(null);
+                                                    setShowChangeModal('edit');
+                                                    setShowMenuIndex(null);
+                                                }}
+                                                className="cursor-pointer flex items-center gap-2.5 w-full rounded-xl p-3 text-left text-sm hover:bg-[#FEF8EC] text-[#656565] hover:text-[#292929]"
+                                            >
+                                                <img src={CameraIcon} alt="CameraIcon" />
+                                                <p>Change Image</p>
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setGalleyImgDelete(img);
+                                                    setShowMenuIndex(null);
+                                                }}
+                                                className="cursor-pointer flex items-center gap-2.5 w-full rounded-xl p-3 text-left text-sm hover:bg-[#FEF8EC] text-[#656565] hover:text-[#292929]"
+                                            >
+                                                <img src={deleteIconGrey} alt="deleteIcon" />
+                                                <p>Delete Image</p>
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))
                     )}
-
-                    {/* Upload Box (opens modal in add mode) */}
-                    <div
-                        className="w-full h-48 md:h-60 lg:h-72 rounded-3xl bg-[#FEF8EC] flex items-center justify-center cursor-pointer transition"
-                        onClick={() => {
-                            setSelectedImageIndex(null);
-                            setUpdatedFile(null);
-                            setShowChangeModal('add');
-                        }}
-                    >
-                        <img src={addIconBlack} alt="Add" />
-                    </div>
                 </div>
             </div>
 
             {previewImage && (
                 <div className="fixed inset-0 flex justify-center items-center bg-black/40 backdrop-blur-sm z-50 text-[#464646] w-full p-4">
                     <div className="relative">
-                        {/* Close Button */}
                         <button
                             onClick={() => setPreviewImage(null)}
                             className="absolute top-4 right-4 bg-white py-2 px-3.5 rounded-full shadow-md hover:bg-[#] cursor-pointer z-50"

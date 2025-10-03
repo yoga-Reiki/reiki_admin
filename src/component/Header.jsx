@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import notificationsIcon from "../assets/svg/notification.svg";
 import notificationWhite from "../assets/svg/notificationWhite.svg";
 import userIcon from "../assets/svg/userIcon.svg";
-import UserIcon1 from "../assets/svg/UserIcon1.svg"
+import UserIcon1 from "../assets/svg/userIconOrange1.svg"
 import logoutIcon from "../assets/svg/logoutIcon.svg";
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -61,11 +61,11 @@ function Header() {
   };
 
   const getButtonClasses = (name) =>
-    `flex items-center gap-2 border border-[#FCEAC9] px-4.5 py-3 rounded-full transition cursor-pointer
-   ${activeButton === name ? "bg-[#EA7913] text-white" : "hover:bg-orange-50"}`;
+    `flex items-center gap-2 px-4.5 py-3 rounded-full transition cursor-pointer
+   ${activeButton === name ? "bg-[#FEF8EC] border border-[#EA7913]" : "hover:bg-orange-50 border border-[#FCEAC9]"}`;
 
   return (
-    <header className="bg-white border border-[#F1F1F1] shadow-md rounded-3xl px-4 sm:px-5 h-[80px] flex justify-end items-center text-[#656565] relative">
+    <header className="bg-white rounded-2xl px-4 py-4 h-[80px] shadow-[4px_4px_12px_rgba(0,0,0,0.06)]  flex justify-end items-center text-[#656565] relative">
       <div className="hidden sm:flex space-x-4 relative">
 
         {/* Notifications Button with hover & click */}
@@ -83,7 +83,7 @@ function Header() {
             }}
           >
             <div className="relative">
-              <img src={activeButton ? notificationWhite : notificationsIcon} alt="notificationsIcon" className="w-5 h-5" />
+              <img src={activeButton === "notifications" ? notificationWhite : notificationsIcon} alt="notificationsIcon" className="w-5 h-5" />
               <span className="absolute top-0 right-0.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
             </div>
             <span>Notifications</span>

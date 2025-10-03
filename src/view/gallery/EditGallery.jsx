@@ -1,5 +1,5 @@
-import React from 'react';
-import { MdOutlineClose } from "react-icons/md";
+import React, { useState } from 'react';
+import UploadIcon from "../../assets/svg/UploadIcon.svg"
 
 function EditGallery({
     mode = "edit",
@@ -12,87 +12,126 @@ function EditGallery({
     onClose,
     handleChangeImage,
     handleAddImage,
-    onFileSelect
 }) {
+    const [tempFile, setTempFile] = useState(null);
+    const [isDragging, setIsDragging] = useState(false);
+
     const isEdit = mode === "edit";
     const isSubmitting = isEdit ? changingImageLoading : uploading;
 
+    const handleFileSelect = (file) => {
+        setTempFile(file);
+    };
+
     const getHelperText = () => {
+        const fileToShow = tempFile || updatedFile;
+
         if (isEdit) {
-            const filename = updatedFile
-                ? updatedFile.name
+            const filename = fileToShow
+                ? fileToShow.name
                 : (images[selectedImageIndex]?.imageUrl || '').split("/").pop();
+
             return (
-                <>
+                <div className='flex flex-col items-center gap-2'>
+                    <img src={UploadIcon} alt='Not Found' className='h-12 w-12' />
                     <p className="text-sm text-[#525252] truncate">{filename}</p>
-                    <p className="text-sm text-[#525252] truncate">Click Here to Change</p>
-                </>
+                    <p className="text-sm text-[#525252] truncate">
+                        Drag & drop file here or <span className='underline'>Choose file</span>
+                    </p>
+                </div>
             );
-        } else {
-            // ✅ Add mode
-            if (updatedFile) {
-                return (
-                    <>
-                        <p className="text-sm text-[#525252] truncate">{updatedFile.name}</p>
-                        <p className="text-sm text-[#525252] truncate">Click Here to Change</p>
-                    </>
-                );
-            }
+        }
+
+        if (fileToShow) {
             return (
+                <div className='flex flex-col items-center gap-2'>
+                    <img src={UploadIcon} alt='Not Found' className='h-12 w-12' />
+                    <p className="text-sm text-[#525252] truncate">{fileToShow.name}</p>
+                    <p className="text-sm text-[#525252] truncate">
+                        Drag & drop file here or <span className='underline'>Choose file</span>
+                    </p>
+                </div>
+            );
+        }
+
+        return (
+            <div className='flex flex-col items-center gap-2'>
+                <img src={UploadIcon} alt='Not Found' className='h-12 w-12' />
                 <p className="text-sm text-[#525252]">
                     Click Here to Upload Image or Drag & Drop here
                 </p>
-            );
-        }
+            </div>
+        );
     };
 
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const file = e.dataTransfer.files?.[0];
+        if (file) handleFileSelect(file);
+    };
+
+    const handleConfirm = () => {
+        if (isEdit) {
+            handleChangeImage(tempFile || updatedFile);
+        } else {
+            handleAddImage(tempFile);
+        }
+    };
 
     return (
         <div>
             <div className="fixed inset-0 flex justify-center items-center bg-black/40 z-50 text-[#464646] p-6">
-                <div className="bg-white w-full mx-4 sm:mx-6 md:mx-8 lg:mx-0 p-5 max-w-md md:max-w-lg lg:max-w-[625px] flex flex-col justify-between gap-5.5 border-t-2 border-t-[#EA7913] rounded-3xl">
-                    <div className="flex justify-between items-center p-3">
-                        <h2 className="text-[32px] font-Raleway Raleway-medium">
+                <div className="bg-white w-full mx-4 sm:mx-6 md:mx-8 lg:mx-0 p-6 max-w-md md:max-w-lg lg:max-w-[500px] flex flex-col justify-between gap-12 rounded-3xl">
+
+                    {/* Title */}
+                    <div className='text-center space-y-2'>
+                        <h2 className="text-[32px] leading-[40px] font-Raleway Raleway-medium text-[#3D3D3D]">
                             {isEdit ? "Change Image" : "Add Image"}
                         </h2>
-                        <button
-                            onClick={onClose}
-                            className="text-[#EA7913] border border-[#989898] cursor-pointer p-4 rounded-full"
-                        >
-                            <MdOutlineClose size={16} />
-                        </button>
+                        <p className='text-[#525252] leading-[24px] text-lg'>
+                            {isEdit ? "Upload image in below input to change the image." : "Upload image in below input to Add the image."}
+                        </p>
                     </div>
 
+                    {/* Drop Zone */}
                     <div>
-                        <h2 className="text-lg mb-2">
-                            {isEdit ? "Upload New Image" : "Upload Image"}
-                        </h2>
-
+                        <h2 className="mb-1">Upload file</h2>
                         <div
-                            className={`bg-white border ${isEdit && selectedImageIndex !== null ? "border-[#EA7913]" : "border-[#DCDCDC]"} rounded-xl h-44 flex items-center justify-center cursor-pointer overflow-hidden`}
+                            className={`border-2 border-dashed rounded-xl h-51.5 flex items-center justify-center cursor-pointer overflow-hidden transition 
+                            ${isDragging ? "border-[#EA7913] bg-orange-50" : "border-[#BDBDBD] bg-white"}`}
                             onClick={() => fileInputRef.current && fileInputRef.current.click()}
                             onDragOver={(e) => e.preventDefault()}
-                            onDrop={(e) => {
-                                e.preventDefault();
-                                const file = e.dataTransfer.files?.[0];
-                                if (file && onFileSelect) onFileSelect(file);
-                            }}
+                            onDragEnter={() => setIsDragging(true)}
+                            onDragLeave={() => setIsDragging(false)}
+                            onDrop={handleDrop}
                         >
                             <div className="flex flex-col items-center justify-center w-full h-full text-center px-2">
                                 {getHelperText()}
                             </div>
                         </div>
+                        <p className='text-xs text-[#656565] text-end pt-1'>Max size : 25 MB</p>
                     </div>
 
-                    <div className="w-full relative inline-block rounded-full px-[4px] py-[3px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:to-[#F39C2C]">
+                    {/* Buttons */}
+                    <div className='flex gap-2 h-12'>
                         <button
-                            type="button"
-                            onClick={isEdit ? handleChangeImage : handleAddImage}
-                            disabled={isSubmitting}
-                            className="w-full py-2.5 bg-[#EA7913] text-white rounded-full font-medium hover:bg-[#F39C2C] cursor-pointer disabled:opacity-60"
-                        >
-                            {isSubmitting ? (isEdit ? "Changing..." : "Uploading...") : (isEdit ? "Change Image" : "Upload Image")}
+                            onClick={onClose}
+                            className='bg-[#FCEAC9] text-[#111111] text-lg py-3 w-full rounded-full cursor-pointer'>
+                            Cancel
                         </button>
+                        <div className="w-full h-full relative inline-block rounded-full p-[1px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:to-[#F39C2C]">
+                            <button
+                                type="button"
+                                onClick={handleConfirm}
+                                disabled={isSubmitting}
+                                className="w-full py-3 bg-[#EA7913] text-white rounded-full font-medium hover:bg-[#F39C2C] cursor-pointer disabled:opacity-60"
+                            >
+                                {isSubmitting
+                                    ? (isEdit ? "Changing..." : "Uploading...")
+                                    : (isEdit ? "Confirm to Change" : "Upload Image")}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -4,9 +4,7 @@ import { IoIosArrowRoundForward } from "react-icons/io";
 import { IoEyeOffOutline } from "react-icons/io5";
 import loginBG from "../../assets/img/loginBG.png";
 import reikiLogo from "../../assets/img/logo.png";
-import Emailicon from "../../assets/svg/Email.svg";
 import eyeIcon from "../../assets/svg/eyeIcon.svg";
-import Password from "../../assets/svg/Password.svg";
 import toast from "react-hot-toast";
 import { userForgotPassowrd, userLogin, userResetPassword, userVerifyOtp } from "../../services/LoginServices";
 import ForgotModel from "./ForgotModel";
@@ -201,21 +199,21 @@ function Login() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center flex items-center justify-center px-4 xl:px-0 text-[#464646]"
+      className="min-h-screen bg-cover bg-right xl:bg-center flex items-center justify-center px-4 xl:px-0 text-[#464646]"
       style={{ backgroundImage: `url(${loginBG})` }}
     >
-      <div className="bg-white bg-opacity-90 border-t-[5px] border-t-[#EA7913] rounded-3xl p-6 md:p-14 w-full max-w-[501px] h-full">
-        <div className="flex flex-col justify-between gap-10 md:gap-14">
+      <div className="bg-white bg-opacity-90 rounded-3xl p-6 w-full max-w-[480px] h-full">
+        <div className={`flex flex-col justify-between ${step === 4 ? "gap-9" : "gap-12"}`}>
           <div className="flex flex-col items-center justify-between gap-5 md:gap-9">
             <Link to="/" className="flex items-center">
               <img
                 src={reikiLogo}
                 alt="Logo"
-                className="w-30 md:w-32.5 object-contain mb-1 hover:cursor-pointer transition-transform transform"
+                className="w-30 md:w-32.5 object-contain hover:cursor-pointer transition-transform transform"
               />
             </Link>
-            <div className="flex flex-col gap-2 text-[#3D3D3D]">
-              <h1 className="text-2xl md:text-[32px] md:leading-[40px] font-semibold font-Raleway Raleway-medium text-center">
+            <div className="flex flex-col gap-1 text-[#3D3D3D]">
+              <h1 className={`${step === 0 ? "text-[28px] leading-[36px]" : "text-[32px] leading-[40px]"} font-Raleway Raleway-medium text-center`}>
                 {step === 0 ? "Welcome to Shree Sai Yog & Reiki Healing Centre" : step === 1 ? "Forgot Password"
                   : step === 2 ? "OTP Verification" : step === 3 ? "Change Password" : "Success"}
               </h1>
@@ -225,16 +223,13 @@ function Login() {
           </div>
 
           {step === 0 && (
-            < form className="space-y-6" onSubmit={onSubmit}>
+            < form className="space-y-4" onSubmit={onSubmit}>
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm md:text-lg mb-2">
+                <label htmlFor="email" className="block text-sm md:text-base mb-1 text-[#292929]">
                   Email
                 </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-3 flex items-center text-[#EA7913]">
-                    <img src={Emailicon} alt="email" className="w-5 h-5" />
-                  </span>
+                <div>
                   <input
                     id="email"
                     name="email"
@@ -242,7 +237,7 @@ function Login() {
                     value={form.email}
                     onChange={onChange}
                     placeholder="Enter Your Email"
-                    className="w-full pl-10 pr-3 py-2.5 rounded-xl text-[#525252] placeholder-[#525252] border-[1px] border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                    className="w-full h-11 px-4 py-3 rounded-full text-[#525252] placeholder-[#656565] border-[1px] border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                   />
                 </div>
                 {errors.email && (
@@ -254,20 +249,17 @@ function Login() {
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm md:text-lg mb-2"
+                  className="block text-sm md:text-base mb-1 text-[#292929]"
                 >
                   Password
                 </label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-3 flex items-center text-[#EA7913]">
-                    <img src={Password} alt="password" className="w-5 h-5" />
-                  </span>
                   <input
                     id="Password"
                     name="Password"
                     value={form.Password}
                     onChange={onChange}
-                    className="w-full pl-10 pr-3 py-2.5 rounded-xl text-[#525252] placeholder-[#525252] border-[1px] border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                    className="w-full h-11 px-4 py-3 rounded-full text-[#525252] placeholder-[#656565] border-[1px] border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                     placeholder="Enter Password"
                     type={showPassword ? "text" : "password"}
                     onCopy={(e) => e.preventDefault()}
@@ -293,7 +285,7 @@ function Login() {
                   <div className="flex justify-end pt-1">
                     <button
                       type="button"
-                      className="text-sm cursor-pointer"
+                      className="text-xs cursor-pointer"
                       onClick={() => setStep(1)}
                     >
                       Forgot Password ?
@@ -303,11 +295,11 @@ function Login() {
               </div>
 
               {/* Sign in button */}
-              <div className="w-full mt-10 md:mt-14 relative inline-block rounded-full px-[4px] py-[3.5px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
+              <div className="w-full mt-10 md:mt-4 relative inline-block rounded-full p-[0.5px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-full inline-flex justify-center items-center space-x-1.5 py-[9.5px] bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
+                  className="w-full h-12 inline-flex justify-center items-center space-x-1.5 py-3 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-lg"
                 >
                   {loading ? (
                     <span>Signing in...</span>
@@ -337,11 +329,11 @@ function Login() {
           )}
 
           {step === 3 && (
-            <ResetPasswordModel form={form} setForm={setForm} errors={errors} handleChangePassword={handleChangePassword} loading={loading} />
+            <ResetPasswordModel onChange={onChange} form={form} setForm={setForm} errors={errors} handleChangePassword={handleChangePassword} loading={loading} />
           )}
 
           {step === 4 && (
-            <SuccessModel setStep0={setStep(0)} />
+            <SuccessModel setStep0={() => setStep(0)} />
           )}
         </div>
       </div>

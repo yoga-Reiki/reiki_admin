@@ -61,10 +61,10 @@ function Dashboard() {
     setLoading(true);
     try {
       const response = await getAllUser({ page: pagination.page, pageSize: pagination.pageSize });
-      setDashboardData(response?.data?.users || []);
+      setDashboardData(response?.data || []);
       setPagination((prev) => ({
         ...prev,
-        totalUsers: response?.data?.totalUsers || 0,
+        totalUsers: response?.data?.pagination?.total || 0,
       }));
     } catch (err) {
       setError("Failed to fetch users");
@@ -141,7 +141,7 @@ function Dashboard() {
         {/* Card 1 */}
         <div className="flex justify-between items-center bg-white rounded-3xl border-l border-l-[#EA7913] shadow-[0_4px_6px_rgba(0,0,0,0.08)]">
           <div className='py-[17px] px-8 w-full flex flex-col gap-1.5'>
-            <h2 className="text-[40px] text-[#525252] font-Raleway Raleway-medium">{dashboardData?.length}</h2>
+            <h2 className="text-[40px] text-[#525252] font-Raleway Raleway-medium">{dashboardData?.pagination?.total}</h2>
             <p className="text-sm text-[#464646]">Total Users</p>
           </div>
           <div className="bg-gradient-to-br w-37.5 h-full flex justify-center items-center from-[#FFB979] to-[#EA7913] rounded-3xl p-3 shadow-[-4px_0_6px_rgba(234,121,19,0.3)]">
@@ -161,7 +161,7 @@ function Dashboard() {
         </div>
       </div>
 
-      <DashboardTable dashboardData={dashboardData} loading={loading} error={error} pagination={pagination} setPagination={setPagination} />
+      <DashboardTable dashboardData={dashboardData?.users} loading={loading} error={error} pagination={pagination} setPagination={setPagination} />
 
       {activePopup === "Courses" && <AddCourse onClose={handleClosePopup} />}
       {activePopup === "Products" && <AddProduct onClose={handleClosePopup} />}
