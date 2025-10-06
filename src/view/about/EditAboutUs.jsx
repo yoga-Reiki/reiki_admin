@@ -16,7 +16,7 @@ const DropImage = ({ onDropFile, inputId, file, setErrors, isEditing }) => {
     return (
         <div>
             <div
-                onDragOver={(e) => e.preventDefault()} // no class toggling
+                onDragOver={(e) => e.preventDefault()}
                 onDragLeave={(e) => e.preventDefault()} 
                 onDrop={(e) => {
                     e.preventDefault();
@@ -68,7 +68,6 @@ const DropImage = ({ onDropFile, inputId, file, setErrors, isEditing }) => {
         </div>
     );
 };
-
 
 function EditAboutUs({ onCancel, aboutData, fetchAboutData }) {
     // Saved state (server data)

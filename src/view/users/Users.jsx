@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import SearchIcon from "../../assets/svg/SearchIcon.svg";
-import downloadIcon from "../../assets/svg/downloadIcon.svg";
+import downloadIconGrey from "../../assets/svg/downloadIconGrey.svg";
 import EditIcon from "../../assets/svg/EditIcon.svg";
 import EyeopenIcon from "../../assets/svg/EyeopenIcon.svg";
 import blockIcon from "../../assets/svg/blockIcon.svg";
@@ -38,10 +38,10 @@ function Users() {
     setLoading(true);
     try {
       const response = await getAllUser({ page: pagination.page, pageSize: pagination.pageSize });
-      setUsers(response?.data?.users || []);
+      setUsers(response?.data || []);
       setPagination((prev) => ({
         ...prev,
-        totalUsers: response?.data?.totalUsers || 0,
+        totalUsers: response?.data?.pagination?.total || 0,
       }));
     } catch (err) {
       setError("Failed to fetch users");
@@ -50,7 +50,7 @@ function Users() {
     }
   };
 
-  const filteredUsers = users.filter((user) => {
+  const filteredUsers = users.users?.filter((user) => {
     const query = searchQuery.toLowerCase();
     return (
       user.name?.toLowerCase().includes(query) ||
@@ -106,23 +106,23 @@ function Users() {
           setSelectedUser={setSelectedUser}
         />
       ) : (
-        <div>
+        <div className="flex flex-col gap-2">
           {/* Header */}
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 p-3">
             <div>
               <h1 className="text-[32px] font-Raleway Raleway-medium">User Management</h1>
               <p className="text-[#656565] pt-1">Manage all your users</p>
             </div>
-            <button onClick={handleDownload} className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 cursor-pointer rounded-full">
-              <img src={downloadIcon} alt="Download Icon" />
+            <button onClick={handleDownload} className="h-12 bg-[#FEF8EC] border border-[#F9D38E] flex items-center space-x-2 hover:bg-[#FCEAC9] text-[#525252] px-6 py-3 cursor-pointer rounded-full">
+              <img src={downloadIconGrey} alt="Download Icon" />
               <span>Download user details</span>
             </button>
           </div>
 
           {/* Search Bar */}
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 py-6 px-3">
-            <p className="text-2xl font-Raleway Raleway-medium text-[#656565]">All Users</p>
-            <div className="relative w-full md:w-72 lg:w-90 xl:w-[451px]">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 px-3">
+            <p className="text-2xl font-Raleway Raleway-medium text-[#656565]">All Blogs List</p>
+            <div className="relative w-full md:w-60 lg:w-76">
               <span className="absolute inset-y-0 left-3 px-1 flex items-center text-[#EA7913]">
                 <img src={SearchIcon} alt="search" className="w-6 h-6" />
               </span>
@@ -131,83 +131,73 @@ function Users() {
                 placeholder="Search User by Name/ Mobile no./ Email"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-2 md:py-3 rounded-full bg-[#FCEAC9] text-[#656565] placeholder-[#656565] border-2 border-[#FEF8EC] focus:outline-none focus:ring-0 focus:border-[#F3E9D6]"
+                className="w-full h-10 pl-12 pr-4 py-2 rounded-full text-[#656565] placeholder-[#656565] border border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#F3E9D6]"
               />
             </div>
           </div>
 
-          {/* Table */}
-          <div className="overflow-x-auto px-3">
-            <table className="w-full table-auto">
-              <thead>
-                <tr className="dm-sans-medium grid grid-cols-6 md:w-[300%] lg:w-[200%] xl:w-[120%] 2xl:w-full bg-[#FCEAC9] text-left text-base text-[#111111] rounded-t-2xl">
-                  <th className='px-4 py-3'>Name</th>
-                  <th className='px-4 py-3'>Email</th>
-                  <th className='px-4 py-3'>Mobile Number</th>
-                  <th className='px-4 py-3'>Aadhar Card</th>
-                  <th className='px-4 py-3'>Address</th>
-                  <th className='px-4 py-3'>Actions</th>
+          <div className="overflow-x-auto bg-white border border-[#BDBDBD] rounded-2xl mx-3">
+            <table className="w-full border-collapse text-left text-[#464646] table-fixed">
+              <thead className="bg-[#FFF8EE] text-sm text-[#09090B] border-b border-[#D4D4D8]">
+                <tr>
+                  <th className='px-4 py-3 font-medium'>Name</th>
+                  <th className='px-4 py-3 font-medium'>Email</th>
+                  <th className='px-4 py-3 font-medium'>Mobile Number</th>
+                  <th className='px-4 py-3 font-medium'>Aadhar Card</th>
+                  <th className='px-4 py-3 font-medium'>Address</th>
+                  <th className='px-4 py-3 font-medium'>Actions</th>
                 </tr>
-              </thead >
-
-              <tbody className="dm-sans-regular flex flex-col gap-y-[1px] justify-center md:w-[300%] lg:w-[200%] xl:w-[120%] 2xl:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
+              </thead>
+              <tbody className="text-sm">
                 {loading ? (
                   <tr>
-                    <td colSpan="6" className="flex justify-center py-6">
-                      Loading...
-                    </td>
+                    <td colSpan="6" className="text-center py-6">Loading...</td>
                   </tr>
                 ) : error ? (
                   <tr>
-                    <td colSpan="6" className="flex justify-center py-6 text-red-500">
-                      {error}
-                    </td>
+                    <td colSpan="6" className="text-center py-6 text-red-500">{error}</td>
                   </tr>
-                ) : filteredUsers.length > 0 ? (
-                  filteredUsers?.map((user, index) => {
-                    const isFirst = index === 0;
-                    const isLast = index === users.length - 1;
-                    return (
-                      <tr
-                        key={index}
-                        className={`grid grid-cols-6 items-center bg-white text-[#656565] text-sm ${isFirst ? 'rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
-                      >
-                        <td className="whitespace-pre-wrap px-4 py-7">{user.name}</td>
-                        <td className="whitespace-pre-wrap px-4 py-7">{user.email}</td>
-                        <td className="whitespace-pre-wrap px-4 py-7">{user.mobileNumber}</td>
-                        <td className="whitespace-pre-wrap px-4 py-7">{user.adharCardNumber}</td>
-                        <td className="whitespace-pre-wrap px-4 py-7">
-                          {user?.address
-                            ? `${user.address.street}, ${user.address.city}, ${user.address.state}, ${user.address.pincode}, ${user.address.country}`
-                            : "-"}
-                        </td>
-                        <td className="flex gap-1 items-center flex-wrap mt-2 md:mt-0">
+                ) : filteredUsers?.length > 0 ? (
+                  filteredUsers.map((Data, index) => (
+                    <tr key={index} className="border-b border-[#D4D4D8] transition h-21">
+                      <td className="px-4 whitespace-pre-wrap">{Data.name}</td>
+                      <td className="px-4 whitespace-pre-wrap">{Data.email}</td>
+                      <td className="px-4 whitespace-pre-wrap">{Data.mobileNumber}</td>
+                      <td className="px-4 whitespace-pre-wrap">{Data.adharCardNumber}</td>
+                      <td className="px-4 whitespace-pre-wrap">
+                        {Data?.address
+                          ? `${Data.address.street}, ${Data.address.city}, ${Data.address.state}, ${Data.address.pincode}, ${Data.address.country}`
+                          : "-"}
+                      </td>
+                      <td className="px-4">
+                        <div className="flex justify-center gap-1 items-center">
                           <button onClick={() => {
-                            setSelectedUser(user)
-                            navigate(`?selectedUserId=${user._id}`);
-                          }} className="flex items-center gap-1 p-3 bg-[#FEF8EC] text-[#EA7913] border border-[#F9D38E] rounded-full text-xs hover:bg-[#FCEAC9] cursor-pointer">
-                            <img src={EditIcon} alt='Download Icon' className='w-4 h-4' /><span>Edit Access</span>
+                            setSelectedUser(Data)
+                            navigate(`?selectedUserId=${Data._id}`);
+                          }} className="p-2 bg-[#FEF8EC] text-[#EA7913] border border-[#F9D38E] rounded-full text-xs hover:bg-[#FCEAC9] cursor-pointer">
+                            <img src={EditIcon} alt='Download Icon' className='w-6 h-6' />
                           </button>
-                          <button onClick={() => setViewUser(user)} className="p-3 rounded-full bg-[#E8F1FF] border border-[#B3CCFF] hover:bg-[#cdddff] cursor-pointer">
-                            <img src={EyeopenIcon} alt='Download Icon' className='w-4 h-4' />
+                          <button onClick={() => setViewUser(Data)} className="p-2 rounded-full bg-[#E8F1FF] border border-[#B3CCFF] hover:bg-[#cdddff] cursor-pointer">
+                            <img src={EyeopenIcon} alt='Download Icon' className='w-6 h-6' />
                           </button>
-                          <button onClick={() => setBlockUser(user)} className="p-3 rounded-full bg-[#FEF2F2] border border-[#FECACA] hover:bg-[#fee3e3] cursor-pointer">
-                            <img src={blockIcon} alt='Download Icon' className='w-4 h-4' />
+                          <button onClick={() => setBlockUser(Data)} className="p-2 rounded-full bg-[#FEF2F2] border border-[#FECACA] hover:bg-[#fee3e3] cursor-pointer">
+                            <img src={blockIcon} alt='Download Icon' className='w-6 h-6' />
                           </button>
-                        </td>
-                      </tr>
-                    )
-                  })
+                        </div>
+                      </td>
+                    </tr>
+                  ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="text-center py-6">
-                      No users found
+                    <td colSpan="5" className="text-center py-6 text-[#9B9B9B]">
+                      Not User Found
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
+
           <div className="flex justify-end items-center text-[#464646] gap-4 py-6 px-3">
             <button
               onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}

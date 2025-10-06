@@ -158,7 +158,7 @@ function Gallery() {
             <div className="flex flex-col lg:flex-row gap-10 lg:gap-2">
                 <div className="w-full lg:w-1/2 grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-2 flex-1 px-4">
                     <div
-                        className="w-full h-48 rounded-3xl border border-[#F9D38E] flex flex-col items-center justify-center text-[#333] space-y-2 cursor-pointer transition"
+                        className="w-full h-48 rounded-lg border border-[#F9D38E] flex flex-col items-center justify-center text-[#333] space-y-2 cursor-pointer transition"
                         style={{
                             backgroundImage: `url(${addImgBG})`,
                             backgroundSize: 'cover',
@@ -257,7 +257,7 @@ function Gallery() {
                         images.map((img, index) => (
                             <div
                                 key={img._id || index}
-                                className="relative overflow-hidden rounded-3xl border border-transparent transition group"
+                                className="relative overflow-hidden rounded-lg border border-transparent transition group"
                                 draggable
                                 onClick={() => setSelectedImageIndex(index)}
                                 onMouseEnter={() => {
@@ -288,7 +288,7 @@ function Gallery() {
                                 <img
                                     src={img.imageUrl}
                                     alt={`Gallery ${index + 1}`}
-                                    className="w-full h-48 object-cover rounded-3xl"
+                                    className="w-full h-48 object-cover rounded-lg"
                                 />
                                 <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                     <button

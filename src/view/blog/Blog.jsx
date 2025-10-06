@@ -1,13 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import SearchIcon from "../../assets/svg/SearchIcon.svg";
-import AddIcon from "../../assets/svg/AddIcon.svg";
 import EditIcon from "../../assets/svg/EditIcon.svg";
-import DeleteIcon from "../../assets/svg/DeleteIcon.svg"
+import DeleteIcon from "../../assets/svg/DeleteIcon.svg";
 import DeleteModel from "../component/DeleteModel";
-import EditBlog from "./EditBlog";
-import AddBlog from "./AddBlog";
 import { getblogData, getBlogDelete } from "../../services/blogServices";
 import toast from "react-hot-toast";
+import plusIconGrey from "../../assets/svg/plusIconGrey.svg";
+import BlogForm from "./EditBlog";
 
 function Blog() {
     const [blogsData, setBlogsData] = useState([]);
@@ -15,7 +14,6 @@ function Blog() {
     const [error, setError] = useState(null);
     const hasFetched = useRef(false);
     const [selectedUser, setSelectedUser] = useState(null);
-    const [addBlogs, setAddBlogs] = useState(null);
     const [blogDelete, setBlogDelete] = useState(null);
     const [pagination, setPagination] = useState({
         page: 1,
@@ -52,7 +50,7 @@ function Blog() {
                 totalUsers: response?.data?.totalItems || 0,
             }));
         } catch (err) {
-            setError("Failed to fetch users");
+            setError("Failed to fetch blogs");
         } finally {
             setLoading(false);
         }
@@ -64,39 +62,37 @@ function Blog() {
         try {
             await getBlogDelete(blogDelete._id);
             setBlogDelete(null);
-            toast.success("blog deleted successfully!")
+            toast.success("Blog deleted successfully!");
             fetchBlog();
         } catch (error) {
             console.error("Delete failed", error);
+            toast.error("Failed to delete blog.");
         }
     };
 
     return (
         <div className="text-[#464646]">
             {selectedUser ? (
-                <EditBlog
+                <BlogForm
                     selectedUser={selectedUser}
                     setSelectedUser={setSelectedUser}
                     fetchBlog={fetchBlog}
                 />
             ) : (
                 <div>
-                    {/* Header */}
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-3">
-                        <div>
-                            <h1 className="text-[32px] font-Raleway Raleway-medium">Blog</h1>
-                            <p className="text-[#656565] pt-1">Change Content and Image of Blog Page</p>
-                        </div>
-                        <button onClick={() => setAddBlogs({})} className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full cursor-pointer">
-                            <img src={AddIcon} alt="Download Icon" className="p-1.5" />
-                            <span>Add Blog </span>
-                        </button>
+                    <div className="p-3">
+                        <h1 className="text-[32px] font-Raleway Raleway-medium">Blog</h1>
+                        <p className="text-[#656565] pt-1">
+                            Change Content and Image of Blog Page
+                        </p>
                     </div>
 
                     {/* Search Bar */}
-                    <div className="flex flex-col md:flex-row justify-between items-center mt-6 mb-6 gap-4 px-3">
-                        <p className="text-2xl text-[#656565] font-Raleway Raleway-medium">All Blogs</p>
-                        <div className="relative w-full md:w-72 lg:w-74.5">
+                    <div className="flex flex-col md:flex-row justify-between items-center my-2 gap-4 px-3">
+                        <p className="text-2xl text-[#656565] font-Raleway Raleway-medium">
+                            All Blogs
+                        </p>
+                        <div className="relative w-full md:w-60 lg:w-76">
                             <span className="absolute inset-y-0 left-3 px-1 flex items-center text-[#EA7913]">
                                 <img src={SearchIcon} alt="search" className="w-6 h-6" />
                             </span>
@@ -110,111 +106,113 @@ function Blog() {
                                         fetchBlog();
                                     }
                                 }}
-                                className="w-full pl-12 pr-4 py-2 md:py-3 rounded-full bg-[#FCEAC9] text-[#656565] placeholder-[#656565] border-2 border-[#FEF8EC] focus:outline-none focus:ring-0 focus:border-[#F3E9D6]"
+                                className="w-full h-10 pl-12 pr-4 py-2 rounded-full text-[#656565] placeholder-[#656565] border border-[#DCDCDC] focus:outline-none focus:ring-0 focus:border-[#F3E9D6]"
                             />
                         </div>
                     </div>
 
                     {/* Table */}
-                    <div className="overflow-x-auto px-3">
-                        <table className="w-full table-auto">
-                            <thead>
-                                <tr className="dm-sans-medium grid grid-cols-3 md:w-[110%] lg:w-full bg-[#FCEAC9] text-left text-base text-[#111111] rounded-t-2xl">
-                                    <th className='px-4 py-3'>Title</th>
-                                    <th className='px-4 py-3'>Description</th>
-                                    <th className='px-4 py-3'>Actions</th>
+                    <div className="overflow-x-auto bg-white border border-[#BDBDBD] rounded-2xl mx-3">
+                        <table className="w-full border-collapse text-left text-[#464646] table-fixed">
+                            <thead className="bg-[#FFF8EE] text-sm text-[#09090B] border-b border-[#D4D4D8]">
+                                <tr>
+                                    <th className="px-4 py-3 font-medium w-40 lg:w-64 xl:w-94">
+                                        Title
+                                    </th>
+                                    <th className="px-4 py-3 font-medium">Description</th>
+                                    <th className="px-4 py-3 font-medium w-36">Actions</th>
                                 </tr>
-                            </thead >
-
-                            <tbody className="dm-sans-regular flex flex-col gap-y-[1px] justify-center md:w-[110%] lg:w-full bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
+                            </thead>
+                            <tbody className="text-sm">
                                 {loading ? (
                                     <tr>
-                                        <td colSpan="6" className="flex justify-center py-6">
+                                        <td colSpan="3" className="text-center py-6">
                                             Loading...
                                         </td>
                                     </tr>
                                 ) : error ? (
                                     <tr>
-                                        <td colSpan="6" className="flex justify-center py-6 text-red-500">
+                                        <td colSpan="3" className="text-center py-6 text-red-500">
                                             {error}
                                         </td>
                                     </tr>
                                 ) : blogsData.length > 0 ? (
-                                    blogsData.map((Data, index) => {
-                                        const isFirst = index === 0;
-                                        const isLast = index === blogsData.length - 1;
-                                        return (
-                                            <tr
-                                                key={index}
-                                                className={`grid grid-cols-3 text-[#656565] items-center bg-white text-sm ${isFirst ? 'rounded-t-xl border-t border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
-                                            >
-                                                <td className="whitespace-pre-wrap px-4 py-4">{Data.title}</td>
-                                                <td className="whitespace-pre-wrap px-4 py-4">
-                                                    <div className="line-clamp-2 whitespace-pre-wrap">{Data.description}</div>
-                                                </td>
-                                                <td className="flex gap-1 items-center flex-wrap mt-2 md:mt-0 px-4 py-4">
-                                                    <button onClick={() => setSelectedUser(Data)} className="p-3 text-xs flex items-center gap-2 rounded-full text-[#EA7913] bg-[#FEF8EC] border border-[#F9D38E] hover:bg-[#FCEAC9] cursor-pointer">
-                                                        <img src={EditIcon} alt='Download Icon' className='w-5 h-5' />
-                                                        <span>Edit</span>
+                                    blogsData.map((Data, index) => (
+                                        <tr
+                                            key={index}
+                                            className="border-b border-[#D4D4D8] transition h-21"
+                                        >
+                                            <td className="px-4 whitespace-pre-wrap w-40 lg:w-64 xl:w-94">
+                                                {Data.title}
+                                            </td>
+                                            <td className="whitespace-pre-wrap pl-4 pr-4 lg:pr-10 xl:pr-36">
+                                                <div className="line-clamp-2 whitespace-pre-wrap">
+                                                    {Data.description}
+                                                </div>
+                                            </td>
+                                            <td className="px-4 text-center w-42 lg:w-36">
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => setSelectedUser(Data)}
+                                                        className="p-2 rounded-full bg-[#FEF8EC] border border-[#F9D38E] hover:bg-[#FCEAC9] transition cursor-pointer"
+                                                    >
+                                                        <img
+                                                            src={EditIcon}
+                                                            alt="Edit"
+                                                            className="w-6 h-6"
+                                                        />
                                                     </button>
-                                                    <button onClick={() => setBlogDelete(Data)} className="p-3 rounded-full bg-[#FEF2F2] border border-[#FECACA] hover:bg-[#fce1e1] cursor-pointer">
-                                                        <img src={DeleteIcon} alt='Download Icon' className='w-5 h-5' />
+                                                    <button
+                                                        onClick={() => setBlogDelete(Data)}
+                                                        className="p-2 rounded-full bg-[#FEF2F2] border border-[#FECACA] hover:bg-[#FDE3E3] transition cursor-pointer"
+                                                    >
+                                                        <img
+                                                            src={DeleteIcon}
+                                                            alt="Delete"
+                                                            className="w-6 h-6"
+                                                        />
                                                     </button>
-                                                </td>
-                                            </tr>
-                                        )
-                                    })
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className="flex justify-center py-6">
-                                            No users found
+                                        <td
+                                            colSpan="5"
+                                            className="text-center py-6 text-[#9B9B9B]"
+                                        >
+                                            No Blogs added
                                         </td>
                                     </tr>
                                 )}
                             </tbody>
                         </table>
 
-                        <div className="flex justify-end items-center gap-4 py-6">
-                            <button
-                                onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
-                                disabled={pagination.page === 1}
-                                className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
-                            >
-                                Previous
-                            </button>
-                            <span className="text-[#656565] font-medium">
-                                Page {pagination.page} of {Math.ceil(pagination.totalUsers / pagination.pageSize)}
-                            </span>
-                            <button
-                                onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
-                                disabled={pagination.page >= Math.ceil(pagination.totalUsers / pagination.pageSize)}
-                                className="px-4 py-2 bg-[#fceac9] text-[#111] rounded disabled:opacity-50"
-                            >
-                                Next
-                            </button>
+                        <div
+                            className="flex px-4 py-3.5 text-[#09090B] bg-[#F1F1F1] cursor-pointer transition hover:bg-[#EAEAEA]"
+                            onClick={() => setSelectedUser({})}
+                        >
+                            <img
+                                src={plusIconGrey}
+                                alt="Add"
+                                className="w-5 h-5 mr-2"
+                            />
+                            <span className="text-sm font-medium">Add New Blog</span>
                         </div>
                     </div>
                 </div>
             )}
 
-            {addBlogs && (
-                <AddBlog
-                    addBlogs={addBlogs}
-                    onClose={() => setAddBlogs(null)}
-                    onConfirm={() => {
-                        console.log("Blocked:", addBlogs.name);
-                        setAddBlogs(null);
-                    }}
-                    fetchBlog={fetchBlog}
-                />
-            )}
-
+            {/* Delete Modal */}
             {blogDelete && (
-                <DeleteModel onCancel={() => setBlogDelete(null)} onConfirmBlog={confirmDelete} />
+                <DeleteModel
+                    onCancel={() => setBlogDelete(null)}
+                    onConfirmBlog={confirmDelete}
+                />
             )}
         </div>
     );
 }
 
 export default Blog;
-

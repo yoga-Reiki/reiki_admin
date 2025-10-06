@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { userLogout } from '../services/LoginServices';
 import { getNotification } from '../services/notificationServices';
+import arrowRightOrange from "../assets/svg/arrowRightOrange.svg"
+import ArrowleftGrey from "../assets/svg/ArrowleftGrey.svg"
 
 function Header() {
   const navigate = useNavigate();
@@ -16,6 +18,7 @@ function Header() {
   const [activeButton, setActiveButton] = useState(null);
   const hasFetched = useRef(false);
   const [notifications, setNotifications] = useState([])
+  const [selectedNotification, setSelectedNotification] = useState(null);
 
   const handleLogout = async () => {
     try {
@@ -36,6 +39,7 @@ function Header() {
     const handleClickOutside = (event) => {
       if (notifRef.current && !notifRef.current.contains(event.target)) {
         setShowNotifications(false);
+        setSelectedNotification(null); // Add this line
         if (activeButton === "notifications") setActiveButton(null);
       }
     };
@@ -60,6 +64,14 @@ function Header() {
     }
   };
 
+  const handleNotificationClick = (notif) => {
+    setSelectedNotification(notif);
+  };
+
+  const handleBackToList = () => {
+    setSelectedNotification(null);
+  };
+
   const getButtonClasses = (name) =>
     `flex items-center gap-2 px-4.5 py-3 rounded-full transition cursor-pointer
    ${activeButton === name ? "bg-[#FEF8EC] border border-[#EA7913]" : "hover:bg-orange-50 border border-[#FCEAC9]"}`;
@@ -80,6 +92,7 @@ function Header() {
                 prev === "notifications" ? null : "notifications"
               );
               setShowNotifications((prev) => !prev);
+              setSelectedNotification(null); // Add this line
             }}
           >
             <div className="relative">
@@ -92,19 +105,58 @@ function Header() {
           {showNotifications && (
             <div className="absolute top-full mt-2 -right-44 lg:right-0 md:w-80 lg:w-103.5 z-50">
               <div className="bg-white rounded-2xl text-[#656565] shadow-xl border border-[#989898] shadow-[0_0_14px_rgba(0,0,0,0.25)] overflow-hidden">
-                <div className="max-h-[272px] overflow-y-auto custom-scrollbar">
-                  {notifications.map((notif, index) => (
-                    <div
-                      key={notif.id}
-                      className="px-4.5 py-3 border-b border-[#989898] last:border-b-0 hover:bg-orange-50 transition cursor-pointer flex justify-between items-center"
-                    >
+
+                {/* Notification List View */}
+                {!selectedNotification && (
+                  <div className="max-h-[272px] overflow-y-auto custom-scrollbar">
+                    {notifications.map((notif, index) => (
+                      <div
+                        key={notif.id}
+                        className="px-4.5 py-3 border-b border-[#989898] last:border-b-0 hover:bg-orange-50 transition cursor-pointer flex justify-between items-center"
+                        onClick={() => handleNotificationClick(notif)}
+                      >
+                        <div>
+                          <p className="">{notif.title}</p>
+                          <p className="text-xs mt-1">{notif.message}</p>
+                        </div>
+                        <img src={arrowRightOrange} alt="Not Found" className='w-6 h-6' />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Notification Detail View */}
+                {selectedNotification && (
+                  <div>
+                    <div className="flex items-center gap-1 border-b border-[#BDBDBD]">
+                      <button
+                        onClick={handleBackToList}
+                        className="py-4 pl-4"
+                      >
+                        <img src={ArrowleftGrey} alt="Not Found" className='w-6 h-6 cursor-pointer' />
+                      </button>
+                      <h3 className="text-xl font-medium text-[#3D3D3D]">Contact Request</h3>
+                    </div>
+
+                    {/* User Details */}
+                    <div className="space-y-4 px-4 pt-4 pb-9">
                       <div>
-                        <p className="">{notif.title}</p>
-                        <p className="text-xs mt-1">{notif.message}</p>
+                        <label className="text-[#656565]">Name</label>
+                        <p className="text-lg mt-1 text-[#3D3D3D]">{selectedNotification.userName || selectedNotification.name || 'N/A'}</p>
+                      </div>
+
+                      <div>
+                        <label className="text-[#656565]">Mobile no.</label>
+                        <p className="text-lg mt-1 text-[#3D3D3D]">{selectedNotification.mobile || selectedNotification.phone || 'N/A'}</p>
+                      </div>
+
+                      <div>
+                        <label className="text-[#656565]">Email</label>
+                        <p className="text-lg mt-1 text-[#3D3D3D]">{selectedNotification.email || 'N/A'}</p>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
