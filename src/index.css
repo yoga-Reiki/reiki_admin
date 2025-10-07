@@ -62,17 +62,4 @@ code {
   font-weight: 500;
 }
 
-/* In your CSS file */
-.dashed-border-big {
-  border: 1px dashed transparent;
-  background-image: linear-gradient(to right, currentColor 10px, transparent 5px),
-                    linear-gradient(to left, currentColor 10px, transparent 5px),
-                    linear-gradient(to top, currentColor 10px, transparent 5px),
-                    linear-gradient(to bottom, currentColor 10px, transparent 5px);
-  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
-  background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
-  background-position: top, bottom, left, right;
-}
-
-
 

@@ -1,15 +1,12 @@
 import React, { useRef, useState } from "react";
-import { MdOutlineClose } from "react-icons/md";
-import { IoIosArrowRoundForward } from "react-icons/io";
 import UploadIcon from "../../assets/svg/UploadIcon.svg";
 import SuccsessModel from "../component/SuccsessModel";
 import { getAddProduct } from "../../services/productServices";
 import toast from "react-hot-toast";
-import { Editor } from "@tinymce/tinymce-react";
-import { FiUploadCloud } from "react-icons/fi";
 
 function AddProduct({ onClose, fetchProduct }) {
-    const fileInputRef = useRef(null);
+    const coverFileInputRef = useRef(null);
+    const detailFileInputRef = useRef(null);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         title: "",
@@ -28,7 +25,10 @@ function AddProduct({ onClose, fetchProduct }) {
         detail: "",
     });
     const [errors, setErrors] = useState({});
-    const [isDragging, setIsDragging] = useState(false);
+    const [isDragging, setIsDragging] = useState({
+        cover: false,
+        detail: false,
+    });
     const [step, setStep] = useState(1);
     const [showSuccess, setShowSuccess] = useState(false);
 
@@ -64,38 +64,28 @@ function AddProduct({ onClose, fetchProduct }) {
     const validateForm = () => {
         const newErrors = {};
 
-        if (step === 1) {
-            if (!formData.title.trim()) newErrors.title = "Title is required.";
-            if (!formData.chip1?.trim()) newErrors.chip1 = "Chip 1 title is required.";
-            if (!formData.chip2?.trim()) newErrors.chip2 = "Chip 2 title is required.";
-            if (!formData.summary.trim()) newErrors.summary = "Content is required.";
-            if (!images.cover) newErrors.cover = "Product section image is required.";
-        } else if (step === 2) {
-            if (!formData.content1?.trim()) newErrors.content1 = "Content is required.";
-            if (!formData.specifications?.trim()) newErrors.specifications = "Specifications are required.";
-            if (!images.detail) newErrors.detail = "Blog section image is required.";
-            if (!formData.priceNew.trim()) {
-                newErrors.priceNew = "New Pricing is required.";
-            } else if (isNaN(formData.priceNew)) {
-                newErrors.priceNew = "New Pricing must be a number.";
-            }
-            if (!formData.priceOld.trim()) {
-                newErrors.priceOld = "Old Pricing is required.";
-            } else if (isNaN(formData.priceOld)) {
-                newErrors.priceOld = "Old Pricing must be a number.";
-            }
-            if (!formData.shippingDetails.trim()) newErrors.shippingDetails = "Shipping details are required.";
+        if (!formData.title.trim()) newErrors.title = "Title is required.";
+        if (!formData.chip1?.trim()) newErrors.chip1 = "Chip 1 title is required.";
+        if (!formData.chip2?.trim()) newErrors.chip2 = "Chip 2 title is required.";
+        if (!formData.summary.trim()) newErrors.summary = "Content is required.";
+        if (!images.cover) newErrors.cover = "Product section image is required.";
+        if (!formData.content1?.trim()) newErrors.content1 = "Content is required.";
+        if (!formData.specifications?.trim()) newErrors.specifications = "Specifications are required.";
+        if (!images.detail) newErrors.detail = "Blog section image is required.";
+        if (!formData.priceNew.trim()) {
+            newErrors.priceNew = "New Pricing is required.";
+        } else if (isNaN(formData.priceNew)) {
+            newErrors.priceNew = "New Pricing must be a number.";
         }
+        if (!formData.priceOld.trim()) {
+            newErrors.priceOld = "Old Pricing is required.";
+        } else if (isNaN(formData.priceOld)) {
+            newErrors.priceOld = "Old Pricing must be a number.";
+        }
+        if (!formData.shippingDetails.trim()) newErrors.shippingDetails = "Shipping details are required.";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
-    };
-
-    // Next button handler
-    const handleNext = (e) => {
-        e.preventDefault();
-        if (!validateForm()) return;
-        setStep(2);
     };
 
     // Submit button handler
@@ -125,7 +115,6 @@ function AddProduct({ onClose, fetchProduct }) {
 
     return (
         <div>
-            {/* Success Modal */}
             {showSuccess ? (
                 <SuccsessModel
                     onClose={() => {
@@ -135,149 +124,168 @@ function AddProduct({ onClose, fetchProduct }) {
                     showSuccessProduct={showSuccess}
                 />
             ) : (
-                <div className="fixed inset-0 flex justify-center items-center bg-black/40 z-50 text-[#464646] p-6">
-                    <div className="bg-white w-full mx-4 sm:mx-6 md:mx-8 lg:mx-0 p-5 max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-[971px] flex flex-col justify-between gap-5.5 border-t-2 border-t-[#EA7913] rounded-3xl">
-                        <div className="flex justify-between items-center px-3 py-4">
-                            <h2 className="text-[32px] font-Raleway Raleway-medium">Add Product</h2>
-                            <button
-                                onClick={onClose}
-                                className="text-[#EA7913] border border-[#989898] cursor-pointer p-4 rounded-full"
-                            >
-                                <MdOutlineClose size={16} />
-                            </button>
-                        </div>
+                <div className='text-[#464646] flex flex-col gap-2'>
+                    <div className="p-3">
+                        <h2 className="text-[32px] font-Raleway Raleway-medium text-[#656565]">
+                            <span onClick={onClose} className="cursor-pointer">
+                                Products
+                            </span>{" "}
+                            &gt;{" "}
+                            <span className="text-[#464646]">
+                                Add Product
+                            </span>
+                        </h2>
+                        <p className="pt-1 text-[#656565]">Add new product and its details</p>
+                    </div>
 
-                        <form className="flex flex-col gap-5.5">
-                            {step === 1 ? (
-                                <div className="space-y-2.5">
-                                    <div>
-                                        <label className="block text-lg mb-1">Title</label>
-                                        <input
-                                            type="text"
-                                            name="title"
-                                            value={formData?.title}
-                                            onChange={handleChange}
-                                            placeholder="Enter your Title"
-                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 text-[#525252] placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
-                                        />
-                                        {errors?.title && (
-                                            <p className="text-red-500 text-sm mt-1">{errors?.title}</p>
-                                        )}
-                                    </div>
+                    <div className="flex justify-center items-center text-[#464646] px-3">
+                        <div className="bg-white w-full p-6 flex flex-col justify-between gap-8 rounded-3xl">
+                            <div>
+                                <h2 className="text-[32px] font-Raleway Raleway-medium">Add Product</h2>
+                            </div>
 
-                                    {/* Content + Image */}
-                                    <div className="grid grid-cols-2 gap-x-4.5">
-                                        <div>
+                            <form>
+                                <div className="space-y-8 w-full">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6">
+                                        <div className="space-y-4.5">
+                                            {["title", "chip1", "chip2"].map((f, i) => (
+                                                <div key={f}>
+                                                    <label className="text-[#292929] block mb-1">{f.charAt(0).toUpperCase() + f.slice(1)}</label>
+                                                    <input
+                                                        type="text"
+                                                        name={f}
+                                                        value={formData[f]}
+                                                        onChange={handleChange}
+                                                        placeholder={`Enter ${f}`}
+                                                        className="w-full h-11 border border-[#BDBDBD] rounded-full px-4.5 py-2.5 text-[#525252] placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                                    />
+                                                    {errors[f] && <p className="text-red-500 text-sm mt-1">{errors[f]}</p>}
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <div className="h-[252px]">
                                             <label className="block text-lg mb-1">Content</label>
                                             <textarea
                                                 name="summary"
                                                 value={formData.summary}
                                                 onChange={handleChange}
                                                 placeholder="Enter Your Content"
-                                                className="w-full h-[120px] border border-[#BDBDBD] rounded-xl px-4 py-3 text-[#525252] placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                                className="w-full h-[220px] border border-[#BDBDBD] rounded-2xl px-4 py-3 text-[#525252] placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
                                             />
                                             {errors.summary && <p className="text-red-500 text-sm mt-1">{errors.summary}</p>}
                                         </div>
+                                    </div>
 
-                                        {/* Image Upload */}
-                                        <div>
-                                            <label className="block text-lg mb-1">Upload Image - Product Section</label>
-                                            <div
-                                                className={`flex flex-col items-center justify-center h-[120px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
-                                                    }`}
-                                                onDragOver={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    setIsDragging(true);
-                                                }}
-                                                onDragLeave={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    setIsDragging(false);
-                                                }}
-                                                onDrop={(e) => handleDrop(e, "cover")}
-                                                onClick={() => fileInputRef.current?.click()}
-                                            >
-                                                {images.cover ? (
-                                                    <div className="flex flex-col items-center gap-1 text-[#525252]">
-                                                        <FiUploadCloud size={20} className="text-[#EA7913]" />
-                                                        <span className="font-medium">{images.cover.name}</span>
-                                                        <span>Click Here to Change Image</span>
-                                                    </div>
-                                                ) : (
-                                                    <div className="flex flex-col items-center gap-2 px-12 text-[#525252]">
-                                                        <FiUploadCloud size={20} className="text-[#EA7913]" />
-                                                        <span>Upload Image or Drag & drop here</span>
-                                                    </div>
-                                                )}
-                                                <input
-                                                    ref={fileInputRef}
-                                                    type="file"
-                                                    accept="image/*"
-                                                    className="hidden"
-                                                    onChange={(e) => handleFileChange(e, "cover")}
-                                                    onInput={(e) => handleFileChange(e, "cover")}
-                                                />
+                                    <div className="space-y-3">
+                                        <div className="flex flex-col lg:flex-row gap-6">
+                                            {/* --- COVER IMAGE UPLOAD --- */}
+                                            <div className="w-full">
+                                                <label className="block text-lg mb-1">Product Image</label>
+                                                <div
+                                                    className={`flex flex-col items-center justify-center h-[171px] border border-dashed rounded-xl cursor-pointer transition-all ${isDragging.cover ? "border-[#EA7913]" : "border-[#BDBDBD]"
+                                                        }`}
+                                                    onDragOver={(e) => {
+                                                        e.preventDefault();
+                                                        setIsDragging((prev) => ({ ...prev, cover: true }));
+                                                    }}
+                                                    onDragLeave={(e) => {
+                                                        e.preventDefault();
+                                                        setIsDragging((prev) => ({ ...prev, cover: false }));
+                                                    }}
+                                                    onDrop={(e) => handleDrop(e, "cover")}
+                                                    onClick={() => coverFileInputRef.current?.click()}
+                                                >
+                                                    <img src={UploadIcon} alt="Upload" className="h-12 w-12 mb-3" />
+                                                    {images.cover ? (
+                                                        <div className="text-[#525252]">
+                                                            <span className="font-medium">{images.cover.name}</span>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="px-12 text-[#525252]">
+                                                            <span>Drag & drop file here or Choose file</span>
+                                                        </div>
+                                                    )}
+                                                    <input
+                                                        ref={coverFileInputRef}
+                                                        type="file"
+                                                        accept="image/*"
+                                                        className="hidden"
+                                                        onChange={(e) => handleFileChange(e, "cover")}
+                                                    />
+                                                </div>
+                                                <div
+                                                    className={`flex items-center ${errors.cover ? "justify-between" : "justify-end"
+                                                        }`}
+                                                >
+                                                    {errors.cover && (
+                                                        <p className="text-red-500 text-sm mt-1">{errors.cover}</p>
+                                                    )}
+                                                    <p className="text-[#656565] text-xs pt-1">Max size : 25 MB</p>
+                                                </div>
                                             </div>
-                                            {errors.cover && <p className="text-red-500 text-sm mt-1">{errors.cover}</p>}
+
+                                            {/* --- DETAIL IMAGE UPLOAD --- */}
+                                            <div className="w-full">
+                                                <label className="block text-lg mb-1">Product Detail Image</label>
+                                                <div
+                                                    className={`flex flex-col items-center justify-center h-[171px] border border-dashed rounded-xl cursor-pointer transition-all ${isDragging.detail ? "border-[#EA7913]" : "border-[#BDBDBD]"
+                                                        }`}
+                                                    onDragOver={(e) => {
+                                                        e.preventDefault();
+                                                        setIsDragging((prev) => ({ ...prev, detail: true }));
+                                                    }}
+                                                    onDragLeave={(e) => {
+                                                        e.preventDefault();
+                                                        setIsDragging((prev) => ({ ...prev, detail: false }));
+                                                    }}
+                                                    onDrop={(e) => handleDrop(e, "detail")}
+                                                    onClick={() => detailFileInputRef.current?.click()}
+                                                >
+                                                    <img src={UploadIcon} alt="Upload" className="h-12 w-12 mb-3" />
+                                                    {images.detail ? (
+                                                        <div className="text-[#525252]">
+                                                            <span className="font-medium">{images.detail.name}</span>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="px-12 text-[#525252]">
+                                                            <span>Drag & drop file here or Choose file</span>
+                                                        </div>
+                                                    )}
+                                                    <input
+                                                        ref={detailFileInputRef}
+                                                        type="file"
+                                                        accept="image/*"
+                                                        className="hidden"
+                                                        onChange={(e) => handleFileChange(e, "detail")}
+                                                    />
+                                                </div>
+                                                <div
+                                                    className={`flex items-center ${errors.detail ? "justify-between" : "justify-end"
+                                                        }`}
+                                                >
+                                                    {errors.detail && (
+                                                        <p className="text-red-500 text-sm mt-1">{errors.detail}</p>
+                                                    )}
+                                                    <p className="text-[#656565] text-xs pt-1">Max size : 25 MB</p>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div>
-                                        <label className="block text-lg mb-1">Chip 1 </label>
-                                        <input
-                                            type="text"
-                                            name="chip1"
-                                            value={formData?.chip1}
-                                            onChange={handleChange}
-                                            placeholder="Enter your Title"
-                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 text-[#525252] placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
-                                        />
-                                        {errors?.chip1 && (
-                                            <p className="text-red-500 text-sm mt-1">{errors?.chip1}</p>
-                                        )}
-                                    </div>
-                                    <div className="pb-16.5">
-                                        <label className="block text-lg mb-1">Chip 2 </label>
-                                        <input
-                                            type="text"
-                                            name="chip2"
-                                            value={formData?.chip2}
-                                            onChange={handleChange}
-                                            placeholder="Enter your Title"
-                                            className="w-full border border-[#BDBDBD] rounded-xl px-4.5 py-2.5 text-[#525252] placeholder-[#525252] focus:outline-none focus:ring-0 focus:border-[#EA7913]"
-                                        />
-                                        {errors?.chip2 && (
-                                            <p className="text-red-500 text-sm mt-1">{errors?.chip2}</p>
-                                        )}
-                                    </div>
+                                        <div className="flex flex-col lg:flex-row gap-6">
+                                            <div className="w-full">
+                                                <label className="block text-lg mb-1">Product Detail Content</label>
+                                                <textarea
+                                                    name="content1"
+                                                    value={formData.content1}
+                                                    onChange={handleChange}
+                                                    placeholder="Enter Your Content"
+                                                    className="w-full h-[171px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                                />
+                                                {errors.content1 && <p className="text-red-500 text-sm mt-1">{errors.content1}</p>}
+                                            </div>
 
-                                    <div className="w-full relative inline-block rounded-full px-[4px] py-[3.5px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900]">
-                                        <button
-                                            type="button"
-                                            onClick={handleNext}
-                                            className="w-full flex justify-center items-center gap-2 cursor-pointer py-2 sm:py-[9.5px] bg-[#EA7913] text-white rounded-full font-medium shadow hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-sm sm:text-base"
-                                        >
-                                            <span>Next</span>
-                                            <IoIosArrowRoundForward size={28} />
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="grid grid-cols-2 gap-y-5.5 gap-x-4.5">
-                                    <div className="flex flex-col gap-4.5">
-                                        {/* <div>
-                                            <label className="block text-lg mb-1">Product Detail Content</label>
-                                            <textarea
-                                                name="content1"
-                                                value={formData.content1}
-                                                onChange={handleChange}
-                                                placeholder="Enter Your Content"
-                                                className="w-full h-[217px] border border-[#BDBDBD] rounded-xl px-4 py-3 placeholder-gray-500 resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
-                                            />
-                                            {errors.content1 && <p className="text-red-500 text-sm mt-1">{errors.content1}</p>}
-                                        </div> */}
-                                        <div>
+                                            {/* <div>
                                             <label className="block text-lg mb-1">Product Detail Content</label>
                                             <Editor
                                                 apiKey="w0h75l9p91ijk4a35sioyvhphj294qox82aq9wntohg9iees"
@@ -307,57 +315,56 @@ function AddProduct({ onClose, fetchProduct }) {
                                                 }}
                                             />
                                             {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
+                                            </div> */}
+                                            <div className="w-full">
+                                                <label className="block text-lg mb-1">Specifications</label>
+                                                <textarea
+                                                    name="specifications"
+                                                    value={formData.specifications}
+                                                    onChange={handleChange}
+                                                    placeholder="Enter Your Specifications"
+                                                    className="w-full h-[171px] border border-[#BDBDBD] rounded-xl px-4 py-3 text-[#525252] placeholder-[#525252] resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
+                                                />
+                                                {errors.specifications && <p className="text-red-500 text-sm mt-1">{errors.specifications}</p>}
+                                            </div>
                                         </div>
 
-                                        <div>
-                                            <label className="block text-lg mb-1">Specifications</label>
-                                            <textarea
-                                                name="specifications"
-                                                value={formData.specifications}
-                                                onChange={handleChange}
-                                                placeholder="Enter Your Specifications"
-                                                className="w-full h-[217px] border border-[#BDBDBD] rounded-xl px-4 py-3 text-[#525252] placeholder-[#525252] resize-none focus:outline-none focus:ring-0 focus:border-[#EA7913]"
-                                            />
-                                            {errors.specifications && <p className="text-red-500 text-sm mt-1">{errors.specifications}</p>}
-                                        </div>
-                                    </div>
+                                        <div className="flex flex-col lg:flex-row gap-6">
+                                            <div className="w-full">
+                                                <label className="block text-lg mb-1">New Pricing</label>
+                                                <input
+                                                    type="text"
+                                                    name="priceNew"
+                                                    value={formData.priceNew}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value;
+                                                        if (/^\d*$/.test(val)) {
+                                                            handleChange(e);
+                                                        }
+                                                    }}
+                                                    placeholder="Enter Your New Pricing"
+                                                    className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-full text-[#525252] placeholder-[#525252] px-4.5 py-2.5"
+                                                />
+                                                {errors.priceNew && <p className="text-red-500 text-sm mt-1">{errors.priceNew}</p>}
+                                            </div>
 
-                                    {/* Right Section */}
-                                    <div className="flex flex-col gap-6">
-                                        <div>
-                                            <label className="block text-lg mb-1">New Pricing</label>
-                                            <input
-                                                type="text"
-                                                name="priceNew"
-                                                value={formData.priceNew}
-                                                onChange={(e) => {
-                                                    const val = e.target.value;
-                                                    if (/^\d*$/.test(val)) {
-                                                        handleChange(e);
-                                                    }
-                                                }}
-                                                placeholder="Enter Your New Pricing"
-                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl text-[#525252] placeholder-[#525252] px-4.5 py-2.5"
-                                            />
-                                            {errors.priceNew && <p className="text-red-500 text-sm mt-1">{errors.priceNew}</p>}
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-lg mb-1">Old Pricing</label>
-                                            <input
-                                                type="text"
-                                                name="priceOld"
-                                                value={formData.priceOld}
-                                                onChange={(e) => {
-                                                    const val = e.target.value;
-                                                    if (/^\d*$/.test(val)) {
-                                                        handleChange(e);
-                                                    }
-                                                }}
-                                                placeholder="Enter Your Old Pricing"
-                                                className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-xl text-[#525252] placeholder-[#525252] px-4.5 py-2.5"
-                                            />
-                                            {errors.priceOld && <p className="text-red-500 text-sm mt-1">{errors.priceOld}</p>}
+                                            <div className="w-full">
+                                                <label className="block text-lg mb-1">Old Pricing</label>
+                                                <input
+                                                    type="text"
+                                                    name="priceOld"
+                                                    value={formData.priceOld}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value;
+                                                        if (/^\d*$/.test(val)) {
+                                                            handleChange(e);
+                                                        }
+                                                    }}
+                                                    placeholder="Enter Your Old Pricing"
+                                                    className="w-full border border-[#BDBDBD] focus:outline-none focus:ring-0 focus:border-[#EA7913] rounded-full text-[#525252] placeholder-[#525252] px-4.5 py-2.5"
+                                                />
+                                                {errors.priceOld && <p className="text-red-500 text-sm mt-1">{errors.priceOld}</p>}
+                                            </div>
                                         </div>
 
                                         <div>
@@ -372,74 +379,36 @@ function AddProduct({ onClose, fetchProduct }) {
                                             />
                                             {errors.shippingDetails && <p className="text-red-500 text-sm mt-1">{errors.shippingDetails}</p>}
                                         </div>
-
-                                        <div>
-                                            <label className="block text-lg mb-1">Image for Blog Section</label>
-                                            <div
-                                                className={`flex flex-col items-center justify-center h-[212px] border rounded-xl cursor-pointer bg-[#FCFCFC] ${isDragging ? "border-dashed border-[#EA7913] bg-[#FEF8EC]" : "border-[#BDBDBD]"
-                                                    }`}
-                                                onDragOver={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    setIsDragging(true);
-                                                }}
-                                                onDragLeave={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    setIsDragging(false);
-                                                }}
-                                                onDrop={(e) => handleDrop(e, "detail")}
-                                                onClick={() => fileInputRef.current?.click()}
-                                            >
-                                                {images.detail ? (
-                                                    <div className="flex flex-col items-center gap-1 text-[#525252]">
-                                                        <FiUploadCloud size={20} className="text-[#EA7913]" />
-                                                        <span className="font-medium">{images.detail.name}</span>
-                                                        <span>Click Here to Change Image</span>
-                                                    </div>
-                                                ) : (
-                                                    <div className="flex flex-col items-center gap-2 px-12 text-[#525252]">
-                                                        <FiUploadCloud size={20} className="text-[#EA7913]" />
-                                                        <span>Upload Image Here</span>
-                                                    </div>
-                                                )}
-
-                                                <input
-                                                    ref={fileInputRef}
-                                                    type="file"
-                                                    accept="image/*"
-                                                    className="hidden"
-                                                    onChange={(e) => handleFileChange(e, "detail")}
-                                                    onInput={(e) => handleFileChange(e, "detail")}
-                                                />
-                                            </div>
-                                            {errors.detail && <p className="text-red-500 text-sm mt-1">{errors.detail}</p>}
-                                        </div>
                                     </div>
 
                                     {/* Confirm Submit button */}
-                                    <div className="col-span-2 pt-8.5">
-                                        <div className="w-full relative inline-block rounded-full px-[5px] py-[3px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
+                                    <div className="flex justify-end gap-2 h-12">
+                                        <div>
                                             <button
-                                                type="submit"
-                                                onClick={(e) => handleConfirmSubmit(e)}
-                                                className="w-full h-full inline-flex justify-center items-center space-x-1.5 py-2 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
+                                                className="w-full bg-[#FCEAC9] text-[#656565] px-6 py-3 rounded-full hover:bg-[#FCEAC2] cursor-pointer"
+                                                onClick={onClose}
                                             >
-                                                {loading ? (<span>Submitting...</span>) : (
-                                                    <>
-                                                        <span>Submit</span>
-                                                        <IoIosArrowRoundForward size={28} />
-                                                    </>
-                                                )}
-
+                                                Cancel
                                             </button>
+                                        </div>
+                                        <div>
+                                            <div className="w-full relative inline-block rounded-full p-[1px] bg-gradient-to-r from-[#FF7900] via-[#EAD3BE] to-[#FF7900] hover:from-[#F39C2C] hover:via-[#F39C2C] hover:to-[#F39C2C] active:from-[#EA7913] active:via-[#EA7913] active:to-[#EA7913]">
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => handleConfirmSubmit(e)}
+                                                    className="w-full h-full inline-flex justify-center items-center space-x-1.5 px-6 py-3 bg-[#EA7913] text-[#F8F8F8] rounded-full font-medium hover:cursor-pointer hover:bg-[#F39C2C] active:bg-[#EA7913] transition text-base"
+                                                >
+                                                    {loading ? "Uploading..." : "Save"}
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            )}
-                        </form>
-                    </div>
-                </div >
+
+                            </form>
+                        </div>
+                    </div >
+                </div>
             )
             }
         </div >

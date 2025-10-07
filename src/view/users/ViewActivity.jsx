@@ -72,42 +72,44 @@ function ViewActivity({ viewUser, setViewUser }) {
 
     return (
         <div className="text-[#464646] pt-2">
-            <div className="flex items-center space-x-6 text-sm text-gray-600 mb-6 px-3 py-4 cursor-pointer">
-                <div className='p-2' onClick={() => setViewUser(null)}>
-                    <img src={leftBackIcon} alt='Not Found' className='w-5 h-5' />
-                </div>
-
-                <div className='flex items-center'>
-                    <button
-                        onClick={() => setViewUser(null)}
-                        className="flex items-center text-3xl gap-1 transition font-Raleway Raleway-medium"
-                    >
-                        <span className='hover:text-[#EA7913] cursor-pointer text-[32px]'>User Management</span> <span className="mx-2">{">"}</span>
-                    </button>
-                    <button className="text-[#656565] text-2xl mt-1 font-Raleway Raleway-medium">View Activity</button>
-                </div>
+            <div className="mb-2 p-3">
+                <h2 className="text-[32px] font-Raleway Raleway-medium text-[#656565]">
+                    <span onClick={() => setViewUser(null)} className="cursor-pointer">
+                        User Management
+                    </span>{" "}
+                    &gt;{" "}
+                    <span className="text-[#464646]">
+                        View Activity
+                    </span>
+                </h2>
+                <p className="pt-1 text-[#656565]">Manage all your users</p>
             </div>
 
-            <div className="bg-white border-t border-t-[#EA7913] rounded-3xl px-8 pt-8 pb-12.5 max-w-[863px] mt-8 mx-auto">
-                <h2 className="text-[32px] text-[#3D3D3D] mb-5.5 font-Raleway Raleway-medium">View Activity</h2>
+            <div className="bg-white rounded-3xl p-6">
+                <h2 className="text-[32px] text-[#3D3D3D] mb-8 font-Raleway Raleway-medium">View Activity</h2>
 
                 <div className='flex flex-col gap-8'>
-                    {/* User Name */}
-                    <div className="flex items-center w-full p-1 rounded-2xl overflow-hidden bg-gradient-to-r from-[#FCEAC9] to-[#EA7913]">
-                        <div className="flex items-center gap-2 px-4 py-2 text-lg text-[#464646] font-medium">
-                            <img src={UserIcon} alt='Not Found' className='w-5 h-5' /> Name
+                    <div className="flex gap-24">
+                        <div className="flex items-start space-x-4">
+                            <div className="w-[1px] bg-[#EA7913] h-full"></div>
+                            <div className="flex flex-col gap-2">
+                                <span className="text-lg text-[#656565]">Name</span>
+                                <span className="text-xl text-[#3D3D3D]">{viewUser.name}</span>
+                            </div>
                         </div>
-                        <input
-                            type="text"
-                            readOnly
-                            value={viewUser.name}
-                            className="flex-1 px-4 py-2 bg-[#FFFFFF] rounded-xl outline-none border-0"
-                        />
+
+                        <div className="flex items-start space-x-4">
+                            <div className="w-[1px] bg-[#EA7913] h-full"></div>
+                            <div className="flex flex-col gap-2">
+                                <span className="text-lg text-[#656565]">Mobile Number</span>
+                                <span className="text-xl text-[#3D3D3D]">+91 {viewUser.mobileNumber}</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className='flex flex-col gap-7'>
-                        <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
-                            <p className='text-[#525252] text-lg'>Activities</p>
+                    <div className='flex flex-col gap-4'>
+                        <div className='flex items-center justify-between gap-4'>
+                            <p className='text-[#525252] text-lg'>Course List</p>
 
                             {/* Custom Dropdown */}
                             <div className="relative">
@@ -143,50 +145,38 @@ function ViewActivity({ viewUser, setViewUser }) {
                         </div>
 
                         {/* Table */}
-                        <div className="overflow-x-auto w-full">
-                            <table className="w-full table-auto">
-                                <thead>
-                                    <tr className="dm-sans-medium grid grid-cols-4 bg-[#FCEAC9] text-left text-base text-[#111111] rounded-t-2xl">
-                                        <th className='px-4 py-3'>Day</th>
-                                        <th className='px-4 py-3'>Date</th>
-                                        <th className='px-4 py-3'>Start Time</th>
-                                        <th className='px-4 py-3'>End Time</th>
+                        <div className="overflow-x-auto bg-white border border-[#BDBDBD] rounded-2xl">
+                            <table className="w-full border-collapse text-left text-[#464646] table-fixed">
+                                <thead className="bg-[#FFF8EE] text-sm text-[#09090B] border-b border-[#D4D4D8]">
+                                    <tr>
+                                        <th className='px-4 py-3 font-medium'>Day</th>
+                                        <th className='px-4 py-3 font-medium'>Date</th>
+                                        <th className='px-4 py-3 font-medium'>Start Time</th>
+                                        <th className='px-4 py-3 font-medium'>End Time</th>
                                     </tr>
-                                </thead >
-
-                                <tbody className="dm-sans-regular flex flex-col gap-y-[1px] bg-[#FCEAC9] rounded-b-2xl overflow-hidden">
+                                </thead>
+                                <tbody className="text-sm">
                                     {loading ? (
                                         <tr>
-                                            <td colSpan="6" className="flex justify-center py-6">
-                                                Loading...
-                                            </td>
+                                            <td colSpan="4" className="text-center py-6">Loading...</td>
                                         </tr>
                                     ) : error ? (
                                         <tr>
-                                            <td colSpan="6" className="flex justify-center py-6 text-red-500">
-                                                {error}
-                                            </td>
+                                            <td colSpan="4" className="text-center py-6 text-red-500">{error}</td>
                                         </tr>
                                     ) : activity.length > 0 ? (
-                                        activity.map((data, index) => {
-                                            const isFirst = index === 0;
-                                            const isLast = index === activity.length - 1;
-                                            return (
-                                                <tr
-                                                    key={index}
-                                                    className={`grid grid-cols-4 items-center text-[#656565] bg-white border-b border-[#DCDCDC] text-sm ${isFirst ? 'rounded-t-xl border-y border-[#DCDCDC] shadow-[0_-2px_4px_rgba(0,0,0,0.05)]' : ''} ${isLast ? 'rounded-b-xl border-b-0' : ''}`}
-                                                >
-                                                    <td className="whitespace-pre-wrap px-4 py-7">{data?.day}</td>
-                                                    <td className="whitespace-pre-wrap px-4 py-7">{new Date(data.date).toLocaleDateString()}</td>
-                                                    <td className="whitespace-pre-wrap px-4 py-7">{new Date(data.startTime).toLocaleTimeString()}</td>
-                                                    <td className="whitespace-pre-wrap px-4 py-7">{new Date(data.endTime).toLocaleTimeString()}</td>
-                                                </tr>
-                                            )
-                                        })
+                                        activity.map((Data, index) => (
+                                            <tr key={index} className="border-b border-[#D4D4D8] last:border-b-0 transition h-11">
+                                                <td className="px-4 whitespace-pre-wrap">{Data?.day}</td>
+                                                <td className="px-4 whitespace-pre-wrap">{new Date(Data.date).toLocaleDateString()}</td>
+                                                <td className="px-4 whitespace-pre-wrap">{new Date(Data.startTime).toLocaleTimeString()}</td>
+                                                <td className="px-4 whitespace-pre-wrap">{new Date(Data.endTime).toLocaleTimeString()}</td>
+                                            </tr>
+                                        ))
                                     ) : (
                                         <tr>
-                                            <td colSpan="6" className="flex justify-center py-6">
-                                                No users found
+                                            <td colSpan="5" className="text-center py-6 text-[#9B9B9B]">
+                                                No Course added
                                             </td>
                                         </tr>
                                     )}

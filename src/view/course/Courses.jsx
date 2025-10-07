@@ -61,6 +61,16 @@ function Courses() {
         <div>
             {isEditingCard ? (
                 <EditCourseSec selectedCourse={selectedCourse} onCancel={() => setIsEditingCard(false)} fetchCourse={fetchCourse} />
+            ) : addCourse ? (
+                <AddCourse
+                    addCourse={addCourse}
+                    onClose={() => setAddCourse(null)}
+                    onConfirm={() => {
+                        console.log("Blocked:", addCourse.name);
+                        setAddCourse(null);
+                    }}
+                    fetchCourse={fetchCourse}
+                />
             ) : (
                 <div className="text-[#464646] flex flex-col gap-2">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-3">
@@ -75,20 +85,6 @@ function Courses() {
                     </div>
 
                     <CourseCard loading={loading} setIsEditingCard={setIsEditingCard} setSelectedCourse={setSelectedCourse} coursesData={coursesData} setCoursesDelete={setCoursesDelete} />
-
-                    <CourseSection loading={loading} coursesData={coursesData} />
-
-                    {addCourse && (
-                        <AddCourse
-                            addCourse={addCourse}
-                            onClose={() => setAddCourse(null)}
-                            onConfirm={() => {
-                                console.log("Blocked:", addCourse.name);
-                                setAddCourse(null);
-                            }}
-                            fetchCourse={fetchCourse}
-                        />
-                    )}
 
                     {coursesDelete && (
                         <DeleteModel courseLoading={loading} onCancel={() => setCoursesDelete(null)} onConfirmCourse={confirmDelete} />

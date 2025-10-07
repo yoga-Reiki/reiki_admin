@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { MdOutlineClose } from "react-icons/md";
 import successIcon from "../../assets/img/success.png";
 
-function SuccsessModel({ onClose, showSuccessTestimonails, showSuccessBlog, showSuccessCourse, showSuccessProduct }) {
+function SuccsessModel({ onClose, showSuccessTestimonails, showSuccessBlog, showSuccessCourse, showSuccessProduct, showSuccessCourseEdit, showSuccessProductEdit }) {
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -20,7 +20,9 @@ function SuccsessModel({ onClose, showSuccessTestimonails, showSuccessBlog, show
 
                     <div>
                         <p className="text-[#464646]">{showSuccessTestimonails ? "Testimonial Added Successfully"
-                            : showSuccessBlog ? "Blog has been successfully added." : showSuccessCourse ? "Course has been successfully added." : showSuccessProduct && "Product has been successfully added."}</p>
+                            : showSuccessBlog ? "Blog has been successfully added." : showSuccessCourse ? "Course has been successfully added."
+                                : showSuccessCourseEdit ? "Course details change successfully" : showSuccessProduct ? "Product has been successfully added."
+                                    : showSuccessProductEdit && "Product details change successfully"}</p>
                     </div>
                 </div>
 
