@@ -23,15 +23,9 @@ function Blog() {
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
-        if (!hasFetched.current) {
+        if (!hasFetched.current || searchQuery === "") {
             fetchBlog();
             hasFetched.current = true;
-        }
-    }, []);
-
-    useEffect(() => {
-        if (searchQuery === "") {
-            fetchBlog();
         }
     }, [searchQuery]);
 

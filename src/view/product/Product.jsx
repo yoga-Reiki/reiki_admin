@@ -40,12 +40,6 @@ function Product() {
         }
     }, []);
 
-    useEffect(() => {
-        if (searchQuery === "") {
-            fetchProduct();
-        }
-    }, [searchQuery]);
-
     const fetchProduct = async () => {
         setLoading(true);
         try {
@@ -54,7 +48,7 @@ function Product() {
                 pageSize: pagination.pageSize,
                 query: searchQuery,
             });
-
+            toast.success("Product fetched successfully!")
             setProductData(response?.data?.items || []);
             setPagination((prev) => ({
                 ...prev,

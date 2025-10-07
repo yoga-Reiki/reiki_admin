@@ -16,6 +16,26 @@ export async function getAllUser({ page: page, pageSize: pageSize }) {
     }
 }
 
+// update user 
+export async function getUserUpdate({ userId, formData }) {
+    try {
+        const response = await axios.put(
+            `${process.env.REACT_APP_URL}/users/${userId}`,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("admin_accessToken")}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+
 // user block 
 export async function getUserAccess({ userId }) {
     try {
@@ -53,7 +73,7 @@ export async function getCourseEditAccess({ body }) {
 }
 
 // get course Activity 
-export async function getCourseActivity({userId, courseId}) {
+export async function getCourseActivity({ userId, courseId }) {
     try {
         const response = await axios.get(
             `${process.env.REACT_APP_URL}/courses/admin/${userId}/${courseId}/activity`,

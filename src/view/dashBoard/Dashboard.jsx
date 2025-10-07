@@ -26,6 +26,11 @@ function Dashboard() {
     pageSize: 10,
     totalUsers: 0,
   });
+  const [activeTab, setActiveTab] = useState("Pending");
+  const [dateFilter, setDateFilter] = useState("Today");
+  const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
+  const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -161,7 +166,7 @@ function Dashboard() {
         </div>
       </div>
 
-      <DashboardTable dashboardData={dashboardData?.users} loading={loading} error={error} pagination={pagination} setPagination={setPagination} />
+      <DashboardTable fetchUsers={fetchUsers} searchTerm={searchTerm} setSearchTerm={setSearchTerm} setStatusDropdownOpen={setStatusDropdownOpen} statusDropdownOpen={statusDropdownOpen} setDateDropdownOpen={setDateDropdownOpen} dateDropdownOpen={dateDropdownOpen} setDateFilter={setDateFilter} dateFilter={dateFilter} setActiveTab={setActiveTab} activeTab={activeTab} dashboardData={dashboardData?.users} loading={loading} error={error} pagination={pagination} setPagination={setPagination} />
 
       {activePopup === "Courses" && <AddCourse onClose={handleClosePopup} />}
       {activePopup === "Products" && <AddProduct onClose={handleClosePopup} />}

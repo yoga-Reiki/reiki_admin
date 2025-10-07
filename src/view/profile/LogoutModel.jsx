@@ -1,22 +1,25 @@
 import React from 'react'
+import logoutImg from "../../assets/img/logoutImg.png"
 
-function LogoutModel({ handleLogout, setShowLogoutModal }) {
+function LogoutModel({ handleLogout, setCurrentScreenMain }) {
     return (
         <div>
-            <div className="fixed inset-0 bg-black/40 z-50 text-[#464646] flex justify-center items-center">
-                <div className="bg-white p-6 rounded-lg w-[90%] max-w-sm text-center">
-                    <h2 className="text-xl font-semibold mb-4">Confirm Logout</h2>
-                    <p className="mb-6">Are you sure you want to log out?</p>
-                    <div className="flex justify-between gap-4">
+            <div className="text-[#464646] flex justify-center items-center">
+                <div className="bg-white p-6 rounded-3xl w-[784px] flex flex-col gap-6">
+                    <p className="text-2xl text-[#656565]">Are you sure you want to log out?</p>
+                    <div className='flex justify-center items-center'>
+                        <img src={logoutImg} alt="Not Found" className='w-[264px] h-75' />
+                    </div>
+                    <div className="flex justify-end gap-2">
                         <button
-                            onClick={() => setShowLogoutModal(false)}
-                            className="flex-1 bg-gray-200 py-2 rounded-lg cursor-pointer"
+                            onClick={setCurrentScreenMain}
+                            className="bg-[#FEF8EC] border border-[#F9D38E] py-3 px-6 rounded-full cursor-pointer text-[#656565]"
                         >
                             Cancel
                         </button>
                         <button
                             onClick={handleLogout}
-                            className="flex-1 bg-[#EA7913] text-white py-2 rounded-lg cursor-pointer"
+                            className="bg-[#EA7913] text-white py-3 px-6 rounded-full cursor-pointer"
                         >
                             Log Out
                         </button>

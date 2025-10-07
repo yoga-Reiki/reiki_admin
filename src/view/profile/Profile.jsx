@@ -58,7 +58,12 @@ function Profile() {
     { label: 'Edit Profile', action: () => setCurrentScreen('edit') },
     { label: 'Change Password', action: () => setCurrentScreen('changePassword') },
     // { label: 'Account Activity', action: () => setCurrentScreen('accountActivity') },
-    { label: 'Log Out', action: () => setShowLogoutModal(true) },
+    {
+      label: 'Log Out', action: () => {
+        setCurrentScreen('logout')
+        setShowLogoutModal(true)
+      }
+    },
   ];
 
   return (
@@ -89,18 +94,21 @@ function Profile() {
         </>
       ) : currentScreen === 'edit' ? (
         <EditProfile ProfileData={ProfileData} setCurrentScreenMain={() => setCurrentScreen('main')} />
+      ) : currentScreen === 'logout' ? (
+        <LogoutModel handleLogout={handleLogout} setCurrentScreenMain={() => setCurrentScreen('main')} />
       ) : (
-      // currentScreen === 'changePassword' ? (
+        // currentScreen === 'changePassword' ? (
         <ChangePassword ProfileData={ProfileData} setCurrentScreenMain={() => setCurrentScreen('main')} />
       )}
-       {/* : (
+
+
+      {/* : (
         <AccountActivity setCurrentScreenMain={() => setCurrentScreen('main')} />
       )} */}
 
-      {/* Logout Confirmation Modal */}
-      {showLogoutModal && (
+      {/* {showLogoutModal && (
         <LogoutModel handleLogout={handleLogout} setShowLogoutModal={setShowLogoutModal} />
-      )}
+      )} */}
     </div>
   );
 }
