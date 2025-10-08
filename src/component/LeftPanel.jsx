@@ -57,7 +57,7 @@ function LeftPanel({ isCollapsed, setIsCollapsed }) {
             </div>
 
             {/* Menu Items */}
-            <div className='bg-white shadow-[4px_4px_12px_rgba(0,0,0,0.06)] rounded-2xl flex-1 p-5 space-y-3.5'>
+            <div className='bg-white shadow-[4px_4px_12px_rgba(0,0,0,0.06)] rounded-2xl flex-1 p-5 space-y-2 xl:space-y-3.5'>
                 {menuItems.map((item, index) => (
                     <NavLink
                         key={index}

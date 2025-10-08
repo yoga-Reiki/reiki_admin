@@ -1,26 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
-import arrowRightOrange from "../../assets/svg/arrowRightOrange.svg"
+import arrowRightOrange from "../../assets/svg/arrowRightOrange.svg";
 import EditProfile from './EditProfile';
 import ChangePassword from './ChangePassword';
-import AccountActivity from './AccountActivity';
+import LogoutModel from './LogoutModel';
 import toast from 'react-hot-toast';
 import { getProfileData } from '../../services/ProfileServices';
 import { userLogout } from '../../services/LoginServices';
 import { useNavigate } from 'react-router-dom';
-import LogoutModel from './LogoutModel';
 
 function Profile() {
   const navigate = useNavigate();
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [currentScreen, setCurrentScreen] = useState('main');
+  const [currentScreen, setCurrentScreen] = useState('edit');
   const hasFetched = useRef(false);
   const [loading, setLoading] = useState(false);
-  const [ProfileData, setProfileData] = useState([]);
+  const [profileData, setProfileData] = useState([]);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-
-  const handleToggleNotification = () => {
-    setNotificationsEnabled(!notificationsEnabled);
-  };
 
   useEffect(() => {
     if (!hasFetched.current) {
@@ -55,60 +49,68 @@ function Profile() {
   };
 
   const menuItems = [
-    { label: 'Edit Profile', action: () => setCurrentScreen('edit') },
-    { label: 'Change Password', action: () => setCurrentScreen('changePassword') },
-    // { label: 'Account Activity', action: () => setCurrentScreen('accountActivity') },
-    {
-      label: 'Log Out', action: () => {
-        setCurrentScreen('logout')
-        setShowLogoutModal(true)
-      }
-    },
+    { label: 'Edit Profile', key: 'edit' },
+    { label: 'Change Password', key: 'changePassword' },
+    // { label: 'Account Activity', key: 'accountActivity' },
+    { label: 'Log Out', key: 'logout' },
   ];
 
   return (
-    <div className="text-[#464646] p-3 flex flex-col gap-2">
-      {currentScreen === 'main' ? (
-        <>
-          <div className="mb-6">
-            <h1 className="text-[32px] font-Raleway Raleway-medium">Profile</h1>
-            <p className="text-[#656565] pt-1">Manage your profile</p>
-          </div>
+    <div>
+      <div className='px-3 pb-3 pt-5'>
+        <h1 className="text-3xl font-Raleway Raleway-medium text-[#464646]">Profile</h1>
+        <p className="text-[#888] text-sm mt-1">Manage your profile</p>
+      </div>
 
-          <div className="flex flex-col gap-3.5">
+      <div className="flex flex-col xl:flex-row gap-6 bg-[#FAFAFA] text-[#464646]">
+        <div className="w-full xl:w-54 rounded-xl px-4 flex flex-col gap-6">
+          <div className="flex flex-row xl:flex-col gap-1">
             {menuItems.map((item, index) => (
               <div
                 key={index}
-                className={`flex items-center justify-between bg-white p-6 rounded-lg cursor-pointer`}
-                onClick={item.action ? item.action : undefined}
+                onClick={() => {
+                  if (item.key === 'logout') {
+                    setShowLogoutModal(true);
+                  } else {
+                    setCurrentScreen(item.key);
+                  }
+                }}
+                className={`cursor-pointer py-3 px-6 text-[16px] font-medium 
+                ${currentScreen === item.key
+                    ? 'text-[#EA7913]'
+                    : 'text-[#464646]'
+                  } hover:text-[#EA7913] transition-all`}
               >
-                <span className="text-lg text-[#525252]">{item.label}</span>
-                {item.label === 'Log Out' ? (
-                  <p className='w-12 h-12'></p>
-                ) : (
-                  <img src={arrowRightOrange} alt="Not Found" />
-                )}
+                {item.label}
               </div>
             ))}
           </div>
-        </>
-      ) : currentScreen === 'edit' ? (
-        <EditProfile ProfileData={ProfileData} setCurrentScreenMain={() => setCurrentScreen('main')} />
-      ) : currentScreen === 'logout' ? (
-        <LogoutModel handleLogout={handleLogout} setCurrentScreenMain={() => setCurrentScreen('main')} />
-      ) : (
-        // currentScreen === 'changePassword' ? (
-        <ChangePassword ProfileData={ProfileData} setCurrentScreenMain={() => setCurrentScreen('main')} />
-      )}
+        </div>
 
+        {/* Right Content */}
+        <div className="w-[560px] bg-white rounded-3xl p-6 mx-3 xl:mx-0">
+          {currentScreen === 'edit' && (
+            <EditProfile
+              ProfileData={profileData}
+              setCurrentScreenMain={() => setCurrentScreen('main')}
+            />
+          )}
 
-      {/* : (
-        <AccountActivity setCurrentScreenMain={() => setCurrentScreen('main')} />
-      )} */}
+          {currentScreen === 'changePassword' && (
+            <ChangePassword
+              ProfileData={profileData}
+              setCurrentScreenMain={() => setCurrentScreen('main')}
+            />
+          )}
 
-      {/* {showLogoutModal && (
-        <LogoutModel handleLogout={handleLogout} setShowLogoutModal={setShowLogoutModal} />
-      )} */}
+          {showLogoutModal && (
+            <LogoutModel
+              handleLogout={handleLogout}
+              setShowLogoutModal={setShowLogoutModal}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }
