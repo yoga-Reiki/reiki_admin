@@ -70,7 +70,7 @@ function Profile() {
                 key={index}
                 onClick={() => {
                   if (item.key === 'logout') {
-                    setShowLogoutModal(true);
+                    setCurrentScreen('logout');
                   } else {
                     setCurrentScreen(item.key);
                   }
@@ -92,21 +92,21 @@ function Profile() {
           {currentScreen === 'edit' && (
             <EditProfile
               ProfileData={profileData}
-              setCurrentScreenMain={() => setCurrentScreen('main')}
+              setCurrentScreenMain={() => setCurrentScreen('edit')}
             />
           )}
 
           {currentScreen === 'changePassword' && (
             <ChangePassword
               ProfileData={profileData}
-              setCurrentScreenMain={() => setCurrentScreen('main')}
+              setCurrentScreenMain={() => setCurrentScreen('edit')}
             />
           )}
 
-          {showLogoutModal && (
+          {currentScreen === 'logout' && (
             <LogoutModel
               handleLogout={handleLogout}
-              setShowLogoutModal={setShowLogoutModal}
+              setCurrentScreenMain={() => setCurrentScreen('edit')}
             />
           )}
         </div>

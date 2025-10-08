@@ -4,14 +4,16 @@ import ResetPassword from './ResetPassword';
 import { userVerifyOtp } from '../../services/LoginServices';
 import toast from 'react-hot-toast';
 import { getUserUpdate } from '../../services/userServices';
+import SuccessProfile from './SuccessProfile';
 
-function OtpVerification({ setCurrentScreenMain, ProfileData, email, handleBackProfile, formData, fetchUserProfile, setInitialData, handleSaveDetails }) {
+function OtpVerification({ currentPassword, handleClose, ProfileData, email, handleBackProfile, formData, fetchUserProfile, setInitialData, handleSaveDetails }) {
     const [otp, setOtp] = useState(Array(6).fill(""));
     const [activeInput, setActiveInput] = useState(0);
     const [timer, setTimer] = useState(300);
     const [error, setError] = useState("");
     const inputRefs = useRef([]);
     const [resetPassShow, setResetPassShow] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
     const [resetToken, setResetToken] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -82,7 +84,11 @@ function OtpVerification({ setCurrentScreenMain, ProfileData, email, handleBackP
             const res = await userVerifyOtp({ body });
             if (res.success) {
                 setResetToken(res?.data?.resetToken);
-                setResetPassShow(true);
+                if (currentPassword) {
+                    setShowSuccess(true)
+                } else {
+                    setResetPassShow(true);
+                }
             } else {
                 setError(res.message || "OTP verification failed.");
                 toast.error(res.message || "OTP verification failed.");
@@ -130,6 +136,7 @@ function OtpVerification({ setCurrentScreenMain, ProfileData, email, handleBackP
                         await fetchUserProfile();
                     }
                     handleBackProfile()
+                    // setShowSuccess(true)
                     setInitialData(formData);
                 } catch (error) {
                     console.error(error);
@@ -153,16 +160,18 @@ function OtpVerification({ setCurrentScreenMain, ProfileData, email, handleBackP
     return (
         <div>
             {resetPassShow ? (
-                <ResetPassword resetToken={resetToken} setCurrentScreenMain={setCurrentScreenMain} ProfileData={ProfileData} otp={otp} />
+                <ResetPassword resetToken={resetToken} handleClose={handleClose} ProfileData={ProfileData} otp={otp} />
+            ) : showSuccess ? (
+                <SuccessProfile handleClose={handleClose} />
             ) : (
                 <div className='flex flex-col gap-6'>
                     <div className='text-[#656565] space-y-1'>
                         <h1 className="text-2xl font-Raleway Raleway-medium">Enter OTP</h1>
                         <p className='text-sm'>OTP has been send to {email}</p>
-                    </div>
+                    </div >
 
                     {/* OTP Section */}
-                    <div>
+                    < div >
                         <form onSubmit={verifyOtp ? verifyOtp : handleOTPVerifyUpdateProfile} className="flex flex-col gap-62">
                             <div className="flex flex-col gap-1">
                                 <label className="text-[#292929]">OTP</label>
@@ -195,8 +204,8 @@ function OtpVerification({ setCurrentScreenMain, ProfileData, email, handleBackP
                                         onClick={handleResendOtp}
                                         disabled={formatTime() !== "00:00"}
                                         className={`text-sm ${formatTime() === "00:00"
-                                                ? "text-[#333] cursor-pointer"
-                                                : "cursor-not-allowed"
+                                            ? "text-[#333] cursor-pointer"
+                                            : "cursor-not-allowed"
                                             }`}
                                     >
                                         {formatTime() === "00:00" ? "Resend OTP" : `Resend in ${formatTime()}`}
@@ -209,7 +218,7 @@ function OtpVerification({ setCurrentScreenMain, ProfileData, email, handleBackP
                                 <button
                                     type="button"
                                     className="bg-[#FCEAC9] text-[#656565] px-6 py-3 rounded-full hover:bg-[#FCEAC2] cursor-pointer"
-                                    onClick={handleBackProfile}
+                                    onClick={handleBackProfile ? handleBackProfile : handleClose}
                                 >
                                     Cancel
                                 </button>
@@ -224,10 +233,11 @@ function OtpVerification({ setCurrentScreenMain, ProfileData, email, handleBackP
                                 </div>
                             </div>
                         </form>
-                    </div>
-                </div>
-            )}
-        </div>
+                    </div >
+                </div >
+            )
+            }
+        </div >
     );
 }
 

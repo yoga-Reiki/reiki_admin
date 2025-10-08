@@ -5,7 +5,7 @@ function LogoutModel({ handleLogout, setCurrentScreenMain }) {
     return (
         <div>
             <div className="text-[#464646] flex justify-center items-center">
-                <div className="bg-white p-6 rounded-3xl w-[784px] flex flex-col gap-6">
+                <div className="bg-white rounded-3xl w-[784px] flex flex-col gap-6">
                     <p className="text-2xl text-[#656565]">Are you sure you want to log out?</p>
                     <div className='flex justify-center items-center'>
                         <img src={logoutImg} alt="Not Found" className='w-[264px] h-75' />

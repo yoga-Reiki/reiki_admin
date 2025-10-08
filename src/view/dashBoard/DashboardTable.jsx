@@ -93,8 +93,8 @@ function DashboardTable({ fetchUsers, searchTerm, setSearchTerm, statusDropdownO
                             <th className='px-4 py-3 font-medium'>Name</th>
                             <th className='px-4 py-3 font-medium'>Email</th>
                             <th className='px-4 py-3 font-medium'>Mobile Number</th>
-                            <th className='px-4 py-3 font-medium'>Address</th>
-                            <th className='px-4 py-3 font-medium'>Action</th>
+                            <th className='px-4 py-3 font-medium lg:w-64 xl:w-96'>Address</th>
+                            <th className='px-4 py-3 font-medium w-20'>Action</th>
                         </tr>
                     </thead>
                     <tbody className="text-sm">
