@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { Editor } from "@tinymce/tinymce-react";
 import SuccsessModel from "../component/SuccsessModel";
 
-function BlogForm({ selectedUser, setSelectedUser, fetchBlog }) {
+function BlogForm({ selectedUser, setSelectedUser, fetchBlog, onClose }) {
     const isEditMode = !!selectedUser?._id;
     const [formData, setFormData] = useState({
         title: "",
@@ -260,7 +260,7 @@ function BlogForm({ selectedUser, setSelectedUser, fetchBlog }) {
                 <div className="flex justify-end gap-2 h-12">
                     <button
                         className="bg-[#FCEAC9] text-[#656565] px-6 py-2.5 rounded-full hover:bg-[#FCEAC2] cursor-pointer"
-                        onClick={handleCancel}
+                        onClick={onClose ? onClose : handleCancel}
                     >
                         Cancel
                     </button>

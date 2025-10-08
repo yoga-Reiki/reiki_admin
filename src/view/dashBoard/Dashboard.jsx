@@ -1,15 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
-import AddIcon from "../../assets/svg/AddIcon.svg";
-import dropdownArrow from "../../assets/svg/dropdownArrow.svg";
-import UserIcon1 from "../../assets/svg/UserIcon1.svg";
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import plusIconGrey from "../../assets/svg/plusIconGrey.svg";
+import ArrowDownIcon from "../../assets/svg/ArrowDownIcon.svg";
+import Dashboard1 from "../../assets/svg/Dashboard1.svg";
+import DashboardOrder2 from "../../assets/svg/DashboardOrder2.svg"
+import DashboardCourse3 from "../../assets/svg/DashboardCourse3.svg"
+import DashboardProduct4 from "../../assets/svg/DashboardProduct4.svg"
 import DashboardTable from './DashboardTable';
-import fileIcon from "../../assets/svg/fileIcon.svg";
 import { getAllUser } from '../../services/userServices';
-import AddCourse from '../course/AddCourse';
 import AddProduct from '../product/AddProduct';
-import AddBlog from '../blog/AddBlog';
-import AddTestimonials from '../testimonails/AddTestimonials';
 import { getAllOrder } from '../../services/orderServices';
+import { getCoursesData } from '../../services/courseServices';
+import { useLocation } from 'react-router-dom';
+import { getProductData } from '../../services/productServices';
+import AddCourse from '../course/AddCourse';
+import BlogForm from '../blog/EditBlog';
+import TestimonialsEdit from '../testimonails/TestimonialsEdit';
 
 function Dashboard() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -17,6 +22,8 @@ function Dashboard() {
   const [activePopup, setActivePopup] = useState(null);
   const [dashboardData, setDashboardData] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [coursesData, setCoursesData] = useState([])
+  const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const hasFetched = useRef(false);
@@ -31,6 +38,8 @@ function Dashboard() {
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const location = useLocation()
+  const userId = useMemo(() => location.search.split("?selectedUserId=")?.[1], [location])
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -55,12 +64,16 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-    if (!hasFetched.current) {
-      fetchUsers();
-      fetchOrder()
-      hasFetched.current = true;
-    }
+    fetchUsers();
   }, [pagination.page]);
+
+  useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+    fetchOrder();
+    fetchCourse();
+    fetchProduct();
+  }, []);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -94,6 +107,33 @@ function Dashboard() {
     }
   };
 
+  const fetchCourse = async () => {
+    setLoading(true);
+    try {
+      const response = await getCoursesData({ userId });
+      setCoursesData(response?.data?.items || []);
+    } catch (err) {
+      console.error("Failed to fetch users");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchProduct = async () => {
+    setLoading(true);
+    try {
+      const response = await getProductData({
+        page: pagination.page,
+        pageSize: pagination.pageSize,
+      });
+      setProductData(response?.data?.items || []);
+    } catch (err) {
+      setError("Failed to fetch product");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleClosePopup = () => {
     setActivePopup(null);
     setActiveItem("");
@@ -112,25 +152,27 @@ function Dashboard() {
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={toggleDropdown}
-            className="bg-[#EA7913] flex items-center space-x-2 hover:bg-[#F39C2C] text-white px-6 py-3 rounded-full cursor-pointer"
+            className="h-12 bg-[#FEF8EC] flex items-center space-x-2 text-[#525252] border border-[#F9D38E] px-6 py-3 rounded-full cursor-pointer"
           >
-            <img src={AddIcon} alt="Add Icon" className="p-1.5" />
+            <img src={plusIconGrey} alt="Add Icon" />
             <span>Add</span>
-            <img src={dropdownArrow} alt="Dropdown Icon" className="p-1.5" />
+            <img src={ArrowDownIcon} alt="Dropdown Icon" />
           </button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-36 bg-white rounded-xl border border-[#BDBDBD] z-10 shadow-[0_2px_6px_rgba(234,121,19,0.3)]">
-              <ul className="py-2 px-4.5 text-sm text-[#555]">
+            // absolute z-20 p-2 space-y-1 mt-2 bg-white shadow-lg rounded-2xl w-full overflow-hidden border border-[#FCEAC9] cursor-pointer
+            <div className="absolute z-20 p-2 mt-2 bg-white shadow-lg rounded-2xl w-full overflow-hidden border border-[#FCEAC9] cursor-pointer">
+              <ul className="text-sm text-[#555] space-y-1">
                 {["Courses", "Products", "Blog", "Testimonials"].map((item, index) => (
                   <li
                     key={item}
                     onClick={() => handleItemClick(item)}
-                    className={`py-3 cursor-pointer text-center transition-colors duration-200 ${index !== 0 ? "border-t border-[#DCDCDC]" : ""
-                      } ${activeItem === item
-                        ? "text-[#EA7913] font-medium"
-                        : "hover:text-[#EA7913]"
-                      }`}
+                    className={`px-3 py-2 cursor-pointer rounded-lg hover:bg-[#FEF8EC] ${activeItem === item ? "text-[#292929] bg-[#FEF8EC] rounded-lg" : "text-[#656565]"}`}
+                  // className={`py-3 cursor-pointer text-center transition-colors duration-200 ${index !== 0 ? "border-t border-[#DCDCDC]" : ""
+                  //   } ${activeItem === item
+                  //     ? "text-[#EA7913] font-medium"
+                  //     : "hover:text-[#EA7913]"
+                  //   }`}
                   >
                     {item}
                   </li>
@@ -142,36 +184,85 @@ function Dashboard() {
       </div>
 
       {/* Stats Cards Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 px-3 py-2.5">
-        {/* Card 1 */}
-        <div className="flex justify-between items-center bg-white rounded-3xl border-l border-l-[#EA7913] shadow-[0_4px_6px_rgba(0,0,0,0.08)]">
-          <div className='py-[17px] px-8 w-full flex flex-col gap-1.5'>
-            <h2 className="text-[40px] text-[#525252] font-Raleway Raleway-medium">{dashboardData?.pagination?.total}</h2>
-            <p className="text-sm text-[#464646]">Total Users</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2 px-3 py-2.5">
+        {[
+          {
+            label: "Total Users",
+            value: dashboardData?.pagination?.total || 0,
+            icon: Dashboard1,
+          },
+          {
+            label: "Total Orders",
+            value: orders?.items?.length || 0,
+            icon: DashboardOrder2,
+          },
+          {
+            label: "Total Courses",
+            value: coursesData?.length || 0,
+            icon: DashboardCourse3,
+          },
+          {
+            label: "Total Products",
+            value: productData?.length || 0,
+            icon: DashboardProduct4,
+          },
+        ].map((card, index) => (
+          <div
+            key={index}
+            className="flex gap-6 justify-between items-center bg-white p-6 rounded-3xl hover:shadow-md transition-all duration-300"
+          >
+            <div>
+              <p className="text-sm text-[#464646]">{card.label}</p>
+              {loading ? (
+                <div >...</div>
+                // <div className="flex items-center mt-2">
+                //   <div className="w-5 h-5 border-2 border-[#F9D38E] border-t-[#EA7913] rounded-full animate-spin"></div>
+                // </div>
+              ) : (
+                <h2 className="text-[32px] text-[#525252] font-Raleway Raleway-medium">
+                  {card.value}
+                </h2>
+              )}
+            </div>
+            <img src={card.icon} alt={`${card.label} Icon`} />
           </div>
-          <div className="bg-gradient-to-br w-37.5 h-full flex justify-center items-center from-[#FFB979] to-[#EA7913] rounded-3xl p-3 shadow-[-4px_0_6px_rgba(234,121,19,0.3)]">
-            <img src={UserIcon1} alt="User Icon" className="w-8 h-10" />
-          </div>
-        </div>
-
-        {/* Card 2 */}
-        <div className="flex justify-between items-center bg-white rounded-3xl border-l border-l-[#EA7913] shadow-[0_4px_6px_rgba(0,0,0,0.08)]">
-          <div className='py-[17px] px-8 w-full flex flex-col gap-1.5'>
-            <h2 className="text-[40px] text-[#525252] font-Raleway Raleway-medium">{orders?.items?.length}</h2>
-            <p className="text-sm text-[#464646]">Total Orders</p>
-          </div>
-          <div className="bg-gradient-to-br w-37.5 h-full flex justify-center items-center from-[#FFB979] to-[#EA7913] rounded-3xl p-3 shadow-[-4px_0_6px_rgba(234,121,19,0.3)]">
-            <img src={fileIcon} alt="User Icon" className="w-8 h-10" />
-          </div>
-        </div>
+        ))}
       </div>
 
-      <DashboardTable fetchUsers={fetchUsers} searchTerm={searchTerm} setSearchTerm={setSearchTerm} setStatusDropdownOpen={setStatusDropdownOpen} statusDropdownOpen={statusDropdownOpen} setDateDropdownOpen={setDateDropdownOpen} dateDropdownOpen={dateDropdownOpen} setDateFilter={setDateFilter} dateFilter={dateFilter} setActiveTab={setActiveTab} activeTab={activeTab} dashboardData={dashboardData?.users} loading={loading} error={error} pagination={pagination} setPagination={setPagination} />
+      <DashboardTable
+        fetchUsers={fetchUsers}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        setStatusDropdownOpen={setStatusDropdownOpen}
+        statusDropdownOpen={statusDropdownOpen}
+        setDateDropdownOpen={setDateDropdownOpen}
+        dateDropdownOpen={dateDropdownOpen}
+        setDateFilter={setDateFilter}
+        dateFilter={dateFilter}
+        setActiveTab={setActiveTab}
+        activeTab={activeTab}
+        dashboardData={dashboardData?.users}
+        loading={loading} error={error}
+        pagination={pagination}
+        setPagination={setPagination}
+      />
 
-      {activePopup === "Courses" && <AddCourse onClose={handleClosePopup} />}
-      {activePopup === "Products" && <AddProduct onClose={handleClosePopup} />}
-      {activePopup === "Blog" && <AddBlog onClose={handleClosePopup} />}
-      {activePopup === "Testimonials" && <AddTestimonials onClose={handleClosePopup} />}
+      {activePopup === "Courses" && (
+        <AddCourse
+          onClose={handleClosePopup}
+          fetchCourse={fetchCourse}
+          onConfirm={() => handleClosePopup()}
+        />
+      )}
+      {activePopup === "Products" &&
+        <AddProduct
+          onClose={handleClosePopup}
+          onConfirm={() => handleClosePopup()}
+          fetchProduct={fetchProduct}
+        />
+      }
+      {activePopup === "Blog" && <BlogForm onClose={handleClosePopup} />}
+      {activePopup === "Testimonials" && <TestimonialsEdit onClose={handleClosePopup} />}
     </div>
   );
 }

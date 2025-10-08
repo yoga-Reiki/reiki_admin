@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
-import successTickIcon from "../../assets/svg/successTickIcon.svg"
+import successGreenIcon from "../../assets/svg/successGreenIcon.svg"
 import SearchIcon from "../../assets/svg/SearchIcon.svg";
+import ArrowDownIcon from "../../assets/svg/ArrowDownIcon.svg";
 
 function DashboardTable({ fetchUsers, searchTerm, setSearchTerm, statusDropdownOpen, setStatusDropdownOpen, dateDropdownOpen, setDateDropdownOpen, setDateFilter, dateFilter, setActiveTab, activeTab, dashboardData, loading, error, pagination, setPagination }) {
     const dateDropdownRef = useRef(null);
@@ -33,16 +34,7 @@ function DashboardTable({ fetchUsers, searchTerm, setSearchTerm, statusDropdownO
                             className="flex items-center justify-between text-[#656565] border border-[#FCEAC9] rounded-full px-6 py-2 min-w-[112px] cursor-pointer"
                         >
                             {dateFilter}
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={2}
-                                stroke="currentColor"
-                                className="w-5 h-5 text-[#EA7913] ml-2"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                            </svg>
+                            <img src={ArrowDownIcon} alt="Dropdown Icon" />
                         </button>
 
                         {dateDropdownOpen && (
@@ -70,16 +62,7 @@ function DashboardTable({ fetchUsers, searchTerm, setSearchTerm, statusDropdownO
                             className="flex items-center justify-between text-[#656565] border border-[#FCEAC9] rounded-full px-6 py-2 min-w-[127px] cursor-pointer"
                         >
                             {activeTab}
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={2}
-                                stroke="currentColor"
-                                className="w-5 h-5 text-[#EA7913] ml-2"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                            </svg>
+                            <img src={ArrowDownIcon} alt="Dropdown Icon" />
                         </button>
 
                         {statusDropdownOpen && (
@@ -128,16 +111,15 @@ function DashboardTable({ fetchUsers, searchTerm, setSearchTerm, statusDropdownO
                                 <tr key={index} className="border-b border-[#D4D4D8] last:border-b-0 transition h-16">
                                     <td className="px-4 whitespace-pre-wrap">{Data?.name}</td>
                                     <td className="px-4 w-32 break-words whitespace-normal">{Data.email}</td>
-                                    <td className="whitespace-pre-wrap px-4 py-7">{Data.mobileNumber}</td>
-                                    <td className="whitespace-pre-wrap px-4 py-7">
+                                    <td className="whitespace-pre-wrap px-4">{Data.mobileNumber}</td>
+                                    <td className="whitespace-pre-wrap px-4">
                                         {Data?.address
                                             ? `${Data.address.street}, ${Data.address.city}, ${Data.address.state}, ${Data.address.pincode}, ${Data.address.country}`
                                             : "-"}
                                     </td>
-                                    <td className="flex justify-end gap-3.5 items-center flex-wrap mt-2 md:mt-0 px-4 py-7.5">
-                                        <button className="p-3 flex items-center gap-2 rounded-full bg-[#F0FDF4] text-[#22C55E] border border-[#BBF7D0] cursor-pointer">
-                                            <img src={successTickIcon} alt='Not Found' className='w-4 h-4' />
-                                            <span>Contacted</span>
+                                    <td className="flex gap-3.5 items-center flex-wrap mt-2 md:mt-0 px-4 py-[9.2px]">
+                                        <button className="w-10 h-10 p-2 rounded-full bg-[#F0FDF4] text-[#22C55E] border border-[#BBF7D0] cursor-pointer">
+                                            <img src={successGreenIcon} alt='Not Found' className='w-6 h-6' />
                                         </button>
                                     </td>
                                 </tr>
@@ -151,6 +133,27 @@ function DashboardTable({ fetchUsers, searchTerm, setSearchTerm, statusDropdownO
                         )}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Pagination */}
+            <div className="flex justify-end items-center gap-4 py-6 text-[#464646] px-2">
+                <button
+                    onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                    disabled={pagination.page === 1}
+                    className="px-4 py-2 bg-[#fceac9] rounded-full disabled:opacity-50 cursor-pointer"
+                >
+                    Previous
+                </button>
+                <span className="font-medium">
+                    Page {pagination.page} of {Math.ceil(pagination.totalUsers / pagination.pageSize)}
+                </span>
+                <button
+                    onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                    disabled={pagination.page >= Math.ceil(pagination.totalUsers / pagination.pageSize)}
+                    className="px-4 py-2 bg-[#fceac9] rounded-full disabled:opacity-50 cursor-pointer"
+                >
+                    Next
+                </button>
             </div>
         </div>
     )

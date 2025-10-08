@@ -3,6 +3,7 @@ import SearchIcon from "../../assets/svg/SearchIcon.svg";
 import successGreenIcon from "../../assets/svg/successGreenIcon.svg";
 import CancelIconRed from "../../assets/svg/CancelIconRed.svg";
 import { getAllOrder, getOrderUpdate } from "../../services/orderServices";
+import ArrowDownIcon from "../../assets/svg/ArrowDownIcon.svg";
 import * as XLSX from 'xlsx';
 
 function Order() {
@@ -190,16 +191,7 @@ function Order() {
                                 className="flex items-center justify-between text-[#656565] border border-[#FCEAC9] rounded-full px-6 py-2 min-w-[112px] cursor-pointer"
                             >
                                 {dateFilter}
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={2}
-                                    stroke="currentColor"
-                                    className="w-5 h-5 text-[#EA7913] ml-2"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                                </svg>
+                                <img src={ArrowDownIcon} alt="Dropdown Icon" />
                             </button>
 
                             {dateDropdownOpen && (
@@ -227,16 +219,7 @@ function Order() {
                                 className="flex items-center justify-between text-[#656565] border border-[#FCEAC9] rounded-full px-6 py-2 min-w-[127px] cursor-pointer"
                             >
                                 {activeTab}
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={2}
-                                    stroke="currentColor"
-                                    className="w-5 h-5 text-[#EA7913] ml-2"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                                </svg>
+                                <img src={ArrowDownIcon} alt="Dropdown Icon" />
                             </button>
 
                             {statusDropdownOpen && (
